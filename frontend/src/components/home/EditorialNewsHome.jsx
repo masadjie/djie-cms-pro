@@ -532,10 +532,10 @@ export default function EditorialNewsHome() {
         </div>
 
         {/* ── 6. WHAT'S NEW SECTION (COMPLEX MAGAZINE 2-COL + SOCIAL WIDGET) ──── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Left Col (8 Cols): What's New Lead + Mini List */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 space-y-6 flex flex-col justify-between">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
               <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                 <span>What's New</span>
@@ -559,30 +559,32 @@ export default function EditorialNewsHome() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch flex-1">
               {/* Lead Card (7 Cols) */}
-              <div className="md:col-span-7 bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all group flex flex-col justify-between">
+              <div className="md:col-span-7 bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all group flex flex-col justify-between h-full">
                 <div className="relative aspect-[16/11] overflow-hidden bg-slate-100">
                   <img
                     src={whatsNewLead?.image}
                     alt={whatsNewLead?.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <span className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white ${whatsNewLead?.catColor}`}>
+                  <span className={`absolute top-3 left-3 px-2.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white ${whatsNewLead?.catColor || 'bg-blue-600'} shadow-sm`}>
                     {whatsNewLead?.category}
                   </span>
                 </div>
-                <div className="p-5 space-y-2.5">
-                  <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                    <Link to={`/berita/${whatsNewLead?.slug}`}>
-                      {whatsNewLead?.title}
-                    </Link>
-                  </h3>
-                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
-                    {whatsNewLead?.excerpt}
-                  </p>
-                  <div className="pt-2 text-[11px] text-slate-400 font-medium flex items-center gap-3">
-                    <span>BY {whatsNewLead?.author?.toUpperCase()}</span>
+                <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <h3 className="text-base sm:text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                      <Link to={`/berita/${whatsNewLead?.slug}`}>
+                        {whatsNewLead?.title}
+                      </Link>
+                    </h3>
+                    <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
+                      {whatsNewLead?.excerpt}
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-400 font-medium flex items-center gap-3">
+                    <span className="font-bold text-slate-600">BY {whatsNewLead?.author?.toUpperCase()}</span>
                     <span>•</span>
                     <span>{whatsNewLead?.date}</span>
                   </div>
@@ -590,13 +592,13 @@ export default function EditorialNewsHome() {
               </div>
 
               {/* Stacked 3 Horizontal Cards (5 Cols) */}
-              <div className="md:col-span-5 flex flex-col justify-between gap-4">
+              <div className="md:col-span-5 flex flex-col justify-between gap-4 h-full">
                 {whatsNewList.map((item, idx) => (
                   <div
                     key={idx}
-                    className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex items-center gap-3 group"
+                    className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex items-center gap-3.5 group flex-1"
                   >
-                    <div className="w-24 h-20 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
+                    <div className="w-24 h-22 sm:w-28 sm:h-24 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
                       <img
                         src={item.image}
                         alt={item.title}
@@ -606,16 +608,16 @@ export default function EditorialNewsHome() {
                         {idx + 1}
                       </span>
                     </div>
-                    <div className="space-y-1 min-w-0">
+                    <div className="space-y-1.5 min-w-0 flex-1">
                       <span className="text-[9px] font-black text-blue-600 uppercase tracking-wider block">
                         {item.category}
                       </span>
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                      <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
                         <Link to={`/berita/${item.slug}`}>
                           {item.title}
                         </Link>
                       </h4>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-[10px] text-slate-400 font-medium truncate">
                         {item.date}
                       </div>
                     </div>
@@ -626,7 +628,7 @@ export default function EditorialNewsHome() {
           </div>
 
           {/* Right Col (4 Cols): Stay Connected & Newsletter */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 flex flex-col justify-between gap-6 h-full">
             
             {/* Stay Connected Widget */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
@@ -636,7 +638,7 @@ export default function EditorialNewsHome() {
               </h3>
 
               <div className="space-y-2.5">
-                <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-[#1877f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3.5 rounded-xl bg-[#1877f2] hover:bg-[#166fe5] text-white font-bold text-xs shadow-sm hover:shadow transition-all">
                   <div className="flex items-center gap-3">
                     <Facebook className="w-4 h-4 fill-white" />
                     <span>Facebook</span>
@@ -644,7 +646,7 @@ export default function EditorialNewsHome() {
                   <span className="font-normal opacity-90">{settings.social_facebook_fans || '12.5k Fans'}</span>
                 </a>
 
-                <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-[#1da1f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3.5 rounded-xl bg-[#1da1f2] hover:bg-[#1a94da] text-white font-bold text-xs shadow-sm hover:shadow transition-all">
                   <div className="flex items-center gap-3">
                     <Twitter className="w-4 h-4 fill-white" />
                     <span>Twitter / X</span>
@@ -652,7 +654,7 @@ export default function EditorialNewsHome() {
                   <span className="font-normal opacity-90">{settings.social_twitter_fans || '28.4k Followers'}</span>
                 </a>
 
-                <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-500 hover:opacity-95 text-white font-bold text-xs shadow-sm hover:shadow transition-all">
                   <div className="flex items-center gap-3">
                     <Instagram className="w-4 h-4" />
                     <span>Instagram</span>
@@ -660,7 +662,7 @@ export default function EditorialNewsHome() {
                   <span className="font-normal opacity-90">{settings.social_instagram_fans || '45.2k Followers'}</span>
                 </a>
 
-                <a href={settings.social_youtube || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-[#ff0000] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_youtube || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3.5 rounded-xl bg-[#ff0000] hover:bg-[#e60000] text-white font-bold text-xs shadow-sm hover:shadow transition-all">
                   <div className="flex items-center gap-3">
                     <Youtube className="w-4 h-4 fill-white" />
                     <span>YouTube</span>
@@ -671,23 +673,25 @@ export default function EditorialNewsHome() {
             </div>
 
             {/* Newsletter Subscription Box */}
-            <div className="bg-gradient-to-b from-white to-blue-50/60 rounded-3xl p-6 border border-blue-200/80 shadow-xs space-y-4 text-center">
-              <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md">
-                <Mail className="w-5 h-5" />
+            <div className="bg-gradient-to-b from-white to-blue-50/50 rounded-3xl p-6 border border-blue-200/80 shadow-xs space-y-4 text-center flex-1 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <h4 className="text-base font-black text-slate-900">
+                  Berlangganan Newsletter
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
+                  Dapatkan artikel eksklusif, analisis berita, dan rangkuman mingguan langsung ke email Anda.
+                </p>
               </div>
-              <h4 className="text-base font-black text-slate-900">
-                Berlangganan Newsletter
-              </h4>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Dapatkan artikel eksklusif, analisis berita, dan rangkuman mingguan langsung ke email Anda.
-              </p>
 
               {newsletterSent ? (
-                <div className="p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-bold">
+                <div className="p-3.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-bold">
                   ✓ Terima kasih telah bergabung!
                 </div>
               ) : (
-                <form onSubmit={handleNewsletterSubmit} className="space-y-2">
+                <form onSubmit={handleNewsletterSubmit} className="space-y-2.5 pt-2">
                   <input
                     type="email"
                     required
