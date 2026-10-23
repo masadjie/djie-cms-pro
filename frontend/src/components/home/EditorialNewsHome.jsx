@@ -314,7 +314,7 @@ export default function EditorialNewsHome() {
   };
 
   return (
-    <div className="w-full bg-[#f8fafc] text-slate-800 min-h-screen pt-20 sm:pt-24 pb-20 font-sans selection:bg-blue-600 selection:text-white">
+    <div className="w-full bg-[#f8fafc] text-slate-800 min-h-screen pt-20 sm:pt-24 pb-8 sm:pb-10 font-sans selection:bg-blue-600 selection:text-white">
 
       {/* ── 1. TOP TICKER STRIP (NEEON STYLE) ─────────────────────────────────── */}
       <div className="bg-[#0f172a] text-slate-300 text-xs py-2 px-4 border-b border-slate-800">

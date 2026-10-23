@@ -44,9 +44,13 @@ export default function Footer() {
   const wa = (settings.kontak_wa || settings.social_whatsapp || '081269494591').replace(/[^0-9]/g, '');
 
   return (
-    <footer className="w-full bg-white border-t border-slate-100 text-slate-600 mt-16 sm:mt-24">
+    <footer className={`w-full bg-white border-t border-slate-100 text-slate-600 ${
+      isTemplateA ? 'mt-4 sm:mt-6' : 'mt-16 sm:mt-24'
+    }`}>
       {/* ── TOP HIGHLIGHT BANNER: Floating Clean Curved Container ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -translate-y-8 sm:-translate-y-12">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${
+        isTemplateA ? '-translate-y-4 sm:-translate-y-6' : '-translate-y-8 sm:-translate-y-12'
+      }`}>
         <div className={`relative overflow-hidden rounded-3xl text-white p-8 sm:p-12 shadow-xl ${
           isTemplateA 
             ? 'bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 shadow-blue-900/15'
