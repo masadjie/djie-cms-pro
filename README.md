@@ -122,55 +122,83 @@ djie-cms-pro/
 
 ---
 
-## 📦 Panduan Instalasi Cepat
+## 📦 Panduan Instalasi
 
-### Prasyarat Sistem
-* **Node.js**: Versi 18.x atau 20.x ke atas
-* **Database**: MySQL 8.0+ atau MariaDB 10.5+
-* **Redis** (Opsional, untuk akselerasi cache)
-* **MinIO / S3 Storage** (Opsional, untuk penyimpanan berkas dokumen)
+> 💡 **Sangat Disarankan Menggunakan Docker!**  
+> Menggunakan Docker adalah cara paling cepat, bersih, dan bebas pusing karena database MySQL, Redis, S3 MinIO, Backend, dan Frontend akan langsung terkonfigurasi otomatis dalam satu perintah tanpa perlu install database manual di laptop/server Anda.
 
 ---
 
-### Langkah 1: Clone Repositori
-```bash
-git clone https://github.com/masadjie/djie-cms-pro.git
-cd djie-cms-pro
-```
+### 🐳 Opsi 1: Instalasi dengan Docker (Sangat Disarankan ⭐)
 
-### Langkah 2: Setup & Jalankan Backend
-```bash
-cd backend
-cp .env.example .env
-```
-> Buka file `.env` dan sesuaikan kredensial database Anda (`DB_NAME`, `DB_USER`, `DB_PASS`). Buat database kosong terlebih dahulu di MySQL (misal: `CREATE DATABASE djie_cms_pro;`).
+Cukup pastikan Anda sudah menginstall [Docker](https://www.docker.com/) dan Docker Compose.
 
-Lalu jalankan backend:
-```bash
-npm install
-npm run dev
-```
+1. **Clone Repositori**:
+   ```bash
+   git clone https://github.com/masadjie/djie-cms-pro.git
+   cd djie-cms-pro
+   ```
 
-### Langkah 3: Setup & Jalankan Frontend
-Buka terminal baru di folder proyek:
-```bash
-cd frontend
-npm install
-npm run dev
-```
+2. **Jalankan Seluruh Stack dengan 1 Perintah**:
+   ```bash
+   docker compose up -d --build
+   ```
+   *Docker akan otomatis menyiapkan container MySQL 8, Redis 7, MinIO Storage, Backend API, dan Frontend Nginx.*
 
-### Langkah 4: Buka Setup Wizard di Browser
-Kunjungi alamat web lokal Anda:
-👉 **`http://localhost:5173`**
+3. **Buka Browser & Jalankan Setup Wizard**:
+   Buka browser di:  
+   👉 **`http://localhost:3000`** (atau `http://localhost:3000/install`)
 
-Sistem otomatis mendeteksi status instalasi dan mengarahkan Anda ke:
-👉 **`http://localhost:5173/install`**
+---
 
-Ikuti 4 langkah pada antarmuka:
-1. **Pemeriksaan Sistem**: Memastikan server dan database siap digunakan.
-2. **Identitas Portal**: Masukkan nama portal berita/organisasi Anda dan informasi kontak.
-3. **Akun Super Admin & Dummy Data**: Buat email dan password admin utama Anda, serta pilih apakah ingin memasang data contoh (*dummy migration*).
-4. **Selesai**: Klik tombol luncurkan dan masuk ke Dashboard Administrator!
+### 💻 Opsi 2: Instalasi Manual (Node.js & Local MySQL)
+
+Jika Anda ingin menjalankan server development langsung di environment lokal:
+
+#### Prasyarat Sistem
+* **Node.js**: Versi 18.x atau 20.x ke atas
+* **Database**: MySQL 8.0+ atau MariaDB 10.5+
+
+#### Langkah-langkah:
+1. **Clone Repositori**:
+   ```bash
+   git clone https://github.com/masadjie/djie-cms-pro.git
+   cd djie-cms-pro
+   ```
+
+2. **Setup & Jalankan Backend**:
+   ```bash
+   cd backend
+   cp .env.example .env
+   ```
+   > Sesuaikan kredensial database di file `.env` (misal: `DB_NAME=djie_cms_pro`). Buat database kosong terlebih dahulu di MySQL (`CREATE DATABASE djie_cms_pro;`).
+
+   Lalu jalankan backend:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+3. **Setup & Jalankan Frontend**:
+   Buka terminal baru di folder proyek:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+4. **Buka Setup Wizard di Browser**:
+   Buka browser di:  
+   👉 **`http://localhost:5173`** (otomatis dialihkan ke `/install`)
+
+---
+
+### 🧙‍♂️ Apa yang Dilakukan di Setup Wizard (`/install`)?
+Ikuti 4 langkah mudah pada layar:
+1. **Pemeriksaan Kesiapan Sistem**: Memastikan server dan database terhubung.
+2. **Identitas Portal**: Masukkan nama portal berita/organisasi Anda, tagline, dan kontak.
+3. **Akun Super Admin & Dummy Data**: Buat email dan password admin utama Anda, serta pilih apakah ingin mencentang **Pasang Data Contoh / Dummy Migration**.
+4. **Selesai**: Klik tombol luncurkan dan langsung masuk ke Dashboard Administrator!
 
 ---
 
