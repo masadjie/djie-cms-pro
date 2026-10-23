@@ -30,17 +30,20 @@ import {
   Tag,
   Briefcase,
   Compass,
-  Bookmark
+  Bookmark,
+  MessageSquare,
+  Play,
+  Youtube,
+  Rss
 } from 'lucide-react';
 
 export default function EditorialNewsHome() {
   const navigate = useNavigate();
   const [selectedTopic, setSelectedTopic] = useState('ALL');
+  const [activeTabCat, setActiveTabCat] = useState('ALL');
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSent, setNewsletterSent] = useState(false);
   const [searchWord, setSearchWord] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
   // 1. Fetch CMS Web Settings
   const { data: settingsData } = useQuery({
@@ -55,7 +58,7 @@ export default function EditorialNewsHome() {
     }
   });
 
-  // 2. Fetch Categories (Trending Topics)
+  // 2. Fetch Categories
   const { data: categoriesData } = useQuery({
     queryKey: ['editorialCategories'],
     queryFn: async () => {
@@ -68,20 +71,14 @@ export default function EditorialNewsHome() {
     }
   });
 
-  // 3. Fetch Articles / News
+  // 3. Fetch All Published Articles
   const { data: beritaData, isLoading } = useQuery({
-    queryKey: ['editorialNewsList', selectedTopic, currentPage],
+    queryKey: ['editorialNewsListFull'],
     queryFn: async () => {
       try {
-        const params = {
-          status: 'PUBLISHED',
-          page: currentPage,
-          limit: itemsPerPage
-        };
-        if (selectedTopic !== 'ALL') {
-          params.kategori = selectedTopic;
-        }
-        const res = await api.get('/berita', { params });
+        const res = await api.get('/berita', {
+          params: { status: 'PUBLISHED', limit: 30 }
+        });
         return res?.data || res || { data: [], total: 0 };
       } catch (err) {
         return { data: [], total: 0 };
@@ -89,35 +86,146 @@ export default function EditorialNewsHome() {
     }
   });
 
-  // 4. Fetch Featured / Spotlight News (limit 4)
-  const { data: featuredData } = useQuery({
-    queryKey: ['editorialFeaturedNews'],
-    queryFn: async () => {
-      try {
-        const res = await api.get('/berita', {
-          params: { is_featured: true, limit: 4, status: 'PUBLISHED' }
-        });
-        const list = res?.data?.data || res?.data || res || [];
-        return Array.isArray(list) ? list : [];
-      } catch (err) {
-        return [];
-      }
-    }
-  });
-
   const settings = settingsData || {};
-  const articles = beritaData?.data || (Array.isArray(beritaData) ? beritaData : []);
-  const totalArticles = beritaData?.total || articles.length;
-  const totalPages = Math.ceil(totalArticles / itemsPerPage) || 1;
-  const featuredPosts = Array.isArray(featuredData) ? featuredData : [];
-  const mainFeatured = featuredPosts.length > 0 ? featuredPosts[0] : (articles.length > 0 ? articles[0] : null);
+  const rawArticles = beritaData?.data || (Array.isArray(beritaData) ? beritaData : []);
   const categories = categoriesData || [];
 
-  const siteName = settings.site_name || 'Djie CMS Pro';
-  const editorialHeading = settings.site_tagline || 'Pusat Informasi & Redaksi Publikasi Digital';
-  const editorialSub = settings.site_description || 'Portal resmi penyebaran berita terverifikasi, sudut pandang mendalam, liputan eksklusif, dan wawasan terkini setiap hari.';
-  const authorName = settings.site_author || settings.instansi_name || 'Redaksi Publikasi';
-  const authorDesc = settings.editorial_author_bio || 'Menghadirkan liputan investigasi, ulasan teknologi, tren terkini, dan analisis berbobot dari jurnalis independen.';
+  // Fallback demo articles if DB is fresh / few items
+  const fallbackArticles = [
+    {
+      id: 'fb-1',
+      title: 'Budget Issues Force The World Tour To Be Cancelled',
+      slug: 'budget-issues-force-the-world-tour-to-be-cancelled',
+      excerpt: 'Organizers confirmed earlier this morning that financial constraints and logistical complexities have made the upcoming international season untenable.',
+      category: 'FASHION',
+      catColor: 'bg-rose-500',
+      author: 'Admin',
+      date: 'December 9, 2026',
+      comments: 8,
+      readTime: '4 min',
+      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=80'
+    },
+    {
+      id: 'fb-2',
+      title: 'Crafty Cook and Decorate All Of Our Food Dishes With Love',
+      slug: 'crafty-cook-and-decorate-all-food-dishes-with-love',
+      excerpt: 'Culinary experts share secret plating techniques and artisanal ingredients that turn everyday meals into restaurant-grade experiences.',
+      category: 'FOOD',
+      catColor: 'bg-amber-500',
+      author: 'Admin',
+      date: 'December 9, 2026',
+      comments: 3,
+      readTime: '3 min',
+      image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'fb-3',
+      title: 'African Nation Are Struggling To Save Their Native Wildlife',
+      slug: 'african-nation-are-struggling-to-save-their-native-wildlife',
+      excerpt: 'New satellite conservation tracking reveals shifting habitats and urgent funding gaps needed to protect endangered migratory corridors.',
+      category: 'TECHNOLOGY',
+      catColor: 'bg-blue-600',
+      author: 'Admin',
+      date: 'December 8, 2026',
+      comments: 5,
+      readTime: '5 min',
+      image: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'fb-4',
+      title: 'How To Have Fantastic Trips Without Blowing Your Monthly Budget',
+      slug: 'how-to-have-fantastic-trips-without-blowing-your-budget',
+      excerpt: 'Mastering off-peak travel passes, local rail networks, and homestays lets digital nomads travel the world on a modest budget.',
+      category: 'TRAVEL',
+      catColor: 'bg-emerald-600',
+      author: 'Admin',
+      date: 'December 7, 2026',
+      comments: 2,
+      readTime: '4 min',
+      image: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'fb-5',
+      title: 'How Childhood Viral Infections May Affect Long Term Immunity',
+      slug: 'how-childhood-viral-infections-may-affect-long-term-immunity',
+      excerpt: 'Longitudinal studies uncover surprising immunological pathways developed during early years that protect against metabolic disorders.',
+      category: 'HEALTH',
+      catColor: 'bg-cyan-600',
+      author: 'Admin',
+      date: 'December 6, 2026',
+      comments: 1,
+      readTime: '3 min',
+      image: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'fb-6',
+      title: 'Animal Conservationists Pioneer AI Acoustic Wildlife Tracking',
+      slug: 'animal-conservationists-pioneer-ai-acoustic-wildlife-tracking',
+      excerpt: 'Sensors deployed across dense canopies detect acoustic frequencies of rare primates and immediately alert anti-poaching field teams.',
+      category: 'SCIENCE',
+      catColor: 'bg-indigo-600',
+      author: 'Admin',
+      date: 'December 5, 2026',
+      comments: 4,
+      readTime: '5 min',
+      image: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'fb-7',
+      title: 'If You Went Round The World, Which Hidden Places Could You Not Miss?',
+      slug: 'if-you-went-round-the-world-which-hidden-places',
+      excerpt: 'A curated itinerary of uncharted islands, alpine villages, and ancient trade routes that remain untouched by mass tourism.',
+      category: 'TRAVEL',
+      catColor: 'bg-emerald-600',
+      author: 'Admin',
+      date: 'December 4, 2026',
+      comments: 9,
+      readTime: '6 min',
+      image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'fb-8',
+      title: 'Moon Mission Landings: How Close Are Commercial Deep Space Habitats?',
+      slug: 'moon-mission-landings-how-close-are-commercial-deep-space-habitats',
+      excerpt: 'Modular inflatable lunar base designs achieve pressurized vacuum tests, bringing autonomous extraterrestrial settlements closer to reality.',
+      category: 'TECHNOLOGY',
+      catColor: 'bg-blue-600',
+      author: 'Admin',
+      date: 'December 3, 2026',
+      comments: 6,
+      readTime: '5 min',
+      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80'
+    }
+  ];
+
+  // Merge real articles with fallbacks
+  const articles = rawArticles.length > 0 ? rawArticles.map((a, i) => ({
+    id: a.id,
+    title: a.title,
+    slug: a.slug,
+    excerpt: a.excerpt || 'Baca artikel dan liputan informasi mendalam selengkapnya.',
+    category: a.kategori?.nama_kategori?.toUpperCase() || (fallbackArticles[i % fallbackArticles.length].category),
+    catColor: ['bg-blue-600', 'bg-rose-500', 'bg-emerald-600', 'bg-amber-500', 'bg-indigo-600'][i % 5],
+    author: a.author_name || 'Admin',
+    date: a.published_at ? new Date(a.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'December 2026',
+    comments: a.comments_count || Math.floor(Math.random() * 8) + 1,
+    readTime: `${a.read_time_minutes || 4} min`,
+    image: a.cover_image || fallbackArticles[i % fallbackArticles.length].image
+  })) : fallbackArticles;
+
+  // Slices for each Neeon magazine section
+  const tickerItems = articles.slice(0, 4);
+  const heroMain = articles[0];
+  const heroSide = articles.slice(1, 4);
+  const topStories = articles.slice(0, 4);
+  const whatsNewLead = articles[4] || articles[0];
+  const whatsNewList = articles.slice(5, 8).length > 0 ? articles.slice(5, 8) : articles.slice(1, 4);
+  const circularHighlights = [
+    { num: 1, title: 'Ducati Has All The Cards To Win Championship', cat: 'SPORTS', date: 'October 14, 2026', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=250&q=80' },
+    { num: 2, title: 'If You Went Round The World Which Path To Choose', cat: 'TRAVEL', date: 'October 12, 2026', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=250&q=80' },
+    { num: 3, title: 'The Best Ways To Start A Motorsport Career', cat: 'FASHION', date: 'October 10, 2026', img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=250&q=80' },
+    { num: 4, title: 'Moon Mission Landings: How Near Are Commercial Bases', cat: 'HEALTH', date: 'October 08, 2026', img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=250&q=80' }
+  ];
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -137,414 +245,392 @@ export default function EditorialNewsHome() {
     }
   };
 
-  // Trending Topic Category Pills with clean Royal Blue & Multi-Pastel Accents
-  const defaultTopics = [
-    { label: 'Semua Berita', slug: 'ALL', icon: '✨', bg: 'bg-blue-50 text-blue-700 border-blue-200' },
-    { label: 'Technology', slug: 'teknologi', icon: '💻', bg: 'bg-sky-50 text-sky-700 border-sky-200' },
-    { label: 'Business', slug: 'bisnis', icon: '💼', bg: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-    { label: 'Sport', slug: 'olahraga', icon: '⚽', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-    { label: 'Trends', slug: 'tren', icon: '🔥', bg: 'bg-rose-50 text-rose-700 border-rose-200' },
-    { label: 'Startups', slug: 'startups', icon: '🚀', bg: 'bg-amber-50 text-amber-700 border-amber-200' },
-    { label: 'News', slug: 'berita-pengumuman', icon: '📰', bg: 'bg-cyan-50 text-cyan-700 border-cyan-200' }
-  ];
-
   return (
-    <div className="w-full bg-[#f8fafc] text-slate-800 min-h-screen pt-24 sm:pt-28 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
-        
-        {/* ── 1. EDITORIAL HERO BANNER (ROYAL BLUE BRAND) ────────────────────────── */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 pt-2 sm:pt-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-black tracking-wide uppercase shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>Digital Magazine & Newsroom</span>
+    <div className="w-full bg-[#f8fafc] text-slate-800 min-h-screen pt-20 sm:pt-24 pb-20 font-sans selection:bg-blue-600 selection:text-white">
+
+      {/* ── 1. TOP TICKER STRIP (NEEON STYLE) ─────────────────────────────────── */}
+      <div className="bg-[#0f172a] text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-3 overflow-hidden w-full md:w-auto">
+            <span className="px-2.5 py-0.5 rounded-sm bg-blue-600 text-white font-black text-[10px] tracking-wider uppercase flex items-center gap-1 shrink-0">
+              <Flame className="w-3 h-3" />
+              TRENDING
+            </span>
+            <p className="truncate text-slate-300 text-xs font-medium hover:text-white transition-colors cursor-pointer">
+              {tickerItems[0]?.title || 'Here What in Battlefield Deluxe Edition Hotel Area Edition Simply Dummy Text'}
+            </p>
           </div>
-
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
-            {editorialHeading.split(':').map((part, idx) => (
-              idx === 1 ? (
-                <span key={idx}>: <span className="text-blue-600">{part}</span></span>
-              ) : (
-                <span key={idx}>{part}</span>
-              )
-            ))}
-          </h1>
-
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
-            {editorialSub}
-          </p>
-
-          {/* Quick Search in Hero */}
-          <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto pt-2 flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchWord}
-                onChange={(e) => setSearchWord(e.target.value)}
-                placeholder="Cari topik berita, kata kunci, artikel..."
-                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-white border border-slate-200 rounded-2xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+          <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 shrink-0">
+            <span>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+            <span>•</span>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-500">FOLLOW US:</span>
+              <a href="#" className="hover:text-blue-400 transition-colors"><Facebook className="w-3.5 h-3.5" /></a>
+              <a href="#" className="hover:text-sky-400 transition-colors"><Twitter className="w-3.5 h-3.5" /></a>
+              <a href="#" className="hover:text-pink-400 transition-colors"><Instagram className="w-3.5 h-3.5" /></a>
+              <a href="#" className="hover:text-red-400 transition-colors"><Youtube className="w-3.5 h-3.5" /></a>
             </div>
-            <button
-              type="submit"
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-sm transition-all shrink-0 cursor-pointer"
-            >
-              Cari
-            </button>
-          </form>
+          </div>
         </div>
+      </div>
 
-        {/* ── 2. EXPLORE TRENDING TOPICS (CATEGORY PILLS) ─────────────────────────── */}
-        <div className="space-y-3 text-center">
-          <span className="text-[11px] font-black tracking-widest text-slate-400 uppercase">
-            Explore Trending Topics
-          </span>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-4xl mx-auto">
-            {defaultTopics.map((topic) => {
-              const isActive = selectedTopic === topic.slug;
-              return (
-                <button
-                  key={topic.slug}
-                  onClick={() => { setSelectedTopic(topic.slug); setCurrentPage(1); }}
-                  className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border cursor-pointer ${
-                    isActive
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
-                      : `${topic.bg} hover:scale-105 hover:shadow-xs`
-                  }`}
-                >
-                  <span>{topic.icon}</span>
-                  <span>{topic.label}</span>
-                </button>
-              );
-            })}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-12">
+
+        {/* ── 2. CIRCULAR NUMBERED HIGHLIGHTS BAR (TOP 4 SLIDER BAR) ──────────── */}
+        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/80 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+            {circularHighlights.map((item, idx) => (
+              <div key={idx} className={`flex items-center gap-3.5 ${idx !== 0 ? 'sm:pl-5' : ''} ${idx > 0 ? 'pt-4 sm:pt-0' : ''}`}>
+                <div className="relative shrink-0">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-16 h-16 rounded-full object-cover shadow-sm ring-2 ring-blue-500/20"
+                  />
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white font-black text-[10px] flex items-center justify-center border-2 border-white">
+                    {item.num}
+                  </span>
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[10px] font-black uppercase text-blue-600 tracking-wider block">
+                    {item.cat}
+                  </span>
+                  <Link to={`/berita/${tickerItems[idx % tickerItems.length]?.slug || '#'}`} className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 leading-snug block">
+                    {item.title}
+                  </Link>
+                  <span className="text-[10px] text-slate-400 block font-medium">
+                    {item.date}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── 3. MAIN EDITORIAL CONTENT: 2-COLUMNS (LEFT: 8 COLS, RIGHT: 4 COLS) ──── */}
+        {/* ── 3. HERO COMPOSITE GRID (1 HUGE FEATURED + 3 SIDEBAR CARDS) ───────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          
+          {/* Main Huge Feature Card (Col 8) */}
+          <div className="lg:col-span-7 xl:col-span-8 relative rounded-3xl overflow-hidden group shadow-sm bg-slate-900 min-h-[380px] sm:min-h-[460px] flex flex-col justify-end">
+            <img
+              src={heroMain?.image}
+              alt={heroMain?.title}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
+            />
+            {/* Dark gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+
+            <div className="relative z-10 p-6 sm:p-8 space-y-3">
+              <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider text-white ${heroMain?.catColor || 'bg-rose-600'} shadow-sm`}>
+                {heroMain?.category || 'FASHION'}
+              </span>
+
+              <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-md">
+                <Link to={`/berita/${heroMain?.slug}`} className="hover:underline">
+                  {heroMain?.title}
+                </Link>
+              </h1>
+
+              <div className="flex items-center gap-3 text-xs text-slate-300 font-medium pt-1">
+                <span className="text-white font-bold">BY {heroMain?.author?.toUpperCase()}</span>
+                <span>•</span>
+                <span>{heroMain?.date}</span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  {heroMain?.comments} COMMENTS
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3 Right Hand Cards (Col 5 / 4) */}
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-between gap-4">
+            {heroSide.map((item, idx) => (
+              <div 
+                key={idx}
+                className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex items-center gap-4 group"
+              >
+                <div className="w-28 h-24 sm:w-32 sm:h-28 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <div className="space-y-1.5 min-w-0">
+                  <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white ${item.catColor || 'bg-blue-600'}`}>
+                    {item.category}
+                  </span>
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                    <Link to={`/berita/${item.slug}`}>
+                      {item.title}
+                    </Link>
+                  </h3>
+                  <div className="text-[10px] text-slate-400 font-medium">
+                    BY {item.author.toUpperCase()} • {item.date}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        {/* ── 4. HORIZONTAL SPONSOR / BANNER DISPLAY ───────────────────────────── */}
+        <div className="rounded-3xl overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-8 text-white shadow-md relative flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20">
+              <Sparkles className="w-8 h-8 text-amber-300" />
+            </div>
+            <div>
+              <span className="text-[11px] font-black uppercase tracking-widest text-blue-200 block">
+                SPECIAL HIGHLIGHT PROMO
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-white">
+                Djie CMS Pro — High-Speed Digital Publishing Engine
+              </h2>
+              <p className="text-xs text-blue-100/90 mt-1 max-w-xl">
+                Dapatkan akses penuh ke seluruh modul berita redaksi, integrasi dokumen publik, dan performa tinggi React 18 SPA.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/admin/login"
+            className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all shrink-0 active:scale-95"
+          >
+            Masuk Dashboard
+          </Link>
+        </div>
+
+        {/* ── 5. TOP STORIES SECTION (4 EQUAL COLUMNS) ─────────────────────────── */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Top Stories</span>
+              <span className="w-2 h-2 rounded-full bg-blue-600" />
+            </h2>
+            <Link to="/berita" className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              <span>Lihat Semua</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {topStories.map((item, idx) => (
+              <article 
+                key={idx}
+                className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white ${item.catColor}`}>
+                      {item.category}
+                    </span>
+                  </div>
+                  <div className="p-4 space-y-2">
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                      <Link to={`/berita/${item.slug}`}>
+                        {item.title}
+                      </Link>
+                    </h3>
+                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                      {item.excerpt}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-4 pb-4 pt-1 text-[11px] text-slate-400 font-medium border-t border-slate-50 flex items-center justify-between">
+                  <span>BY {item.author.toUpperCase()}</span>
+                  <span>{item.date}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* ── 6. WHAT'S NEW SECTION (COMPLEX MAGAZINE 2-COL + SOCIAL WIDGET) ──── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* ── LEFT 8 COLS: 2-COLUMNS ARTICLE GRID CARDS ────────────────────── */}
-          <div className="lg:col-span-8 space-y-8">
-            
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-4 animate-pulse">
-                    <div className="h-48 bg-slate-200 rounded-2xl w-full" />
-                    <div className="h-4 bg-slate-200 rounded w-1/3" />
-                    <div className="h-5 bg-slate-200 rounded w-4/5" />
-                    <div className="h-3 bg-slate-200 rounded w-full" />
-                  </div>
-                ))}
-              </div>
-            ) : articles.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-xs space-y-3">
-                <Compass className="w-12 h-12 text-blue-400 mx-auto" />
-                <h3 className="text-lg font-black text-slate-800">Belum Ada Artikel di Topik Ini</h3>
-                <p className="text-xs text-slate-500 max-w-md mx-auto">
-                  Belum ada naskah berita yang dipublikasikan pada rubrik ini. Silakan pilih topik lain atau input berita baru dari admin panel.
-                </p>
-                <button
-                  onClick={() => setSelectedTopic('ALL')}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 cursor-pointer"
-                >
-                  Lihat Semua Berita
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7">
-                {articles.map((item) => (
-                  <article
-                    key={item.id}
-                    className="group bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between overflow-hidden"
-                  >
-                    <div>
-                      {/* Image Thumbnail with Category Badge Overlay */}
-                      <Link to={`/berita/${item.slug}`} className="block relative aspect-[16/10] overflow-hidden bg-slate-100">
-                        <img
-                          src={item.cover_image || item.gambar_utama || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80'}
-                          alt={item.title || item.judul}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => {
-                            e.currentTarget.src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80';
-                          }}
-                        />
-                        {/* Category Floating Badges */}
-                        <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-1.5 z-10">
-                          <span className="px-2.5 py-1 rounded-xl text-[10px] font-black tracking-wider uppercase bg-white/95 backdrop-blur-md text-slate-800 shadow-sm border border-slate-200/60">
-                            {item.kategori?.nama_kategori || 'News'}
-                          </span>
-                        </div>
-                      </Link>
-
-                      {/* Content Info */}
-                      <div className="p-5 sm:p-6 space-y-3">
-                        {/* Meta: Author & Date */}
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
-                          <span className="font-bold text-slate-700 hover:text-blue-600 transition-colors">
-                            {item.author_name || authorName}
-                          </span>
-                          <span>•</span>
-                          <span>
-                            {item.published_at 
-                              ? new Date(item.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-                              : 'Terbaru'}
-                          </span>
-                          {(item.read_time_minutes || item.read_time) && (
-                            <>
-                              <span>•</span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {item.read_time_minutes || item.read_time} mnt
-                              </span>
-                            </>
-                          )}
-                        </div>
-
-                        {/* Title */}
-                        <h2 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                          <Link to={`/berita/${item.slug}`}>
-                            {item.title || item.judul}
-                          </Link>
-                        </h2>
-
-                        {/* Excerpt */}
-                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                          {item.excerpt || item.ringkasan || 'Baca liputan dan informasi mendalam selengkapnya di artikel ini.'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Card Footer: Read More Arrow */}
-                    <div className="px-5 sm:px-6 pb-5 pt-2 flex items-center justify-between text-xs font-bold text-blue-600 border-t border-slate-50">
-                      <Link to={`/berita/${item.slug}`} className="flex items-center gap-1.5 group-hover:gap-2 transition-all">
-                        <span>Baca Selengkapnya</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                      <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {item.views_count || 120}
-                      </span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="pt-6 flex items-center justify-center gap-2">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                {Array.from({ length: totalPages }).map((_, i) => (
+          {/* Left Col (8 Cols): What's New Lead + Mini List */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <span>What's New</span>
+                <span className="w-2 h-2 rounded-full bg-blue-600" />
+              </h2>
+              {/* Category Pills Tabs */}
+              <div className="flex items-center gap-1.5 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+                {['ALL', 'Travel', 'Food', 'Health', 'Politics'].map((tab) => (
                   <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      currentPage === i + 1
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'border border-slate-200 text-slate-600 hover:bg-slate-100'
+                    key={tab}
+                    onClick={() => setActiveTabCat(tab)}
+                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                      activeTabCat === tab
+                        ? 'bg-blue-600 text-white'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    {i + 1}
+                    {tab}
                   </button>
                 ))}
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-          </div>
-
-          {/* ── RIGHT 4 COLS: EDITORIAL SIDEBAR ─────────────────────────────────── */}
-          <div className="lg:col-span-4 space-y-6">
-            
-            {/* 1. Author / Redaksi Bio Profile Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
-                About the Redaction
-              </span>
-
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black flex items-center justify-center shadow-md text-lg">
-                  {authorName.charAt(0)}
-                </div>
-                <div>
-                  <h4 className="text-sm font-black text-slate-900">{authorName}</h4>
-                  <span className="text-[11px] text-blue-700 font-semibold block">Editorial & Newsroom</span>
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed">
-                {authorDesc}
-              </p>
-
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 pt-1">
-                <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>{settings.kantor_kota || 'Jakarta'}, Indonesia</span>
-              </div>
-
-              {/* Social Media Link Icons */}
-              <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-slate-500">
-                <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
-                  <Twitter className="w-3.5 h-3.5" />
-                </a>
-                <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
-                  <Facebook className="w-3.5 h-3.5" />
-                </a>
-                <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
-                  <Instagram className="w-3.5 h-3.5" />
-                </a>
-                <a href={settings.social_whatsapp ? `https://wa.me/${settings.social_whatsapp}` : '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
-                  <Share2 className="w-3.5 h-3.5" />
-                </a>
               </div>
             </div>
 
-            {/* 2. Featured Posts Spotlight Card */}
-            {mainFeatured && (
-              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    Featured Post
-                  </span>
-                  <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 font-bold text-[10px]">
-                    Highlight
-                  </span>
-                </div>
-
-                <Link to={`/berita/${mainFeatured.slug}`} className="block relative aspect-[4/3] rounded-2xl overflow-hidden group shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              {/* Lead Card (7 Cols) */}
+              <div className="md:col-span-7 bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all group flex flex-col justify-between">
+                <div className="relative aspect-[16/11] overflow-hidden bg-slate-100">
                   <img
-                    src={mainFeatured.cover_image || mainFeatured.gambar_utama || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80'}
-                    alt={mainFeatured.title || mainFeatured.judul}
+                    src={whatsNewLead?.image}
+                    alt={whatsNewLead?.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent flex flex-col justify-end p-4 text-white">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-blue-300">
-                      {mainFeatured.kategori?.nama_kategori || 'Editorial'}
-                    </span>
-                    <h5 className="text-sm font-black text-white line-clamp-2 mt-1 leading-snug">
-                      {mainFeatured.title || mainFeatured.judul}
-                    </h5>
-                    <span className="text-[10px] text-slate-300 mt-2 block">
-                      {mainFeatured.author_name || authorName} • {mainFeatured.published_at ? new Date(mainFeatured.published_at).toLocaleDateString('id-ID') : 'Terbaru'}
-                    </span>
+                  <span className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white ${whatsNewLead?.catColor}`}>
+                    {whatsNewLead?.category}
+                  </span>
+                </div>
+                <div className="p-5 space-y-2.5">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                    <Link to={`/berita/${whatsNewLead?.slug}`}>
+                      {whatsNewLead?.title}
+                    </Link>
+                  </h3>
+                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
+                    {whatsNewLead?.excerpt}
+                  </p>
+                  <div className="pt-2 text-[11px] text-slate-400 font-medium flex items-center gap-3">
+                    <span>BY {whatsNewLead?.author?.toUpperCase()}</span>
+                    <span>•</span>
+                    <span>{whatsNewLead?.date}</span>
                   </div>
-                </Link>
+                </div>
               </div>
-            )}
 
-            {/* 3. Editorial Categories / Rubrik Cloud */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-3.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
-                Rubrik & Topik Berita
-              </span>
-              <div className="space-y-2">
-                {categories.map((kat) => (
-                  <Link
-                    key={kat.id}
-                    to={`/berita?kategori=${kat.slug}`}
-                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/70 transition-colors text-xs font-semibold text-slate-700 group"
+              {/* Stacked 3 Horizontal Cards (5 Cols) */}
+              <div className="md:col-span-5 flex flex-col justify-between gap-4">
+                {whatsNewList.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex items-center gap-3 group"
                   >
-                    <span className="flex items-center gap-2 group-hover:text-blue-700">
-                      <Tag className="w-3.5 h-3.5 text-blue-600" />
-                      <span>{kat.nama_kategori}</span>
-                    </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
-                  </Link>
+                    <div className="w-24 h-20 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <span className="absolute bottom-1 right-1 w-5 h-5 rounded-md bg-slate-900/80 text-white font-black text-[9px] flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                    </div>
+                    <div className="space-y-1 min-w-0">
+                      <span className="text-[9px] font-black text-blue-600 uppercase tracking-wider block">
+                        {item.category}
+                      </span>
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                        <Link to={`/berita/${item.slug}`}>
+                          {item.title}
+                        </Link>
+                      </h4>
+                      <div className="text-[10px] text-slate-400">
+                        {item.date}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* 4. Curated Reading / External Resources Widget */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
-                Kanal Rekomendasi
-              </span>
-              <div className="space-y-3 text-xs">
-                <a
-                  href="/katalog"
-                  className="block p-3 rounded-2xl bg-slate-50 hover:bg-blue-50/60 border border-slate-100 transition-all group"
-                >
-                  <div className="flex items-center justify-between font-bold text-slate-800 group-hover:text-blue-700">
-                    <span>Katalog Layanan & Arsip</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
+          {/* Right Col (4 Cols): Stay Connected & Newsletter */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Stay Connected Widget */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <h3 className="text-base font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <span>STAY CONNECTED</span>
+                <span className="w-2 h-2 rounded-full bg-blue-600" />
+              </h3>
+
+              <div className="space-y-2.5">
+                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-[#1877f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                  <div className="flex items-center gap-3">
+                    <Facebook className="w-4 h-4 fill-white" />
+                    <span>Facebook</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                    Eksplorasi dokumen publik, regulasi, dan prosedur operasional terpadu.
-                  </p>
+                  <span className="font-normal opacity-90">12.5k Fans</span>
                 </a>
 
-                <a
-                  href="/galeri"
-                  className="block p-3 rounded-2xl bg-slate-50 hover:bg-blue-50/60 border border-slate-100 transition-all group"
-                >
-                  <div className="flex items-center justify-between font-bold text-slate-800 group-hover:text-blue-700">
-                    <span>Dokumentasi Galeri & Video</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
+                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-[#1da1f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                  <div className="flex items-center gap-3">
+                    <Twitter className="w-4 h-4 fill-white" />
+                    <span>Twitter / X</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                    Liputan foto kegiatan, dokumentasi siaran pers, dan tayangan liputan.
-                  </p>
+                  <span className="font-normal opacity-90">28.4k Followers</span>
+                </a>
+
+                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                  <div className="flex items-center gap-3">
+                    <Instagram className="w-4 h-4" />
+                    <span>Instagram</span>
+                  </div>
+                  <span className="font-normal opacity-90">45.2k Followers</span>
+                </a>
+
+                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-[#ff0000] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                  <div className="flex items-center gap-3">
+                    <Youtube className="w-4 h-4 fill-white" />
+                    <span>YouTube</span>
+                  </div>
+                  <span className="font-normal opacity-90">8.9k Subscribers</span>
                 </a>
               </div>
             </div>
 
-          </div>
+            {/* Newsletter Subscription Box */}
+            <div className="bg-gradient-to-b from-white to-blue-50/60 rounded-3xl p-6 border border-blue-200/80 shadow-xs space-y-4 text-center">
+              <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md">
+                <Mail className="w-5 h-5" />
+              </div>
+              <h4 className="text-base font-black text-slate-900">
+                Berlangganan Newsletter
+              </h4>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Dapatkan artikel eksklusif, analisis berita, dan rangkuman mingguan langsung ke email Anda.
+              </p>
 
-        </div>
-
-        {/* ── 4. NEWSLETTER SUBSCRIPTION BOX (ROYAL BLUE ACCENT) ─────────── */}
-        <div className="bg-gradient-to-b from-white to-blue-50/60 rounded-3xl p-8 sm:p-12 border border-blue-100 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md">
-            <Mail className="w-6 h-6" />
-          </div>
-
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Subscribe to our Newsletter
-          </h3>
-
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
-            Dapatkan kiriman rangkuman berita terpopuler, liputan eksklusif, dan wawasan mingguan langsung di inbox email Anda.
-          </p>
-
-          {newsletterSent ? (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold inline-flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Terima kasih! Anda telah terdaftar dalam buletin berkala kami.</span>
+              {newsletterSent ? (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bold">
+                  ✓ Terima kasih telah bergabung!
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="space-y-2">
+                  <input
+                    type="email"
+                    required
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    placeholder="Alamat email Anda..."
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-xs"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                  >
+                    Subscribe Now
+                  </button>
+                </form>
+              )}
             </div>
-          ) : (
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-2 max-w-md mx-auto pt-2">
-              <input
-                type="email"
-                required
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Ketik alamat email Anda..."
-                className="w-full sm:flex-1 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs"
-              />
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl text-xs font-bold transition-all shadow-md shrink-0 cursor-pointer"
-              >
-                Subscribe
-              </button>
-            </form>
-          )}
 
-          <p className="text-[10px] text-slate-400">
-            Bebas spam. Anda dapat membatalkan langganan kapan saja dengan 1 klik.
-          </p>
+          </div>
+
         </div>
 
       </div>
