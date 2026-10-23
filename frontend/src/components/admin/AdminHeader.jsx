@@ -341,18 +341,11 @@ export default function AdminHeader({ activeTab, setActiveTab, allowedTabs = [] 
         {/* Left: Brand Logo & Search */}
         <div className="flex items-center gap-6">
           <Link to="/admin" className="flex items-center gap-3 shrink-0 group">
-            {/* Logo Lambang Daerah Aceh Tamiang */}
-            <img 
-              src="/logo-tamiang.png" 
-              alt="Logo Aceh Tamiang" 
-              className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-sm group-hover:scale-105 transition-transform" 
-            />
-
-            {/* Logo Resmi DJIE CMS PRO (Horizontal HD) */}
+            {/* Logo Resmi DJIE CMS PRO */}
             <div className="flex items-center">
               <img 
                 src="/logo-djie-cms-pro-horizontal.png" 
-                alt="Djie CMS PRO - BKPSDM Aceh Tamiang" 
+                alt="Djie CMS PRO" 
                 className="h-8 sm:h-9 w-auto object-contain filter drop-shadow-sm hover:brightness-105 transition-all" 
               />
             </div>

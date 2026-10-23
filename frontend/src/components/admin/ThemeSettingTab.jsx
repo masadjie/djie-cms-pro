@@ -221,111 +221,147 @@ export default function ThemeSettingTab() {
         </div>
       </div>
 
-      {/* 2. SECTION: TEMPLATE VIEW & LAYOUT PRESET (COMING SOON) */}
+      {/* 2. SECTION: TEMPLATE VIEW & LAYOUT PRESET */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
           <div>
             <div className="flex items-center gap-2">
-              <LayoutTemplate className="w-5 h-5 text-indigo-600" />
+              <LayoutTemplate className="w-5 h-5 text-blue-600" />
               <h2 className="text-lg font-black text-slate-900">Katalog Template & Tata Letak Beranda (Layout Preset)</h2>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Pilihan arsitektur tata letak antarmuka beranda publik (Portal Klasik Pemda, Modern SaaS Metro, Card Bento Grid, & Minimalist News Portal).
+              Pilih arsitektur tata letak antarmuka beranda publik secara real-time. Template langsung aktif di halaman depan.
             </p>
           </div>
-          <div className="px-3 py-1.5 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-xl text-xs font-black flex items-center gap-1.5 shrink-0">
-            <Clock className="w-3.5 h-3.5 text-indigo-600 animate-spin" />
-            <span>Tahap Digitalisasi v2.0</span>
+          <div className="px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-xl text-xs font-black flex items-center gap-1.5 shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            <span>Multi-Template Ready v2.0</span>
           </div>
         </div>
 
         {/* Template Showcase Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
-          {/* Template 1: Active Default */}
-          <div className="rounded-2xl border-2 border-emerald-600 bg-white p-5 space-y-4 relative shadow-sm">
+          {/* Template A: Revision Editorial Magazine */}
+          <div 
+            onClick={() => {
+              changeTheme('editorial');
+              setForm(prev => ({ ...prev, home_layout_mode: 'EDITORIAL' }));
+              localStorage.setItem('djie_layout_mode', 'EDITORIAL');
+              saveMutation.mutate({ ...form, home_layout_mode: 'EDITORIAL', site_theme: 'editorial' });
+            }}
+            className={`rounded-2xl border-2 p-5 space-y-4 relative shadow-sm cursor-pointer transition-all ${
+              currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL'
+                ? 'border-blue-600 bg-blue-50/20 ring-2 ring-blue-500/10'
+                : 'border-slate-200 bg-white hover:border-slate-300'
+            }`}
+          >
             <div className="flex items-center justify-between">
-              <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
-                Aktif Saat Ini
+              <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 text-slate-600'
+              }`}>
+                {currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL' ? 'Aktif Saat Ini' : 'Pilihan A'}
               </span>
-              <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs">
-                <Check className="w-3.5 h-3.5" />
-              </span>
+              {(currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL') && (
+                <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-xs">
+                  <Check className="w-4 h-4 stroke-[3]" />
+                </span>
+              )}
             </div>
-            {/* Mock Layout Diagram */}
-            <div className="h-28 rounded-xl bg-slate-50 border border-slate-200 p-2.5 space-y-1.5">
-              <div className="h-3 w-full bg-emerald-800/80 rounded" />
-              <div className="h-10 w-full bg-slate-200 rounded flex items-center px-2">
-                <div className="h-2 w-16 bg-slate-400 rounded" />
-              </div>
-              <div className="grid grid-cols-3 gap-1.5 pt-0.5">
-                <div className="h-7 bg-slate-200 rounded" />
-                <div className="h-7 bg-slate-200 rounded" />
-                <div className="h-7 bg-slate-200 rounded" />
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-slate-900">Template 01: Government Portal Pro</h4>
-              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Struktur resmi Kementerian & Pemerintah Daerah dengan Hero Banner raksasa, Quick Service Grid, Ekosistem SiKEPO, Berita, & Footer Mega Link.
-              </p>
-            </div>
-          </div>
 
-          {/* Template 2: Bento Grid (Coming Soon) */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 space-y-4 relative group hover:border-indigo-300 transition-all overflow-hidden">
-            <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[9px] font-black tracking-widest uppercase border border-amber-300">
-              Segera Hadir
-            </div>
-            <span className="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-wider inline-block">
-              Preset Desain 02
-            </span>
-            {/* Mock Layout Diagram */}
-            <div className="h-28 rounded-xl bg-white border border-slate-200 p-2 space-y-1 opacity-75">
-              <div className="grid grid-cols-3 gap-1 h-14">
-                <div className="col-span-2 bg-indigo-100 rounded" />
-                <div className="bg-amber-100 rounded" />
-              </div>
-              <div className="grid grid-cols-3 gap-1 h-9">
-                <div className="bg-slate-200 rounded" />
-                <div className="col-span-2 bg-slate-200 rounded" />
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                <span>Template 02: Modern Bento Box</span>
-              </h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Tata letak modular asimetris ala Apple & Next.js dengan kartu interaktif fleksibel, grafik real-time, dan highlight agenda bergerak.
-              </p>
-            </div>
-          </div>
-
-          {/* Template 3: News Editorial (Coming Soon) */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 space-y-4 relative group hover:border-indigo-300 transition-all overflow-hidden">
-            <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[9px] font-black tracking-widest uppercase border border-amber-300">
-              Segera Hadir
-            </div>
-            <span className="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-wider inline-block">
-              Preset Desain 03
-            </span>
-            {/* Mock Layout Diagram */}
-            <div className="h-28 rounded-xl bg-white border border-slate-200 p-2 space-y-1 opacity-75">
-              <div className="h-2 w-full bg-slate-800 rounded" />
-              <div className="grid grid-cols-4 gap-1 h-20 pt-1">
-                <div className="col-span-3 bg-slate-200 rounded space-y-1 p-1">
-                  <div className="h-8 bg-slate-300 rounded" />
-                  <div className="h-1.5 w-20 bg-slate-400 rounded" />
+            {/* Mock Layout Diagram: Revision Editorial */}
+            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200/80 p-2 space-y-1.5">
+              <div className="h-3 w-full bg-blue-600 rounded flex items-center px-1.5 justify-between">
+                <div className="w-8 h-1 bg-white rounded-full" />
+                <div className="flex gap-1">
+                  <div className="w-4 h-1 bg-white/70 rounded-full" />
+                  <div className="w-4 h-1 bg-white/70 rounded-full" />
                 </div>
-                <div className="bg-slate-100 rounded border border-slate-200" />
+              </div>
+              <div className="flex gap-1 items-center pt-0.5">
+                <div className="h-2 w-8 bg-blue-200 rounded-full" />
+                <div className="h-2 w-6 bg-slate-200 rounded-full" />
+                <div className="h-2 w-10 bg-slate-200 rounded-full" />
+              </div>
+              <div className="grid grid-cols-12 gap-1.5 h-16 pt-0.5">
+                <div className="col-span-8 bg-white border border-slate-200/80 rounded p-1 space-y-1 flex flex-col justify-between">
+                  <div className="h-8 bg-slate-200 rounded" />
+                  <div className="h-1.5 w-3/4 bg-slate-400 rounded-full" />
+                </div>
+                <div className="col-span-4 bg-blue-50 border border-blue-200/60 rounded p-1 flex flex-col justify-between">
+                  <div className="h-4 bg-blue-200 rounded" />
+                  <div className="h-1 w-full bg-blue-400 rounded-full" />
+                </div>
               </div>
             </div>
+
             <div>
-              <h4 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                <span>Template 03: Editorial Press & Media</span>
+              <h4 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
+                <span>Template A: Revision Editorial Magazine</span>
               </h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Dirancang khusus untuk fokus publikasi siaran pers kedinasan, breaking news, galeri foto dokumentasi jurnalistik, dan video podcast.
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Desain editorial modern khusus portal berita & media digital. Dilengkapi bar topik trending warna-warni, grid 2-kolom artikel, profil redaksi bergradasi, dan subscription box newsletter.
+              </p>
+            </div>
+          </div>
+
+          {/* Template B: Government & Public Service Portal */}
+          <div 
+            onClick={() => {
+              changeTheme('emerald');
+              setForm(prev => ({ ...prev, home_layout_mode: 'PORTAL' }));
+              localStorage.setItem('djie_layout_mode', 'PORTAL');
+              saveMutation.mutate({ ...form, home_layout_mode: 'PORTAL', site_theme: 'emerald' });
+            }}
+            className={`rounded-2xl border-2 p-5 space-y-4 relative shadow-sm cursor-pointer transition-all ${
+              currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL'
+                ? 'border-emerald-600 bg-emerald-50/20 ring-2 ring-emerald-500/10'
+                : 'border-slate-200 bg-white hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL'
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-slate-100 text-slate-600'
+              }`}>
+                {currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL' ? 'Aktif Saat Ini' : 'Pilihan B'}
+              </span>
+              {currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL' && (
+                <span className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs shadow-xs">
+                  <Check className="w-4 h-4 stroke-[3]" />
+                </span>
+              )}
+            </div>
+
+            {/* Mock Layout Diagram: Government Portal */}
+            <div className="h-32 rounded-xl bg-slate-50 border border-slate-200/80 p-2 space-y-1.5">
+              <div className="h-3 w-full bg-emerald-800 rounded flex items-center px-1.5 justify-between">
+                <div className="w-8 h-1 bg-white rounded-full" />
+                <div className="flex gap-1">
+                  <div className="w-4 h-1 bg-white/70 rounded-full" />
+                </div>
+              </div>
+              <div className="h-10 w-full bg-emerald-900/90 rounded flex flex-col items-center justify-center px-2">
+                <div className="h-2 w-20 bg-white/90 rounded-full mb-1" />
+                <div className="h-2.5 w-32 bg-white/20 rounded" />
+              </div>
+              <div className="grid grid-cols-4 gap-1 pt-0.5">
+                <div className="h-7 bg-white border border-slate-200 rounded" />
+                <div className="h-7 bg-white border border-slate-200 rounded" />
+                <div className="h-7 bg-white border border-slate-200 rounded" />
+                <div className="h-7 bg-white border border-slate-200 rounded" />
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
+                <span>Template B: Government & Public Service Portal</span>
+              </h4>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Struktur korporat dan pemerintahan dengan Hero Banner pencarian cepat, grid katalog multi-layanan publik, widget status antrean, dan kalender agenda resmi.
               </p>
             </div>
           </div>

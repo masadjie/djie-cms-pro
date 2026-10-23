@@ -57,9 +57,12 @@ export default function SplashScreen({ onFinish }) {
           {/* Circular badge with gold border */}
           <div className="relative w-24 h-24 rounded-3xl bg-white/10 backdrop-blur-md p-3.5 border border-emerald-400/30 shadow-2xl shadow-emerald-950 flex items-center justify-center">
             <img 
-              src="/logo-tamiang.png" 
-              alt="Logo Aceh Tamiang" 
+              src="/logo-djie-cms-pro-square.png" 
+              alt="Logo Djie CMS Pro" 
               className="w-full h-full object-contain filter drop-shadow-lg transform transition-transform duration-700 hover:scale-105"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
             />
           </div>
 
