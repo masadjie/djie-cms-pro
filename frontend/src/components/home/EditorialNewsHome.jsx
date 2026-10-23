@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -44,6 +44,8 @@ export default function EditorialNewsHome() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSent, setNewsletterSent] = useState(false);
   const [searchWord, setSearchWord] = useState('');
+  const [tickerIndex, setTickerIndex] = useState(0);
+  const [tickerFade, setTickerFade] = useState(true);
 
   // 1. Fetch CMS Web Settings
   const { data: settingsData } = useQuery({
@@ -254,13 +256,28 @@ export default function EditorialNewsHome() {
   })) : fallbackArticles;
 
   // Slices for each Neeon magazine section
-  const tickerItems = articles.slice(0, 4);
+  const tickerItems = articles.slice(0, 5);
   const heroMain = articles[0];
   const heroSide = articles.slice(1, 4);
   const topStories = articles.slice(0, 4);
   const whatsNewLead = articles[4] || articles[0];
   const whatsNewList = articles.slice(5, 8).length > 0 ? articles.slice(5, 8) : articles.slice(1, 4);
   const circularHighlights = customHighlights;
+
+  // Auto-rotating animated ticker for trending topics
+  useEffect(() => {
+    if (!tickerItems || tickerItems.length <= 1) return;
+    const interval = setInterval(() => {
+      setTickerFade(false);
+      setTimeout(() => {
+        setTickerIndex((prev) => (prev + 1) % tickerItems.length);
+        setTickerFade(true);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [tickerItems.length]);
+
+  const currentTicker = tickerItems[tickerIndex] || tickerItems[0];
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -287,13 +304,21 @@ export default function EditorialNewsHome() {
       <div className="bg-[#0f172a] text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-3 overflow-hidden w-full md:w-auto">
-            <span className="px-2.5 py-0.5 rounded-sm bg-blue-600 text-white font-black text-[10px] tracking-wider uppercase flex items-center gap-1 shrink-0">
-              <Flame className="w-3 h-3" />
-              TRENDING
+            <span className="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-blue-600 text-white font-black text-[10px] tracking-wider uppercase shrink-0 shadow-sm overflow-hidden group">
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+              <Flame className="w-3.5 h-3.5 text-amber-300 animate-[bounce_1.5s_infinite]" />
+              <span>TRENDING</span>
             </span>
-            <p className="truncate text-slate-300 text-xs font-medium hover:text-white transition-colors cursor-pointer">
-              {tickerItems[0]?.title || 'Here What in Battlefield Deluxe Edition Hotel Area Edition Simply Dummy Text'}
-            </p>
+            <div className="flex items-center gap-2 overflow-hidden min-w-0">
+              <Link 
+                to={`/berita/${currentTicker?.slug || '#'}`} 
+                className={`truncate text-slate-200 text-xs font-semibold hover:text-blue-400 transition-all duration-300 transform ${
+                  tickerFade ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+                }`}
+              >
+                {currentTicker?.title || 'Memuat berita trending terkini...'}
+              </Link>
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-4 text-[11px] text-slate-400 shrink-0">
             <span>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
