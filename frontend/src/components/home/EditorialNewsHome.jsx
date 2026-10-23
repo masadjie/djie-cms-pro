@@ -29,7 +29,8 @@ import {
   Globe,
   Tag,
   Briefcase,
-  Compass
+  Compass,
+  Bookmark
 } from 'lucide-react';
 
 export default function EditorialNewsHome() {
@@ -78,26 +79,26 @@ export default function EditorialNewsHome() {
           limit: itemsPerPage
         };
         if (selectedTopic !== 'ALL') {
-          params.kategori_slug = selectedTopic;
+          params.kategori = selectedTopic;
         }
         const res = await api.get('/berita', { params });
-        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res?.rows) ? res.rows : (Array.isArray(res) ? res : []));
-        const total = res?.total || res?.count || list.length;
-        return { rows: list, count: total };
+        return res?.data || res || { data: [], total: 0 };
       } catch (err) {
-        return { rows: [], count: 0 };
+        return { data: [], total: 0 };
       }
     }
   });
 
-  // 4. Fetch Highlight Banners & Featured Articles
+  // 4. Fetch Featured / Spotlight News (limit 4)
   const { data: featuredData } = useQuery({
     queryKey: ['editorialFeaturedNews'],
     queryFn: async () => {
       try {
-        const res = await api.get('/berita', { params: { is_featured: 'true', limit: 4, status: 'PUBLISHED' } });
-        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res?.rows) ? res.rows : (Array.isArray(res) ? res : []));
-        return list;
+        const res = await api.get('/berita', {
+          params: { is_featured: true, limit: 4, status: 'PUBLISHED' }
+        });
+        const list = res?.data?.data || res?.data || res || [];
+        return Array.isArray(list) ? list : [];
       } catch (err) {
         return [];
       }
@@ -105,17 +106,18 @@ export default function EditorialNewsHome() {
   });
 
   const settings = settingsData || {};
-  const categories = Array.isArray(categoriesData) ? categoriesData : [];
-  const articles = beritaData?.rows || [];
-  const totalCount = beritaData?.count || articles.length;
-  const totalPages = Math.ceil(totalCount / itemsPerPage) || 1;
-  const featuredArticles = Array.isArray(featuredData) && featuredData.length > 0 ? featuredData : articles.slice(0, 3);
-  const mainFeatured = featuredArticles[0] || null;
+  const articles = beritaData?.data || (Array.isArray(beritaData) ? beritaData : []);
+  const totalArticles = beritaData?.total || articles.length;
+  const totalPages = Math.ceil(totalArticles / itemsPerPage) || 1;
+  const featuredPosts = Array.isArray(featuredData) ? featuredData : [];
+  const mainFeatured = featuredPosts.length > 0 ? featuredPosts[0] : (articles.length > 0 ? articles[0] : null);
+  const categories = categoriesData || [];
 
-  const editorialHeading = settings.site_tagline || 'Heartfelt Reflections: Stories of Innovation, Culture, & Ideas';
-  const editorialSub = settings.site_description || 'Selamat datang di portal publikasi modern. Eksplorasi berita terverifikasi, sudut pandang mendalam, dan wawasan terkini setiap hari.';
-  const authorName = settings.site_author || settings.instansi_nama || 'Redaksi Publikasi';
-  const authorDesc = settings.editorial_author_bio || 'Menghadirkan liputan investigasi, ulasan teknologi, tren gaya hidup, dan opini berbobot dari jurnalis independen.';
+  const siteName = settings.site_name || 'Djie CMS Pro';
+  const editorialHeading = settings.site_tagline || 'Pusat Informasi & Redaksi Publikasi Digital';
+  const editorialSub = settings.site_description || 'Portal resmi penyebaran berita terverifikasi, sudut pandang mendalam, liputan eksklusif, dan wawasan terkini setiap hari.';
+  const authorName = settings.site_author || settings.instansi_name || 'Redaksi Publikasi';
+  const authorDesc = settings.editorial_author_bio || 'Menghadirkan liputan investigasi, ulasan teknologi, tren terkini, dan analisis berbobot dari jurnalis independen.';
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -135,10 +137,10 @@ export default function EditorialNewsHome() {
     }
   };
 
-  // Trending Topic Category Pills with colorful icons
+  // Trending Topic Category Pills with clean Royal Blue & Multi-Pastel Accents
   const defaultTopics = [
-    { label: 'Semua Berita', slug: 'ALL', icon: '✨', bg: 'bg-violet-50 text-violet-700 border-violet-200' },
-    { label: 'Technology', slug: 'teknologi', icon: '💻', bg: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { label: 'Semua Berita', slug: 'ALL', icon: '✨', bg: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { label: 'Technology', slug: 'teknologi', icon: '💻', bg: 'bg-sky-50 text-sky-700 border-sky-200' },
     { label: 'Business', slug: 'bisnis', icon: '💼', bg: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
     { label: 'Sport', slug: 'olahraga', icon: '⚽', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
     { label: 'Trends', slug: 'tren', icon: '🔥', bg: 'bg-rose-50 text-rose-700 border-rose-200' },
@@ -147,27 +149,27 @@ export default function EditorialNewsHome() {
   ];
 
   return (
-    <div className="w-full bg-[#fcfcff] text-slate-800 min-h-screen py-8 sm:py-12">
+    <div className="w-full bg-[#f8fafc] text-slate-800 min-h-screen pt-24 sm:pt-28 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         
-        {/* ── 1. EDITORIAL HERO BANNER (REVISION STYLE) ────────────────────────── */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 pt-4 sm:pt-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-100/70 text-violet-700 text-xs font-black tracking-wide uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+        {/* ── 1. EDITORIAL HERO BANNER (ROYAL BLUE BRAND) ────────────────────────── */}
+        <div className="text-center max-w-3xl mx-auto space-y-4 pt-2 sm:pt-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-black tracking-wide uppercase shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
             <span>Digital Magazine & Newsroom</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
             {editorialHeading.split(':').map((part, idx) => (
               idx === 1 ? (
-                <span key={idx}>: <span className="text-violet-600">{part}</span></span>
+                <span key={idx}>: <span className="text-blue-600">{part}</span></span>
               ) : (
                 <span key={idx}>{part}</span>
               )
             ))}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-500 max-w-2xl mx-auto leading-relaxed font-normal">
+          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
             {editorialSub}
           </p>
 
@@ -180,12 +182,12 @@ export default function EditorialNewsHome() {
                 value={searchWord}
                 onChange={(e) => setSearchWord(e.target.value)}
                 placeholder="Cari topik berita, kata kunci, artikel..."
-                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-white border border-slate-200 rounded-2xl shadow-xs focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
+                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-white border border-slate-200 rounded-2xl shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-sm transition-all shrink-0 cursor-pointer"
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-sm transition-all shrink-0 cursor-pointer"
             >
               Cari
             </button>
@@ -206,7 +208,7 @@ export default function EditorialNewsHome() {
                   onClick={() => { setSelectedTopic(topic.slug); setCurrentPage(1); }}
                   className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 border cursor-pointer ${
                     isActive
-                      ? 'bg-violet-600 text-white border-violet-600 shadow-md scale-105'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
                       : `${topic.bg} hover:scale-105 hover:shadow-xs`
                   }`}
                 >
@@ -227,7 +229,7 @@ export default function EditorialNewsHome() {
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="bg-white rounded-3xl p-5 border border-slate-100 shadow-xs space-y-4 animate-pulse">
+                  <div key={n} className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-4 animate-pulse">
                     <div className="h-48 bg-slate-200 rounded-2xl w-full" />
                     <div className="h-4 bg-slate-200 rounded w-1/3" />
                     <div className="h-5 bg-slate-200 rounded w-4/5" />
@@ -236,15 +238,15 @@ export default function EditorialNewsHome() {
                 ))}
               </div>
             ) : articles.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-xs space-y-3">
-                <Compass className="w-12 h-12 text-violet-400 mx-auto" />
+              <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-xs space-y-3">
+                <Compass className="w-12 h-12 text-blue-400 mx-auto" />
                 <h3 className="text-lg font-black text-slate-800">Belum Ada Artikel di Topik Ini</h3>
                 <p className="text-xs text-slate-500 max-w-md mx-auto">
                   Belum ada naskah berita yang dipublikasikan pada rubrik ini. Silakan pilih topik lain atau input berita baru dari admin panel.
                 </p>
                 <button
                   onClick={() => setSelectedTopic('ALL')}
-                  className="px-4 py-2 bg-violet-600 text-white rounded-xl text-xs font-bold hover:bg-violet-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 cursor-pointer"
                 >
                   Lihat Semua Berita
                 </button>
@@ -254,7 +256,7 @@ export default function EditorialNewsHome() {
                 {articles.map((item) => (
                   <article
                     key={item.id}
-                    className="group bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-violet-300 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+                    className="group bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between overflow-hidden"
                   >
                     <div>
                       {/* Image Thumbnail with Category Badge Overlay */}
@@ -269,7 +271,7 @@ export default function EditorialNewsHome() {
                         />
                         {/* Category Floating Badges */}
                         <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-1.5 z-10">
-                          <span className="px-2.5 py-1 rounded-xl text-[10px] font-black tracking-wider uppercase bg-white/90 backdrop-blur-md text-slate-800 shadow-sm border border-white/40">
+                          <span className="px-2.5 py-1 rounded-xl text-[10px] font-black tracking-wider uppercase bg-white/95 backdrop-blur-md text-slate-800 shadow-sm border border-slate-200/60">
                             {item.kategori?.nama_kategori || 'News'}
                           </span>
                         </div>
@@ -279,7 +281,7 @@ export default function EditorialNewsHome() {
                       <div className="p-5 sm:p-6 space-y-3">
                         {/* Meta: Author & Date */}
                         <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
-                          <span className="font-bold text-slate-700 hover:text-violet-600 transition-colors">
+                          <span className="font-bold text-slate-700 hover:text-blue-600 transition-colors">
                             {item.author_name || authorName}
                           </span>
                           <span>•</span>
@@ -300,7 +302,7 @@ export default function EditorialNewsHome() {
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-2 leading-snug">
+                        <h2 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
                           <Link to={`/berita/${item.slug}`}>
                             {item.title || item.judul}
                           </Link>
@@ -314,7 +316,7 @@ export default function EditorialNewsHome() {
                     </div>
 
                     {/* Card Footer: Read More Arrow */}
-                    <div className="px-5 sm:px-6 pb-5 pt-2 flex items-center justify-between text-xs font-bold text-violet-600 border-t border-slate-50">
+                    <div className="px-5 sm:px-6 pb-5 pt-2 flex items-center justify-between text-xs font-bold text-blue-600 border-t border-slate-50">
                       <Link to={`/berita/${item.slug}`} className="flex items-center gap-1.5 group-hover:gap-2 transition-all">
                         <span>Baca Selengkapnya</span>
                         <ArrowRight className="w-3.5 h-3.5" />
@@ -335,7 +337,7 @@ export default function EditorialNewsHome() {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -345,7 +347,7 @@ export default function EditorialNewsHome() {
                     onClick={() => setCurrentPage(i + 1)}
                     className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       currentPage === i + 1
-                        ? 'bg-violet-600 text-white shadow-sm'
+                        ? 'bg-blue-600 text-white shadow-sm'
                         : 'border border-slate-200 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
@@ -355,7 +357,7 @@ export default function EditorialNewsHome() {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -368,18 +370,18 @@ export default function EditorialNewsHome() {
           <div className="lg:col-span-4 space-y-6">
             
             {/* 1. Author / Redaksi Bio Profile Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
                 About the Redaction
               </span>
 
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 text-white font-black flex items-center justify-center shadow-md text-lg">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black flex items-center justify-center shadow-md text-lg">
                   {authorName.charAt(0)}
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-slate-900">{authorName}</h4>
-                  <span className="text-[11px] text-violet-600 font-semibold block">Editorial & Newsroom</span>
+                  <span className="text-[11px] text-blue-700 font-semibold block">Editorial & Newsroom</span>
                 </div>
               </div>
 
@@ -388,22 +390,22 @@ export default function EditorialNewsHome() {
               </p>
 
               <div className="flex items-center gap-1.5 text-xs text-slate-500 pt-1">
-                <MapPin className="w-3.5 h-3.5 text-violet-600 shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>{settings.kantor_kota || 'Jakarta'}, Indonesia</span>
               </div>
 
               {/* Social Media Link Icons */}
               <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-slate-500">
-                <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-violet-50 hover:text-violet-600 flex items-center justify-center transition-colors">
+                <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
                   <Twitter className="w-3.5 h-3.5" />
                 </a>
-                <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-violet-50 hover:text-violet-600 flex items-center justify-center transition-colors">
+                <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
                   <Facebook className="w-3.5 h-3.5" />
                 </a>
-                <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-violet-50 hover:text-violet-600 flex items-center justify-center transition-colors">
+                <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
                   <Instagram className="w-3.5 h-3.5" />
                 </a>
-                <a href={settings.social_whatsapp ? `https://wa.me/${settings.social_whatsapp}` : '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-violet-50 hover:text-violet-600 flex items-center justify-center transition-colors">
+                <a href={settings.social_whatsapp ? `https://wa.me/${settings.social_whatsapp}` : '#'} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors">
                   <Share2 className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -411,12 +413,12 @@ export default function EditorialNewsHome() {
 
             {/* 2. Featured Posts Spotlight Card */}
             {mainFeatured && (
-              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Featured Post
                   </span>
-                  <span className="px-2 py-0.5 rounded-md bg-violet-100 text-violet-700 font-bold text-[10px]">
+                  <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 font-bold text-[10px]">
                     Highlight
                   </span>
                 </div>
@@ -428,7 +430,7 @@ export default function EditorialNewsHome() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent flex flex-col justify-end p-4 text-white">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-violet-300">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-blue-300">
                       {mainFeatured.kategori?.nama_kategori || 'Editorial'}
                     </span>
                     <h5 className="text-sm font-black text-white line-clamp-2 mt-1 leading-snug">
@@ -443,7 +445,7 @@ export default function EditorialNewsHome() {
             )}
 
             {/* 3. Editorial Categories / Rubrik Cloud */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-3.5">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-3.5">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
                 Rubrik & Topik Berita
               </span>
@@ -452,31 +454,31 @@ export default function EditorialNewsHome() {
                   <Link
                     key={kat.id}
                     to={`/berita?kategori=${kat.slug}`}
-                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-violet-50/70 transition-colors text-xs font-semibold text-slate-700 group"
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/70 transition-colors text-xs font-semibold text-slate-700 group"
                   >
-                    <span className="flex items-center gap-2 group-hover:text-violet-700">
-                      <Tag className="w-3.5 h-3.5 text-violet-500" />
+                    <span className="flex items-center gap-2 group-hover:text-blue-700">
+                      <Tag className="w-3.5 h-3.5 text-blue-600" />
                       <span>{kat.nama_kategori}</span>
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-600 group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
                   </Link>
                 ))}
               </div>
             </div>
 
             {/* 4. Curated Reading / External Resources Widget */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
                 Kanal Rekomendasi
               </span>
               <div className="space-y-3 text-xs">
                 <a
                   href="/katalog"
-                  className="block p-3 rounded-2xl bg-slate-50 hover:bg-violet-50/60 border border-slate-100 transition-all group"
+                  className="block p-3 rounded-2xl bg-slate-50 hover:bg-blue-50/60 border border-slate-100 transition-all group"
                 >
-                  <div className="flex items-center justify-between font-bold text-slate-800 group-hover:text-violet-700">
+                  <div className="flex items-center justify-between font-bold text-slate-800 group-hover:text-blue-700">
                     <span>Katalog Layanan & Arsip</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-violet-600" />
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
                   </div>
                   <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
                     Eksplorasi dokumen publik, regulasi, dan prosedur operasional terpadu.
@@ -485,11 +487,11 @@ export default function EditorialNewsHome() {
 
                 <a
                   href="/galeri"
-                  className="block p-3 rounded-2xl bg-slate-50 hover:bg-violet-50/60 border border-slate-100 transition-all group"
+                  className="block p-3 rounded-2xl bg-slate-50 hover:bg-blue-50/60 border border-slate-100 transition-all group"
                 >
-                  <div className="flex items-center justify-between font-bold text-slate-800 group-hover:text-violet-700">
+                  <div className="flex items-center justify-between font-bold text-slate-800 group-hover:text-blue-700">
                     <span>Dokumentasi Galeri & Video</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-violet-600" />
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
                   </div>
                   <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
                     Liputan foto kegiatan, dokumentasi siaran pers, dan tayangan liputan.
@@ -502,9 +504,9 @@ export default function EditorialNewsHome() {
 
         </div>
 
-        {/* ── 4. NEWSLETTER SUBSCRIPTION BOX (REVISION FOOTER COMPONENT) ─────────── */}
-        <div className="bg-gradient-to-b from-white to-violet-50/50 rounded-3xl p-8 sm:p-12 border border-violet-100 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-violet-600 text-white flex items-center justify-center mx-auto shadow-md">
+        {/* ── 4. NEWSLETTER SUBSCRIPTION BOX (ROYAL BLUE ACCENT) ─────────── */}
+        <div className="bg-gradient-to-b from-white to-blue-50/60 rounded-3xl p-8 sm:p-12 border border-blue-100 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md">
             <Mail className="w-6 h-6" />
           </div>
 
@@ -529,11 +531,11 @@ export default function EditorialNewsHome() {
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="Ketik alamat email Anda..."
-                className="w-full sm:flex-1 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 shadow-xs"
+                className="w-full sm:flex-1 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs"
               />
               <button
                 type="submit"
-                className="w-full sm:w-auto px-6 py-3 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white rounded-2xl text-xs font-bold transition-all shadow-md shrink-0 cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl text-xs font-bold transition-all shadow-md shrink-0 cursor-pointer"
               >
                 Subscribe
               </button>

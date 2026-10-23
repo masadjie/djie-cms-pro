@@ -52,15 +52,15 @@
 }
 
 [data-theme="editorial"] {
-  --theme-primary: #5b21b6;
-  --theme-primary-dark: #2e1065;
-  --theme-primary-light: #7c3aed;
-  --theme-accent: #8b5cf6;
-  --theme-accent-light: #c4b5fd;
+  --theme-primary: #0058fb;
+  --theme-primary-dark: #002b80;
+  --theme-primary-light: #2563eb;
+  --theme-accent: #38bdf8;
+  --theme-accent-light: #bae6fd;
   --theme-navbar-bg: #ffffff;
   --theme-hero-from: #ffffff;
-  --theme-hero-via: #fbfbfe;
-  --theme-hero-to: #f3f0ff;
+  --theme-hero-via: #f8fafc;
+  --theme-hero-to: #eff6ff;
 }
 
 @layer base {

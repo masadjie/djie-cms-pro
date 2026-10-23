@@ -53,15 +53,15 @@ export const themes = [
   },
   {
     id: 'editorial',
-    name: 'Revision Editorial News & Magazine (Ungu Pastel)',
-    primaryColor: '#5b21b6', // Deep Purple / Violet
-    accentColor: '#8b5cf6',  // Vibrant Lavender / Purple
-    badgeBg: 'bg-violet-100',
-    heroGradient: 'from-white via-[#faf9ff] to-[#f3f0ff]',
+    name: 'Revision Editorial News & Magazine (Royal Blue Brand)',
+    primaryColor: '#0058fb', // Brand Royal Blue
+    accentColor: '#38bdf8',  // Sky Cyan
+    badgeBg: 'bg-blue-50',
+    heroGradient: 'from-white via-[#f8fafc] to-[#eff6ff]',
     navbarBg: 'bg-white',
-    accentText: 'text-violet-600',
-    primaryBtn: 'bg-violet-600 hover:bg-violet-700 text-white font-bold',
-    badgeText: 'text-violet-700'
+    accentText: 'text-blue-600',
+    primaryBtn: 'bg-blue-600 hover:bg-blue-700 text-white font-bold',
+    badgeText: 'text-blue-700'
   }
 ];
 

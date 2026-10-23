@@ -44,8 +44,24 @@ export default function Navbar() {
     }
   });
 
+  // Dynamic Web Settings for Site Name & Logo
+  const { data: settingsData } = useQuery({
+    queryKey: ['cmsWebSettingsNavbar'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/cms/pengaturan');
+        return res?.data || res || {};
+      } catch (e) {
+        return {};
+      }
+    }
+  });
+
+  const settings = settingsData || {};
+  const isEditorial = activeTheme?.id === 'editorial' || settings?.home_layout_mode === 'EDITORIAL';
+
   const isHome = location.pathname === '/';
-  const isSolid = !isHome || isScrolled || activeDropdown;
+  const isSolid = !isHome || isScrolled || activeDropdown || isEditorial;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -145,36 +161,63 @@ export default function Navbar() {
   return (
     <header 
       ref={headerRef} 
-      className={`fixed top-0 left-0 z-50 w-full text-white transition-all duration-300 ${
+      className={`fixed top-0 left-0 z-50 w-full transition-all duration-300 ${
         isSolid 
-          ? `${activeTheme.navbarBg} shadow-2xl border-b border-white/10 backdrop-blur-md` 
-          : 'bg-transparent border-b border-transparent shadow-none'
+          ? (isEditorial 
+              ? 'bg-white/95 text-slate-800 shadow-sm border-b border-slate-200/80 backdrop-blur-md'
+              : `${activeTheme.navbarBg} text-white shadow-2xl border-b border-white/10 backdrop-blur-md`
+            ) 
+          : 'bg-transparent text-white border-b border-transparent shadow-none'
       }`}
     >
       {/* Main Navbar */}
       <div className="w-full px-3 sm:px-6 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
         
-        {/* Brand BKPSDM Aceh Tamiang */}
+        {/* Brand Logo & Name (Dynamically Adaptable to Editorial or Portal Theme) */}
         <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink min-w-0 pr-2" onClick={() => setActiveDropdown(null)}>
-          <img
-            src="/logo-tamiang.webp"
-            alt="Lambang Aceh Tamiang"
-            width="40"
-            height="40"
-            className="w-8 h-8 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-sm"
-          />
+          {isEditorial ? (
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center p-1 overflow-hidden shrink-0">
+              <img
+                src="/logo-djie-cms-pro-square.png"
+                alt="Logo CMS"
+                width="40"
+                height="40"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            </div>
+          ) : (
+            <img
+              src="/logo-tamiang.webp"
+              alt="Lambang Instansi"
+              width="40"
+              height="40"
+              className="w-8 h-8 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-sm"
+              onError={(e) => {
+                e.target.src = '/logo-djie-cms-pro-square.png';
+              }}
+            />
+          )}
           <div className="flex flex-col min-w-0">
-            <span className="font-bold text-xs xs:text-sm sm:text-[17px] tracking-tight text-white leading-snug truncate">
-              BKPSDM Kab. Aceh Tamiang
+            <span className={`font-black text-xs xs:text-sm sm:text-[17px] tracking-tight leading-snug truncate ${
+              isEditorial ? 'text-slate-900' : 'text-white'
+            }`}>
+              {settings.site_name || 'Djie CMS Pro'}
             </span>
-            <span className="text-[9px] xs:text-[10px] sm:text-[11px] text-amber-300 tracking-wide font-medium truncate">
-              Badan Kepegawaian & Pengembangan SDM
+            <span className={`text-[9px] xs:text-[10px] sm:text-[11px] tracking-wide font-medium truncate ${
+              isEditorial ? 'text-blue-600 font-bold' : 'text-amber-300'
+            }`}>
+              {settings.instansi_name || 'Media Digital & Publishing'}
             </span>
           </div>
         </Link>
 
-        {/* Dynamic Center Nav Links from CMS Database (Up to PPID) */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-bold text-emerald-100 whitespace-nowrap">
+        {/* Dynamic Center Nav Links from CMS Database */}
+        <nav className={`hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-bold whitespace-nowrap ${
+          isEditorial ? 'text-slate-700' : 'text-emerald-100'
+        }`}>
           {activeMenus.map((menu) => {
             const dropdownKey = getDropdownKey(menu.url, menu.label);
 
@@ -185,14 +228,16 @@ export default function Navbar() {
                   type="button"
                   onClick={() => handleToggle(dropdownKey)}
                   className={`flex items-center gap-2 py-2 transition-colors cursor-pointer whitespace-nowrap ${
-                    activeDropdown === dropdownKey ? 'text-amber-400' : 'hover:text-amber-300'
+                    activeDropdown === dropdownKey 
+                      ? (isEditorial ? 'text-blue-600 font-black' : 'text-amber-400') 
+                      : (isEditorial ? 'hover:text-blue-600' : 'hover:text-amber-300')
                   }`}
                 >
                   {menu.icon && (
-                    <DynamicIcon name={menu.icon} className="w-4 h-4 text-amber-400/90" />
+                    <DynamicIcon name={menu.icon} className={`w-4 h-4 ${isEditorial ? 'text-blue-600' : 'text-amber-400/90'}`} />
                   )}
                   <span>{menu.label}</span>
-                  <ChevronDown className={`w-4 h-4 text-amber-400 transition-transform ${activeDropdown === dropdownKey ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 ${isEditorial ? 'text-blue-600' : 'text-amber-400'} transition-transform ${activeDropdown === dropdownKey ? 'rotate-180' : ''}`} />
                 </button>
               );
             }
@@ -204,10 +249,12 @@ export default function Navbar() {
                   href={menu.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="py-2 hover:text-amber-300 transition-colors whitespace-nowrap flex items-center gap-1.5"
+                  className={`py-2 transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                    isEditorial ? 'hover:text-blue-600' : 'hover:text-amber-300'
+                  }`}
                 >
                   {menu.icon && (
-                    <DynamicIcon name={menu.icon} className="w-4 h-4 text-amber-400/90" />
+                    <DynamicIcon name={menu.icon} className={`w-4 h-4 ${isEditorial ? 'text-blue-600' : 'text-amber-400/90'}`} />
                   )}
                   <span>{menu.label}</span>
                   <ExternalLink className="w-3 h-3 opacity-70" />
@@ -220,10 +267,12 @@ export default function Navbar() {
                 key={menu.id || menu.label}
                 to={menu.url}
                 onClick={() => setActiveDropdown(null)}
-                className="py-2 hover:text-amber-300 transition-colors whitespace-nowrap flex items-center gap-1.5"
+                className={`py-2 transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                  isEditorial ? 'hover:text-blue-600' : 'hover:text-amber-300'
+                }`}
               >
                 {menu.icon && (
-                  <DynamicIcon name={menu.icon} className="w-4 h-4 text-amber-400/90" />
+                  <DynamicIcon name={menu.icon} className={`w-4 h-4 ${isEditorial ? 'text-blue-600' : 'text-amber-400/90'}`} />
                 )}
                 <span>{menu.label}</span>
               </Link>
