@@ -47,6 +47,9 @@ export default function EditorialNewsHome() {
   const [tickerIndex, setTickerIndex] = useState(0);
   const [tickerFade, setTickerFade] = useState(true);
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+  const [highlightPage, setHighlightPage] = useState(0);
+  const [highlightFade, setHighlightFade] = useState(true);
+  const [isHighlightPaused, setIsHighlightPaused] = useState(false);
 
   // 1. Fetch CMS Web Settings
   const { data: settingsData } = useQuery({
@@ -269,7 +272,66 @@ export default function EditorialNewsHome() {
   const topStories = articles.slice(0, 4);
   const whatsNewLead = articles[4] || articles[0];
   const whatsNewList = articles.slice(5, 8).length >= 3 ? articles.slice(5, 8) : articles.slice(1, 4);
-  const circularHighlights = customHighlights;
+
+  // Dynamic Multi-Page Circular Highlights (Set 1: Custom Settings / Top Priority, Set 2: Trending Real Articles, Set 3: Popular Articles)
+  const highlightBatch1 = customHighlights.map((ch, idx) => ({
+    num: idx + 1,
+    title: ch.title,
+    cat: ch.cat,
+    img: ch.img,
+    url: ch.url && ch.url !== '#' ? ch.url : `/berita/${articles[idx]?.slug || ''}`,
+    date: articles[idx]?.date || 'RECENT'
+  }));
+
+  const highlightBatch2 = articles.slice(4, 8).map((a, idx) => ({
+    num: idx + 5,
+    title: a.title,
+    cat: a.category || 'TOP PICK',
+    img: a.image,
+    url: `/berita/${a.slug}`,
+    date: a.date
+  }));
+
+  const highlightBatch3 = articles.slice(0, 4).map((a, idx) => ({
+    num: idx + 1,
+    title: a.title,
+    cat: a.category || 'TRENDING',
+    img: a.image,
+    url: `/berita/${a.slug}`,
+    date: a.date
+  }));
+
+  const highlightSets = [highlightBatch1, highlightBatch2, highlightBatch3];
+  const currentHighlightItems = highlightSets[highlightPage % highlightSets.length] || highlightBatch1;
+
+  const nextHighlightBatch = () => {
+    setHighlightFade(false);
+    setTimeout(() => {
+      setHighlightPage((prev) => (prev + 1) % highlightSets.length);
+      setHighlightFade(true);
+    }, 280);
+  };
+
+  const prevHighlightBatch = () => {
+    setHighlightFade(false);
+    setTimeout(() => {
+      setHighlightPage((prev) => (prev === 0 ? highlightSets.length - 1 : prev - 1));
+      setHighlightFade(true);
+    }, 280);
+  };
+
+  // Auto-rotate Circular Highlights every 6 seconds if not hovered
+  useEffect(() => {
+    if (isHighlightPaused) return;
+    const hlTimer = setInterval(() => {
+      setHighlightFade(false);
+      setTimeout(() => {
+        setHighlightPage((prev) => (prev + 1) % highlightSets.length);
+        setHighlightFade(true);
+      }, 280);
+    }, 6000);
+    return () => clearInterval(hlTimer);
+  }, [isHighlightPaused, highlightSets.length]);
 
   // Auto-rotating Hero Carousel (every 5 seconds)
   useEffect(() => {
@@ -353,17 +415,80 @@ export default function EditorialNewsHome() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-12">
 
         {/* ── 2. CIRCULAR NUMBERED HIGHLIGHTS BAR (TOP 4 SLIDER BAR) ──────────── */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/80 shadow-xs">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-            {circularHighlights.map((item, idx) => (
-              <div key={idx} className={`flex items-center gap-3.5 ${idx !== 0 ? 'sm:pl-5' : ''} ${idx > 0 ? 'pt-4 sm:pt-0' : ''}`}>
-                <div className="relative shrink-0">
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    className="w-16 h-16 rounded-full object-cover shadow-sm ring-2 ring-blue-500/20"
+        <div 
+          onMouseEnter={() => setIsHighlightPaused(true)}
+          onMouseLeave={() => setIsHighlightPaused(false)}
+          className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/80 shadow-xs relative group"
+        >
+          {/* Subtle Navigation Header & Indicator */}
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 px-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-800">
+                Top Editorial Picks & Highlights
+              </span>
+              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                {highlightPage + 1} / {highlightSets.length}
+              </span>
+            </div>
+
+            {/* Prev / Next Buttons & Dots */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 mr-1">
+                {highlightSets.map((_, sIndex) => (
+                  <button
+                    key={sIndex}
+                    onClick={() => {
+                      setHighlightFade(false);
+                      setTimeout(() => {
+                        setHighlightPage(sIndex);
+                        setHighlightFade(true);
+                      }, 280);
+                    }}
+                    aria-label={`Go to batch ${sIndex + 1}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      highlightPage === sIndex ? 'w-5 bg-blue-600' : 'w-1.5 bg-slate-200 hover:bg-slate-300'
+                    }`}
                   />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white font-black text-[10px] flex items-center justify-center border-2 border-white">
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={prevHighlightBatch}
+                aria-label="Previous batch"
+                className="w-6 h-6 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={nextHighlightBatch}
+                aria-label="Next batch"
+                className="w-6 h-6 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-600 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Cards with Smooth Fade Transition */}
+          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 transition-all duration-300 ease-in-out ${
+            highlightFade ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
+          }`}>
+            {currentHighlightItems.map((item, idx) => (
+              <div 
+                key={`${highlightPage}-${idx}`} 
+                className={`flex items-center gap-3.5 group/item transition-transform duration-300 hover:-translate-y-0.5 ${idx !== 0 ? 'sm:pl-5' : ''} ${idx > 0 ? 'pt-4 sm:pt-0' : ''}`}
+              >
+                <div className="relative shrink-0">
+                  <div className="w-16 h-16 rounded-full overflow-hidden shadow-sm ring-2 ring-blue-500/20 group-hover/item:ring-blue-600 transition-all">
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 group-hover/item:bg-blue-600 text-white font-black text-[10px] flex items-center justify-center border-2 border-white transition-colors shadow-2xs">
                     {item.num}
                   </span>
                 </div>
@@ -371,7 +496,10 @@ export default function EditorialNewsHome() {
                   <span className="text-[10px] font-black uppercase text-blue-600 tracking-wider block">
                     {item.cat}
                   </span>
-                  <Link to={item.url && item.url !== '#' ? item.url : `/berita/${tickerItems[idx % tickerItems.length]?.slug || '#'}`} className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 leading-snug block">
+                  <Link 
+                    to={item.url || '#'} 
+                    className="text-xs font-bold text-slate-900 group-hover/item:text-blue-600 transition-colors line-clamp-2 leading-snug block"
+                  >
                     {item.title}
                   </Link>
                   <span className="text-[10px] text-slate-400 block font-medium">
