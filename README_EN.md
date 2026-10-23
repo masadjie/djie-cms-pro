@@ -1,42 +1,38 @@
-# 🌐 Djie CMS Pro — Open Source Portal & Content Management System
-
 <div align="center">
-  <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro Banner" width="460" />
-  
+  <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro" width="380" />
+  <br /><br />
+
   <p align="center">
-    <strong>A Modern, Ultra-Fast & Flexible Content Management System (CMS) for News Portals, Online Media, Professional Blogs, Corporate Websites, Communities, and Public Platforms.</strong>
+    <strong>A modern, ultra-fast, and independent CMS for news portals, digital media, and professional websites.</strong>
   </p>
 
   <p align="center">
-    <a href="README.md"><img src="https://img.shields.io/badge/Language-Bahasa%20Indonesia-10b981?style=for-the-badge&logo=google-translate&logoColor=white" alt="Bahasa Indonesia" /></a>
-    <a href="README_EN.md"><img src="https://img.shields.io/badge/Language-English-3b82f6?style=for-the-badge&logo=google-translate&logoColor=white" alt="English Documentation" /></a>
-  </p>
-
-  <p align="center">
-    <a href="https://github.com/masadjie/djie-cms-pro/releases/latest"><img src="https://img.shields.io/badge/Release-v1.0.0-10b981?style=for-the-badge&logo=github" alt="Latest Release" /></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-amber?style=for-the-badge" alt="License" /></a>
-    <a href="#-architecture--tech-stack"><img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20React%20%7C%20MySQL%20%7C%20Redis-blue?style=for-the-badge" alt="Tech Stack" /></a>
-    <a href="#-docker-installation-recommended-"><img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" alt="Docker Ready" /></a>
+    <a href="README.md"><img src="https://img.shields.io/badge/Bahasa-Indonesia-10b981?style=flat-square" alt="Bahasa Indonesia" /></a>
+    <a href="README_EN.md"><img src="https://img.shields.io/badge/Language-English-3b82f6?style=flat-square" alt="English Documentation" /></a>
+    <a href="https://github.com/masadjie/djie-cms-pro/releases/latest"><img src="https://img.shields.io/badge/Release-v1.0.0-10b981?style=flat-square" alt="Latest Release" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-gray?style=flat-square" alt="License" /></a>
+    <a href="#-architecture--tech-stack"><img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20React%20%7C%20MySQL%20%7C%20Redis-blue?style=flat-square" alt="Tech Stack" /></a>
+    <a href="#-docker-installation-recommended-"><img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Ready" /></a>
   </p>
 </div>
 
 ---
 
-## 📖 Project Overview
+## Overview
 
-**Djie CMS Pro** is an enterprise-grade open-source Content Management System designed for speed, flexibility, and modern publishing workflows. Whether you're powering an **Online Newsroom**, **High-Traffic Media Magazine**, **Company Profile**, or **Community Portal**, Djie CMS Pro gives you full independence and peace of mind.
+**Djie CMS Pro** is an open-source, self-hosted Content Management System built for performance, editorial flexibility, and production reliability. Engineered specifically for digital media outlets, independent newsrooms, corporate sites, and community portals.
 
-Built with a decoupled architecture (**Node.js REST API + React 18 SPA**), it includes an out-of-the-box **Fresh-Install Engine**: right after cloning onto a fresh database, the system starts in an uninstalled state and redirects you straight to an interactive **4-Step Setup Wizard** with optional 1-click sample demo data migration!
+Built on a decoupled stack (**Node.js REST API + React 18 SPA**), it features an integrated **4-step Setup Wizard** for zero-friction deployments (with optional sample data seeding).
 
 ---
 
-## 🎯 Ideal Use Cases
+## Use Cases
 
-* 📰 **News Portals & Online Media**: Independent digital newsrooms, university magazines, regional gazettes, and topical publications.
-* 🏢 **Corporate & Company Profiles**: Agency showcases, startup websites, professional portfolios, and service hubs.
-* 👥 **Communities & Non-Profits**: Associations, research foundations, alumni portals, and community platforms.
-* 🏛️ **Public Information Hubs**: Regulatory document catalogs, press releases, public announcements, and transparency portals.
-* ✍️ **Author & Creator Blogs**: Independent professional writing platforms with full ownership of content and subscribers.
+* **Digital Newsrooms & Media**: Independent media, college journalism, online magazines, and regional bulletins.
+* **Company & Agency Portals**: Business landing pages, corporate portfolios, and service registries.
+* **Communities & Non-Profits**: Associations, foundations, alumni networks, and research institutes.
+* **Public Information Hubs**: Regulatory document repositories, official press releases, and transparency feeds.
+* **Independent Creators & Blogs**: High-performance personal publications without third-party platform lock-in.
 
 ---
 

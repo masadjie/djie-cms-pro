@@ -1,42 +1,37 @@
-# 🌐 Djie CMS Pro — Open Source Portal & Content Management System
-
 <div align="center">
-  <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro Banner" width="460" />
-  
+  <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro" width="380" />
+  <br /><br />
+
   <p align="center">
-    <strong>Content Management System (CMS) Modern, Cepat & Fleksibel untuk Portal Berita, Media Online, Blog Profesional, Company Profile, Komunitas, dan Portal Publik</strong>
+    <strong>CMS modern, cepat, dan independen untuk portal berita, media digital, dan website profesional.</strong>
   </p>
 
   <p align="center">
-    <a href="README.md"><img src="https://img.shields.io/badge/Language-Bahasa%20Indonesia-10b981?style=for-the-badge&logo=google-translate&logoColor=white" alt="Bahasa Indonesia" /></a>
-    <a href="README_EN.md"><img src="https://img.shields.io/badge/Language-English-3b82f6?style=for-the-badge&logo=google-translate&logoColor=white" alt="English Documentation" /></a>
-  </p>
-
-  <p align="center">
-    <a href="https://github.com/masadjie/djie-cms-pro/releases/latest"><img src="https://img.shields.io/badge/Release-v1.0.0-10b981?style=for-the-badge&logo=github" alt="Latest Release" /></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-amber?style=for-the-badge" alt="License" /></a>
-    <a href="#arsitektur--tech-stack"><img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20React%20%7C%20MySQL%20%7C%20Redis-blue?style=for-the-badge" alt="Tech Stack" /></a>
-    <a href="#installation-setup-wizard"><img src="https://img.shields.io/badge/Setup-Interactive%20Wizard-emerald?style=for-the-badge" alt="Setup Wizard" /></a>
+    <a href="README.md"><img src="https://img.shields.io/badge/Bahasa-Indonesia-10b981?style=flat-square" alt="Bahasa Indonesia" /></a>
+    <a href="README_EN.md"><img src="https://img.shields.io/badge/Language-English-3b82f6?style=flat-square" alt="English Documentation" /></a>
+    <a href="https://github.com/masadjie/djie-cms-pro/releases/latest"><img src="https://img.shields.io/badge/Release-v1.0.0-10b981?style=flat-square" alt="Latest Release" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-gray?style=flat-square" alt="License" /></a>
+    <a href="#arsitektur--tech-stack"><img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20React%20%7C%20MySQL%20%7C%20Redis-blue?style=flat-square" alt="Tech Stack" /></a>
   </p>
 </div>
 
 ---
 
-## 📖 Ringkasan Proyek
+## Ringkasan
 
-**Djie CMS Pro** adalah Content Management System (CMS) modern level Enterprise yang dirancang fleksibel untuk berbagai kebutuhan web: mulai dari **Portal Berita & Media Online**, **Blog Publikasi Berbobot**, **Website Profil Perusahaan (Company Profile)**, **Portal Komunitas/Organisasi**, hingga **Layanan Informasi Publik**.
+**Djie CMS Pro** adalah Content Management System mandiri (*self-hosted*) yang dirancang untuk kecepatan, kemudahan kurasi konten, dan kesiapan produksi tinggi. Cocok untuk portal berita online, ruang redaksi pers, website profil perusahaan, maupun portal komunitas.
 
-Dibangun dengan arsitektur modern (*Node.js + React*), Djie CMS Pro memberikan kecepatan muat super kencang, editor naskah yang nyaman, sistem manajemen media, serta **Fresh-Install Engine**: saat pertama kali di-clone, sistem berada dalam status **`Uninstalled`**. Siapa pun yang membuka web langsung disambut oleh **Interactive Setup Wizard 4-Langkah** dengan opsi migrasi data contoh (*dummy migration*) sekali klik!
+Dibangun dengan arsitektur decoupled (**Node.js REST API + React 18 SPA**), Djie CMS Pro sudah dilengkapi **Setup Wizard 4-langkah** bawaan untuk instalasi instan (lengkap dengan opsi seeding data dummy untuk preview langsung).
 
 ---
 
-## 🎯 Cocok Digunakan Untuk Apa Saja?
+## Skenario Penggunaan
 
-* 📰 **Portal Berita & Media Informasi**: Media online, pers kampus, portal berita independen, majalah digital, dan bulletin berkala.
-* 🏢 **Company Profile & Corporate Website**: Website resmi perusahaan, agensi, startup, bisnis jasa, atau portofolio tim.
-* 👥 **Organisasi, Komunitas & Yayasan**: Portal yayasan sosial, asosiasi profesi, komunitas hobi, lembaga riset, maupun serikat pekerja.
-* 🏛️ **Instansi & Layanan Publik**: Portal informasi warga, pusat dokumen resmi, regulasi, dan transparansi publik.
-* ✍️ **Personal Brand & Blog Profesional**: Penulis, analis, konten kreator, dan profesional yang membutuhkan CMS mandiri tanpa ketergantungan platform sewa.
+* **Portal Berita & Media Digital**: Redaksi independen, majalah online, jurnalisme kampus, portal warta regional.
+* **Company Profile & Korporat**: Showcase agensi, profil startup, portofolio tim, portal layanan bisnis.
+* **Komunitas & Asosiasi**: Yayasan publik, komunitas hobi, perserikatan, portal alumni atau lembaga riset.
+* **Pusat Informasi & Pengumuman**: Transparansi publik, repositori arsip & dokumen resmi, pengumuman agenda berkala.
+* **Publikasi & Blog Pribadi**: Wadah naskah dan opini mandiri tanpa ketergantungan pada platform sewa pihak ketiga.
 
 ---
 
