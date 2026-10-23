@@ -58,49 +58,104 @@ Djie CMS Pro menghadirkan **14 modul manajemen komprehensif** yang siap pakai un
 
 ---
 
-## 🏗️ Arsitektur & Tech Stack
+## Arsitektur & Cara Kerja Sistem
+
+Djie CMS Pro dirancang dengan konsep **Decoupled (Headless-Ready) Architecture**. Artinya, backend (logika bisnis & database) dan frontend (tampilan web) terpisah secara independen. Pendekatan ini membuat website jauh lebih cepat, hemat resource, dan mudah dimodifikasi di kemudian hari.
 
 ```
-djie-cms-pro/
-├── backend/                  # Node.js + Express REST API Server
-│   ├── src/
-│   │   ├── config/           # Database Sequelize, Redis, MinIO, Winston Logger
-│   │   ├── controllers/      # Logika Bisnis (CMS, Berita, RBAC, Layanan, Storage)
-│   │   ├── middlewares/      # JWT Auth, Rate Limiter, Security, Audit Log
-│   │   ├── models/           # Sequelize ORM Schema (Berita, User, Halaman, dll)
-│   │   ├── routes/           # RESTful API Endpoints
-│   │   └── utils/            # Migrator, Seeder, dan Dummy Data Generator
-│   ├── .env.example
-│   └── package.json
-└── frontend/                 # React 18 + Vite SPA Single Page Application
-    ├── src/
-    │   ├── components/       # UI Komponen Reusable, Navbar, Sidebar, Editor
-    │   ├── context/          # Auth Context, Theme Context
-    │   ├── pages/            # Home, Katalog, Berita, Admin, Setup Wizard, Maintenance
-    │   └── services/         # Axios API Client Interceptor
-    ├── vite.config.js
-    └── tailwind.config.js
++-------------------------------------------------------------+
+|                     PENGUNJUNG & REDAKSI                    |
+|             (Desktop, Tablet, & Smartphone Browser)         |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                 FRONTEND (React 18 + Vite)                  |
+|  - Single Page Application (SPA) secepat kilat tanpa reload |
+|  - Tailwind CSS: Tampilan responsif & modern                |
+|  - TanStack Query: Caching data pintar di sisi browser      |
+|  - TipTap Editor: Ruang redaksi & penulisan naskah interaktif|
++-------------------------------------------------------------+
+                              |
+                     RESTful API (JSON / HTTPs)
+                              |
+                              v
++-------------------------------------------------------------+
+|                 BACKEND (Node.js + Express)                 |
+|  - API Controller: Menangani logika berita, user, & menu    |
+|  - Security Layer: JWT Token, Helmet, CORS, & Rate Limiter  |
+|  - Activity Logger: Pencatat riwayat & audit trail admin    |
++-------------------------------------------------------------+
+         |                        |                   |
+         v                        v                   v
++------------------+    +-------------------+   +-------------+
+|  DATABASE UTAMA  |    |     IN-MEMORY     |   |   STORAGE   |
+|  MySQL 8 / Maria |    |       CACHE       |   |   OBJECT    |
+|                  |    |       Redis       |   | MinIO / S3  |
+|  (Data berita,   |    | (Akselerasi data  |   | (Penyimpanan|
+|  user, kategori, |    | & penahan lonjakan|   | foto berita,|
+|  dan pengaturan) |    | traffic pembaca)  |   | pdf dokumen)|
++------------------+    +-------------------+   +-------------+
 ```
 
 ---
 
-## 💻 Rincian Teknologi yang Digunakan
+## Tech Stack & Peran Teknologinya
 
-* **Backend**:
-  * **Runtime**: Node.js (v18.x / v20.x LTS)
-  * **Framework**: Express.js
-  * **Database ORM**: Sequelize ORM (MySQL 8.x / MariaDB)
-  * **Keamanan**: JSON Web Token (JWT), bcryptjs, Helmet, Express Rate Limit
-  * **Cache**: Redis Cache Engine
-  * **File Storage**: MinIO / S3 Object Storage & Local Storage fallback
-* **Frontend**:
-  * **Framework**: React 18
-  * **Build Tool**: Vite 5
-  * **CSS Framework**: Tailwind CSS v3
-  * **State & Data Cache**: TanStack React Query v5
-  * **Routing**: React Router DOM v6
-  * **Editor Visual**: TipTap WYSIWYG Editor
-  * **Ikon**: Lucide React Vector Icons
+Untuk memastikan performa tinggi dan kemudahan pemeliharaan, berikut teknologi yang digunakan beserta perannya:
+
+### 1. Sisi Pengguna & Antarmuka (Frontend)
+| Teknologi | Peran & Mengapa Digunakan |
+| :--- | :--- |
+| **React 18** | Fondasi antarmuka modern berbasis komponen yang reaktif dan interaktif. |
+| **Vite 5** | Build tool generasi terbaru yang membuat loading dev server dan kompilasi produksi sangat kencang. |
+| **Tailwind CSS v3** | Styling utility-first untuk desain website yang rapi, modern, dan otomatis pas di layar smartphone. |
+| **TanStack React Query v5** | Mengelola request data dan caching di browser agar halaman tidak perlu loading ulang terus-menerus. |
+| **TipTap Editor** | Editor teks kaya (WYSIWYG) standar industri yang nyaman untuk wartawan dan penulis berita. |
+| **Lucide React** | Koleksi ikon vektor modern yang ringan dan tajam di semua resolusi layar. |
+
+### 2. Sisi Server & Logika Bisnis (Backend)
+| Teknologi | Peran & Mengapa Digunakan |
+| :--- | :--- |
+| **Node.js (LTS)** | Runtime JavaScript sisi server yang hemat memori dan memiliki performa I/O non-blocking tinggi. |
+| **Express.js** | Framework web minimalis dan handal untuk menyediakan rute RESTful API yang bersih. |
+| **Sequelize ORM** | Jembatan pengelola relasi tabel database secara terstruktur, aman dari SQL Injection. |
+| **JWT (JSON Web Token)** | Standar autentikasi modern tanpa session cookie yang memberatkan server. |
+| **Helmet & Express Rate Limit** | Lapisan proteksi keamanan otomatis terhadap serangan brute-force, header tampering, dan DDoS ringan. |
+
+### 3. Sisi Database, Caching & Media Storage
+| Teknologi | Peran & Mengapa Digunakan |
+| :--- | :--- |
+| **MySQL 8.x / MariaDB** | Penyimpanan data relasional utama (artikel, user, audit trail, halaman, banner). |
+| **Redis Cache** | Database memori super kilat untuk menyimpan sementara data populer sehingga database tidak terbebani saat traffic melonjak. |
+| **MinIO / AWS S3 Compatible** | Tempat penyimpanan file foto berita, banner, dan lampiran dokumen secara terpusat (*tersedia fallback penyimpanan lokal otomatis*). |
+
+---
+
+## Struktur Folder Proyek
+
+```
+djie-cms-pro/
+├── docker-compose.yml        # Konfigurasi 1-klik untuk MySQL, Redis, MinIO, Backend & Frontend
+├── backend/                  # Server Node.js + Express REST API
+│   ├── src/
+│   │   ├── config/           # Koneksi database Sequelize, Redis, MinIO, & Winston logger
+│   │   ├── controllers/      # Logika pemrosesan berita, kategori, user, menu, dsb.
+│   │   ├── middlewares/      # Pelindung token JWT, pembatas rate limit, audit log
+│   │   ├── models/           # Definisi skema tabel database (Berita, User, Page, dsb.)
+│   │   ├── routes/           # Alamat endpoint RESTful API
+│   │   └── utils/            # Script Setup Wizard, migrator tabel, & pembuat data dummy
+│   ├── .env.example          # Template konfigurasi environment backend
+│   └── package.json
+└── frontend/                 # Aplikasi Web React 18 + Vite
+    ├── src/
+    │   ├── components/       # Komponen UI (Navbar, Footer, Sidebar, Dialog, TipTap Editor)
+    │   ├── context/          # Pengelola state global (Status login & tema)
+    │   ├── pages/            # Halaman Portal, Detail Berita, Dashboard Admin, Setup Wizard
+    │   └── services/         # Penghubung HTTP client (Axios) ke API backend
+    ├── vite.config.js        # Konfigurasi bundler Vite
+    └── tailwind.config.js    # Konfigurasi palet warna & tema Tailwind CSS
+```
 
 ---
 

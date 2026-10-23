@@ -59,25 +59,98 @@ Djie CMS Pro provides **14 comprehensive, ready-to-use management modules** to p
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## System Architecture
+
+Djie CMS Pro is built on a **Decoupled (Headless-Ready) Architecture**. The frontend user interface and backend business logic are completely separated, delivering lightning-fast page transitions, low server resource usage, and straightforward maintenance.
+
+```
++-------------------------------------------------------------+
+|                     READERS & EDITORS                       |
+|           (Desktop, Tablet, & Mobile Web Browsers)          |
++-------------------------------------------------------------+
+                              |
+                              v
++-------------------------------------------------------------+
+|                 FRONTEND (React 18 + Vite)                  |
+|  - High-performance Single Page Application (SPA)           |
+|  - Tailwind CSS: Clean, responsive, and mobile-first design |
+|  - TanStack Query: In-browser smart data caching & prefetch |
+|  - TipTap Editor: Fluid WYSIWYG newsroom writing experience |
++-------------------------------------------------------------+
+                              |
+                     RESTful API (JSON / HTTPs)
+                              |
+                              v
++-------------------------------------------------------------+
+|                 BACKEND (Node.js + Express)                 |
+|  - API Controllers: News, Category, User, & Menu logic      |
+|  - Security Layer: JWT Token, Helmet, CORS, & Rate Limiter  |
+|  - Audit Trail Engine: Administrative access & change logs  |
++-------------------------------------------------------------+
+         |                        |                   |
+         v                        v                   v
++------------------+    +-------------------+   +-------------+
+| PRIMARY DATABASE |    | IN-MEMORY CACHE   |   | S3 STORAGE  |
+| MySQL 8 / Maria  |    |      Redis        |   | MinIO / S3  |
+|                  |    |                   |   |             |
+| (Articles, Users,|    | (Rapid data fetch |   | (News photos|
+|  Categories, and |    | & traffic spike   |   |  and public |
+|  System Settings)|    |  protection)      |   |  documents) |
++------------------+    +-------------------+   +-------------+
+```
+
+---
+
+## Tech Stack & Core Roles
+
+### 1. User Interface & Frontend
+| Technology | Role & Why It Matters |
+| :--- | :--- |
+| **React 18** | Industry-standard reactive component model for fluid user experiences. |
+| **Vite 5** | Next-generation frontend tooling offering instant hot module replacement and optimized production builds. |
+| **Tailwind CSS v3** | Utility-first CSS framework ensuring responsive, pixel-perfect design across all devices. |
+| **TanStack React Query v5** | Server-state management and client-side caching to eliminate unnecessary network re-fetches. |
+| **TipTap Editor** | Modern headless rich-text editor designed for frictionless editorial writing. |
+| **Lucide React** | Crisp, lightweight vector iconography. |
+
+### 2. Server & Backend Logic
+| Technology | Role & Why It Matters |
+| :--- | :--- |
+| **Node.js (LTS)** | Asynchronous, event-driven JavaScript runtime built for high-throughput I/O. |
+| **Express.js** | Unopinionated, robust framework for structuring RESTful API endpoints. |
+| **Sequelize ORM** | Reliable relational schema management and query builder with built-in SQL injection defense. |
+| **JWT (JSON Web Token)** | Stateless, secure authentication that scales easily. |
+| **Helmet & Rate Limiter** | Automated defenses against brute-force, header tampering, and traffic flooding. |
+
+### 3. Database, Caching & Object Storage
+| Technology | Role & Why It Matters |
+| :--- | :--- |
+| **MySQL 8.x / MariaDB** | ACID-compliant primary storage for articles, accounts, menus, and audit logs. |
+| **Redis Cache** | In-memory key-value store to cache trending articles and public endpoints under high traffic. |
+| **MinIO / AWS S3** | Cloud-native asset storage for featured images, banners, and downloadable documents (with automatic local fallback). |
+
+---
+
+## Project Structure
 
 ```
 djie-cms-pro/
+├── docker-compose.yml        # 1-Click stack setup (MySQL, Redis, MinIO, Backend, Frontend)
 ├── backend/                  # Node.js + Express REST API Server
 │   ├── src/
 │   │   ├── config/           # Database Sequelize, Redis, MinIO, Winston Logger
-│   │   ├── controllers/      # Business Logic (CMS, News, RBAC, Services, Storage)
-│   │   ├── middlewares/      # JWT Auth, Rate Limiter, Security, Audit Log
-│   │   ├── models/           # Sequelize ORM Schema
-│   │   ├── routes/           # RESTful API Endpoints
-│   │   └── utils/            # Migrator, Seeder, and Dummy Generator
+│   │   ├── controllers/      # Business logic (News, RBAC, Categories, Storage)
+│   │   ├── middlewares/      # JWT auth, rate limiters, audit trail loggers
+│   │   ├── models/           # Sequelize ORM schemas
+│   │   ├── routes/           # RESTful API route definitions
+│   │   └── utils/            # Setup wizard migrator, seeders, and dummy data generators
 │   ├── .env.example
 │   └── package.json
 └── frontend/                 # React 18 + Vite SPA Single Page Application
     ├── src/
     │   ├── components/       # Reusable UI, Navbars, Sidebars, Rich Text Editor
-    │   ├── context/          # Auth Context, Theme Context
-    │   ├── pages/            # Home, Catalog, News, Admin, Wizard, Maintenance
+    │   ├── context/          # Global Auth & Theme context providers
+    │   ├── pages/            # Public Portal, News Detail, Admin Panel, Setup Wizard
     │   └── services/         # Axios API Client Interceptors
     ├── vite.config.js
     └── tailwind.config.js
