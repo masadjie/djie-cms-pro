@@ -120,52 +120,72 @@ async function seedDummyData() {
 
     const dummyBerita = [
       {
-        title: 'Pemerintah Luncurkan Portal Digital Terpadu Berbasis Djie CMS Pro',
-        slug: 'pemerintah-luncurkan-portal-digital-terpadu-djie-cms-pro',
-        excerpt: 'Langkah strategis akselerasi transformasi digital pelayanan publik yang transparan dan mudah diakses masyarakat.',
-        content: '<p>Pemerintah secara resmi mengumumkan operasional portal layanan publik modern yang mengintegrasikan berbagai layanan administrasi, publikasi informasi, dan pengaduan masyarakat secara real-time.</p><p>Sistem ini dirancang dengan standar keamanan tinggi, performa super cepat, dan arsitektur responsif multi-device untuk menjamin kemudahan akses bagi seluruh lapisan warga.</p>',
-        cover_image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
-        cover_caption: 'Peresmian Portal Digital Terpadu',
+        title: 'Lorem Ipsum Dolor Sit Amet Consectetur Adipiscing Elit',
+        slug: 'lorem-ipsum-dolor-sit-amet',
+        excerpt: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.',
+        content: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p><p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>',
+        cover_image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80',
+        cover_caption: 'Lorem ipsum ilustrasi berita utama',
         kategori_id: katId,
         kategori_ids: [katId],
-        author_name: authorName,
+        author_name: 'John Doe',
         status: 'PUBLISHED',
         published_at: new Date(),
         is_featured: true,
         is_pinned: true,
-        views_count: 142
+        read_time_minutes: 5,
+        views_count: 340
       },
       {
-        title: 'Sosialisasi Standar Pelayanan Prima dan Bebas Pungutan Liar',
-        slug: 'sosialisasi-standar-pelayanan-prima-dan-bebas-pungli',
-        excerpt: 'Penguatan integritas dan komitmen pelayanan publik yang ramah, efisien, dan berkeadilan.',
-        content: '<p>Dalam rangka meningkatkan mutu pelayanan publik, instansi menggelar bimbingan teknis bagi seluruh petugas garda terdepan front-office guna menjamin pelayanan masyarakat yang ramah dan cepat.</p>',
-        cover_image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
-        cover_caption: 'Kegiatan Sosialisasi Pelayanan Prima',
+        title: 'Vestibulum Ante Ipsum Primis In Faucibus Orci Luctus',
+        slug: 'vestibulum-ante-ipsum-primis',
+        excerpt: 'Ultrices posuere cubilia curae integer lacinia ante vel nisl convallis, sed bibendum sem facilisis.',
+        content: '<p>Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem.</p><p>Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet.</p>',
+        cover_image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1200&q=80',
+        cover_caption: 'Vestibulum ante ipsum primis',
         kategori_id: katId,
         kategori_ids: [katId],
-        author_name: authorName,
+        author_name: 'Jane Smith',
         status: 'PUBLISHED',
         published_at: new Date(),
-        is_featured: false,
+        is_featured: true,
         is_pinned: false,
-        views_count: 98
+        read_time_minutes: 3,
+        views_count: 215
       },
       {
-        title: 'Peningkatan Infrastruktur Jaringan dan Keamanan Data Informasi',
-        slug: 'peningkatan-infrastruktur-jaringan-keamanan-data',
-        excerpt: 'Peremajaan server data center dan penerapan protokol enkripsi modern demi perlindungan data masyarakat.',
-        content: '<p>Pemerintah terus berupaya menjaga integritas serta kerahasiaan data masyarakat melalui penerapan standar keamanan informasi terkini dan cadangan data berkala.</p>',
+        title: 'Cras Aliquet Varius Magna At Tempus Suspendisse Potenti',
+        slug: 'cras-aliquet-varius-magna',
+        excerpt: 'Nam elementum dolor vitae nisl imperdiet, id facilisis nunc scelerisque. Fusce pulvinar commodo libero.',
+        content: '<p>Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p><p>Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla.</p>',
         cover_image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
-        cover_caption: 'Infrastruktur Data Center',
+        cover_caption: 'Cras aliquet varius magna',
         kategori_id: katId,
         kategori_ids: [katId],
-        author_name: authorName,
+        author_name: 'Alex Johnson',
         status: 'PUBLISHED',
         published_at: new Date(),
         is_featured: false,
         is_pinned: false,
-        views_count: 65
+        read_time_minutes: 4,
+        views_count: 180
+      },
+      {
+        title: 'Aenean Vulputate Eleifend Tellus Aenean Leo Ligula',
+        slug: 'aenean-vulputate-eleifend-tellus',
+        excerpt: 'Porttitor eu consequat vitae eleifend ac enim. Aliquam lorem ante dapibus in viverra quis feugiat a tellus.',
+        content: '<p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</p><p>Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.</p>',
+        cover_image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80',
+        cover_caption: 'Aenean vulputate eleifend',
+        kategori_id: katId,
+        kategori_ids: [katId],
+        author_name: 'John Doe',
+        status: 'PUBLISHED',
+        published_at: new Date(),
+        is_featured: false,
+        is_pinned: false,
+        read_time_minutes: 2,
+        views_count: 95
       }
     ];
 
@@ -181,8 +201,8 @@ async function seedDummyData() {
     if (bannerCount === 0) {
       await BannerSlider.bulkCreate([
         {
-          judul: 'Portal Berita & Media Informasi Terpercaya',
-          subjudul: 'Menyajikan kabar terkini, liputan mendalam, dan analisis akurat',
+          judul: 'Lorem Ipsum Dolor Sit Amet',
+          subjudul: 'Consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore',
           gambar_url: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1920&q=85',
           target_url: '/berita',
           tipe: 'HERO_SLIDER',
@@ -190,8 +210,8 @@ async function seedDummyData() {
           is_active: true
         },
         {
-          judul: 'Ruang Kolaborasi & Komunitas Digital',
-          subjudul: 'Dapatkan wawasan seputar teknologi, bisnis, dan perkembangan industri',
+          judul: 'Sed Ut Perspiciatis Unde Omnis',
+          subjudul: 'Iste natus error sit voluptatem accusantium doloremque laudantium',
           gambar_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=85',
           target_url: '/katalog',
           tipe: 'HERO_SLIDER',
@@ -200,29 +220,29 @@ async function seedDummyData() {
         },
         // Promo / Highlight Banners
         {
-          judul: 'Pusat Informasi & Ekosistem Digital Terpadu',
-          subjudul: 'Akses cepat seluruh layanan, arsip dokumen, agenda kegiatan, dan portal mitra terpercaya.',
+          judul: 'At Vero Eos Et Accusamus',
+          subjudul: 'Nam libero tempore cum soluta nobis est eligendi optio cumque nihil.',
           gambar_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85',
           target_url: '/katalog',
-          tipe: 'SIKEPO_BANNER',
+          tipe: 'PROMO_BANNER',
           urutan: 1,
           is_active: true
         },
         {
-          judul: 'Portal Publikasi & Media Partner',
-          subjudul: 'Kanal informasi terintegrasi dengan jaringan pers dan media partner terkemuka.',
+          judul: 'Temporibus Autem Quibusdam',
+          subjudul: 'Et aut officiis debitis aut rerum necessitatibus saepe eveniet.',
           gambar_url: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=85',
           target_url: '/berita',
-          tipe: 'SIKEPO_BANNER',
+          tipe: 'PROMO_BANNER',
           urutan: 2,
           is_active: true
         },
         {
-          judul: 'Layanan Pengaduan & Evaluasi Publik',
-          subjudul: 'Sampaikan aspirasi, kritik, dan saran untuk kemajuan kualitas portal bersama.',
+          judul: 'Itaque Earum Rerum Hic Tenetur',
+          subjudul: 'A sapiente delectus ut aut reiciendis voluptatibus maiores alias.',
           gambar_url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=85',
           target_url: '/page/profil-instansi',
-          tipe: 'SIKEPO_BANNER',
+          tipe: 'PROMO_BANNER',
           urutan: 3,
           is_active: true
         }

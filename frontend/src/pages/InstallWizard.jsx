@@ -20,17 +20,21 @@ export default function InstallWizard() {
   // Form State
   const [formData, setFormData] = useState({
     // Step 2: Website & Agency Identity
-    site_name: 'Portal Resmi Pemerintahan',
-    site_tagline: 'Pusat Informasi & Pelayanan Publik Terpadu',
-    site_description: 'Portal resmi pelayanan publik terpadu, keterbukaan informasi, dan administrasi digital modern.',
-    instansi_name: 'Pemerintah Daerah',
-    email_kontak: 'admin@instansi.go.id',
-    telepon_kontak: '(021) 1234567',
-    alamat_kantor: 'Jl. Protokol Pusat Pemerintahan No. 1',
+    site_name: 'Djie CMS Pro — Digital Portal',
+    site_tagline: 'Modern Content Management System & Publishing Engine',
+    site_description: 'Platform manajemen konten berkecepatan tinggi untuk portal berita, media digital, profil perusahaan, dan publikasi profesional.',
+    instansi_name: 'Media Digital / Perusahaan',
+    email_kontak: 'editorial@example.com',
+    telepon_kontak: '(021) 555-0199',
+    alamat_kantor: 'Gedung Pusat Informasi & Redaksi Lt. 5',
+
+    // Step 2 Extension: Selected Theme
+    selected_theme: 'editorial',
+    home_layout_mode: 'EDITORIAL',
 
     // Step 3: Master Super Admin
-    admin_name: 'Administrator Utama',
-    admin_email: 'admin@instansi.go.id',
+    admin_name: 'Super Administrator',
+    admin_email: 'admin@example.com',
     admin_password: '',
     admin_password_confirm: '',
 
@@ -158,17 +162,17 @@ export default function InstallWizard() {
       {/* Header Bar */}
       <header className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between pb-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 font-black text-xl border border-white/20">
-            A
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/20 font-black text-xl border border-white/20">
+            D
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-bold text-lg text-white tracking-wide">CMS Instalasi & Inisialisasi</h1>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                Auto-DB Ready
+              <h1 className="font-bold text-lg text-white tracking-wide">Djie CMS Pro — Setup Wizard</h1>
+              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                Fresh Install
               </span>
             </div>
-            <p className="text-xs text-slate-400">Portal Layanan & Informasi Publik BKPSDM Aceh Tamiang</p>
+            <p className="text-xs text-slate-400">Content Management System Modern & Publishing Engine</p>
           </div>
         </div>
 
@@ -535,6 +539,64 @@ export default function InstallWizard() {
                   </div>
                 </div>
 
+                {/* THEME SELECTION CARD */}
+                <div className="pt-2">
+                  <label className="block text-xs font-semibold text-slate-300 mb-2">
+                    Pilih Tema & Gaya Visual Portal
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'editorial', home_layout_mode: 'EDITORIAL' }))}
+                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                        formData.selected_theme === 'editorial'
+                          ? 'border-violet-500 bg-violet-950/40 shadow-lg shadow-violet-500/10'
+                          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-black text-violet-300 flex items-center gap-1.5">
+                          <span>📰</span>
+                          <span>Revision Editorial Magazine</span>
+                        </span>
+                        {formData.selected_theme === 'editorial' && (
+                          <span className="w-5 h-5 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        Khusus portal berita, media digital & blog. Layout 2-kolom, trending topics pills, sidebar redaksi, dan newsletter.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'emerald', home_layout_mode: 'PORTAL' }))}
+                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                        formData.selected_theme === 'emerald'
+                          ? 'border-emerald-500 bg-emerald-950/40 shadow-lg shadow-emerald-500/10'
+                          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-black text-emerald-300 flex items-center gap-1.5">
+                          <span>🏛️</span>
+                          <span>Portal Layanan & Berita Terpadu</span>
+                        </span>
+                        {formData.selected_theme === 'emerald' && (
+                          <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        Cocok untuk website instansi, korporat, & multi-layanan. Dilengkapi hero search besar, katalog layanan & widget publik.
+                      </p>
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                     Alamat Lengkap Kantor
@@ -546,7 +608,7 @@ export default function InstallWizard() {
                       name="alamat_kantor"
                       value={formData.alamat_kantor}
                       onChange={handleChange}
-                      placeholder="Jl. Ir. H. Juanda No. 1, Karang Baru, Kab. Aceh Tamiang"
+                      placeholder="Gedung Cyber Media Lt. 3, Jakarta"
                       className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
                     />
                   </div>
@@ -664,10 +726,10 @@ export default function InstallWizard() {
                     <div className="space-y-1">
                       <p className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Pasang Data Contoh / Dummy Migration (Disarankan)</span>
+                        <span>Pasang Data Contoh / Dummy Migration (Lorem Ipsum)</span>
                       </p>
                       <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Sistem akan mengisikan contoh berita, agenda kegiatan, banner slider beranda, dokumen SOP publik, dan testimoni agar portal langsung tampak profesional saat pertama kali dibuka. Anda dapat menghapus atau mengeditnya nanti di Dashboard Admin.
+                        Sistem akan mengisikan contoh artikel berita standar Lorem Ipsum, kategori, banner, dokumen, dan agenda agar layout visual langsung rapi dan mudah diuji coba. Anda dapat mengedit atau menghapusnya kapan saja di Dashboard Admin.
                       </p>
                     </div>
                   </label>
@@ -716,10 +778,16 @@ export default function InstallWizard() {
                     <span className="text-slate-400 font-medium">Kata Sandi Admin:</span>
                     <span className="text-slate-300">{formData.admin_password ? '•••••••• (Diperbarui)' : '(Default / Tetap)'}</span>
                   </div>
+                  <div className="py-3 flex justify-between items-center">
+                    <span className="text-slate-400 font-medium">Tema & Layout Dipilih:</span>
+                    <span className="text-violet-300 font-semibold">
+                      {formData.selected_theme === 'editorial' ? '📰 Revision Editorial Magazine' : '🏛️ Portal Layanan & Berita Terpadu'}
+                    </span>
+                  </div>
                   <div className="pt-3 flex justify-between items-center">
                     <span className="text-slate-400 font-medium">Data Contoh / Dummy:</span>
                     <span className={`font-bold ${formData.install_dummy_data ? 'text-emerald-400' : 'text-slate-400'}`}>
-                      {formData.install_dummy_data ? 'Ya (Dipasang)' : 'Tidak (Mulai Kosong)'}
+                      {formData.install_dummy_data ? 'Ya (Dipasang - Lorem Ipsum)' : 'Tidak (Mulai Kosong)'}
                     </span>
                   </div>
                 </div>
@@ -857,13 +925,13 @@ export default function InstallWizard() {
 
       {/* Footer */}
       <footer className="relative z-10 max-w-4xl mx-auto w-full pt-4 text-center text-xs text-slate-500 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-2">
-        <p>© 2026 BKPSDM Kabupaten Aceh Tamiang. Automated Web Engine.</p>
+        <p>© 2026 Djie CMS Pro. Open Source Publishing Engine.</p>
         <div className="flex items-center gap-4 text-slate-400 text-[11px]">
           <span>Security Hardened</span>
           <span>•</span>
           <span>Sequelize ORM</span>
           <span>•</span>
-          <span>React SPA</span>
+          <span>React 18 SPA</span>
         </div>
       </footer>
     </div>

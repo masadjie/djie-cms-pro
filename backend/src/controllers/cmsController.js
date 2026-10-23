@@ -1087,6 +1087,8 @@ const runInitialInstall = async (req, res) => {
       admin_name,
       admin_email,
       admin_password,
+      selected_theme,
+      home_layout_mode,
       install_dummy_data
     } = req.body;
 
@@ -1114,6 +1116,8 @@ const runInitialInstall = async (req, res) => {
       { key_name: 'email_kontak', value: (email_kontak || '').trim(), kategori_setting: 'KONTAK' },
       { key_name: 'telepon_kontak', value: (telepon_kontak || '').trim(), kategori_setting: 'KONTAK' },
       { key_name: 'alamat_kantor', value: (alamat_kantor || '').trim(), kategori_setting: 'KONTAK' },
+      { key_name: 'site_theme', value: selected_theme || 'editorial', kategori_setting: 'TAMPILAN' },
+      { key_name: 'home_layout_mode', value: home_layout_mode || (selected_theme === 'editorial' ? 'EDITORIAL' : 'PORTAL'), kategori_setting: 'TAMPILAN' },
       { key_name: 'cms_is_installed', value: 'true', kategori_setting: 'UMUM' },
       { key_name: 'cms_installed_at', value: new Date().toISOString(), kategori_setting: 'UMUM' }
     ];
