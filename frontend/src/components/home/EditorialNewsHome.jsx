@@ -46,6 +46,7 @@ export default function EditorialNewsHome() {
   const [searchWord, setSearchWord] = useState('');
   const [tickerIndex, setTickerIndex] = useState(0);
   const [tickerFade, setTickerFade] = useState(true);
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
 
   // 1. Fetch CMS Web Settings
   const { data: settingsData } = useQuery({
@@ -262,12 +263,22 @@ export default function EditorialNewsHome() {
 
   // Slices for each Neeon magazine section
   const tickerItems = articles.slice(0, 5);
-  const heroMain = articles[0];
+  const heroFeaturedSlides = articles.slice(0, 4); // 4 sliding carousel items for main hero card
+  const heroMain = heroFeaturedSlides[heroSlideIndex] || articles[0];
   const heroSide = articles.slice(1, 4); // Always exactly 3 cards for right sidebar
   const topStories = articles.slice(0, 4);
   const whatsNewLead = articles[4] || articles[0];
   const whatsNewList = articles.slice(5, 8).length >= 3 ? articles.slice(5, 8) : articles.slice(1, 4);
   const circularHighlights = customHighlights;
+
+  // Auto-rotating Hero Carousel (every 5 seconds)
+  useEffect(() => {
+    if (!heroFeaturedSlides || heroFeaturedSlides.length <= 1) return;
+    const heroTimer = setInterval(() => {
+      setHeroSlideIndex((prev) => (prev + 1) % heroFeaturedSlides.length);
+    }, 5000);
+    return () => clearInterval(heroTimer);
+  }, [heroFeaturedSlides.length]);
 
   // Auto-rotating animated ticker for trending topics
   useEffect(() => {
@@ -375,17 +386,49 @@ export default function EditorialNewsHome() {
         {/* ── 3. HERO COMPOSITE GRID (1 HUGE FEATURED + 3 SIDEBAR CARDS) ───────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
-          {/* Main Huge Feature Card (Col 8) */}
+          {/* Main Huge Feature Card Carousel (Col 8) */}
           <div className="lg:col-span-7 xl:col-span-8 relative rounded-3xl overflow-hidden group shadow-sm bg-slate-900 min-h-[420px] lg:min-h-[500px] flex flex-col justify-end">
-            <img
-              src={heroMain?.image}
-              alt={heroMain?.title}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
-            />
-            {/* Dark gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
+            {/* Sliding Images with crossfade */}
+            {heroFeaturedSlides.map((slide, sIdx) => (
+              <div
+                key={slide.id || sIdx}
+                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                  sIdx === heroSlideIndex ? 'opacity-90 z-0' : 'opacity-0 pointer-events-none'
+                }`}
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            ))}
 
-            <div className="relative z-10 p-6 sm:p-8 space-y-3">
+            {/* Dark gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent z-10 pointer-events-none" />
+
+            {/* Carousel Arrow Controls */}
+            <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setHeroSlideIndex((prev) => (prev === 0 ? heroFeaturedSlides.length - 1 : prev - 1))}
+                aria-label="Previous Headline"
+                className="w-8 h-8 rounded-full bg-slate-900/60 hover:bg-blue-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-sm hover:scale-105"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeroSlideIndex((prev) => (prev + 1) % heroFeaturedSlides.length)}
+                aria-label="Next Headline"
+                className="w-8 h-8 rounded-full bg-slate-900/60 hover:bg-blue-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-sm hover:scale-105"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Slide Content */}
+            <div className="relative z-20 p-6 sm:p-8 space-y-3">
               <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider text-white ${heroMain?.catColor || 'bg-blue-600'} shadow-sm`}>
                 {heroMain?.category || 'BERITA & PENGUMUMAN'}
               </span>
@@ -396,15 +439,34 @@ export default function EditorialNewsHome() {
                 </Link>
               </h1>
 
-              <div className="flex items-center gap-3 text-xs text-slate-300 font-medium pt-1">
-                <span className="text-white font-bold">BY {heroMain?.author?.toUpperCase()}</span>
-                <span>•</span>
-                <span>{heroMain?.date}</span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  {heroMain?.comments} COMMENTS
-                </span>
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <div className="flex items-center gap-3 text-xs text-slate-300 font-medium">
+                  <span className="text-white font-bold">BY {heroMain?.author?.toUpperCase()}</span>
+                  <span>•</span>
+                  <span>{heroMain?.date}</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    {heroMain?.comments} COMMENTS
+                  </span>
+                </div>
+
+                {/* Carousel Indicator Dots */}
+                <div className="flex items-center gap-1.5">
+                  {heroFeaturedSlides.map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      type="button"
+                      onClick={() => setHeroSlideIndex(dotIdx)}
+                      aria-label={`Slide ${dotIdx + 1}`}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        heroSlideIndex === dotIdx 
+                          ? 'w-7 bg-blue-500 shadow-md' 
+                          : 'w-2 bg-white/40 hover:bg-white/70'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
