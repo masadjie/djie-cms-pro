@@ -115,17 +115,9 @@ export default function Navbar() {
   const rawMenus = (menuList && menuList.length > 0 ? menuList : defaultNavs)
     .filter((m) => m.is_active !== false);
 
-  // Strictly filter only the 4 requested top-level menus
+  // Use dynamic menus directly from DB; only filter out parent_id children
   const activeMenus = rawMenus
-    .filter((m) => !m.parent_id && !m.label.toLowerCase().includes('ppid'))
-    .slice(0, 4)
-    .map(m => {
-      // If label is "Profil BKPSDM" or "Profil", display as "Profile"
-      if (m.label.toLowerCase().startsWith('profil')) {
-        return { ...m, label: 'Profile' };
-      }
-      return m;
-    });
+    .filter((m) => !m.parent_id);
 
   // Map child sub-menus grouped by parent
   const getChildrenFor = (parentItem) => {

@@ -50,6 +50,21 @@ export default function BeritaDetail() {
     queryFn: async () => (await api.get('/berita/trending?limit=4')).data
   });
 
+  // Fetch Web Settings for dynamic sidebar & agency identity
+  const { data: settingsData } = useQuery({
+    queryKey: ['cmsWebSettingsBeritaDetail'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/cms/pengaturan');
+        return res?.data || res || {};
+      } catch (err) {
+        return {};
+      }
+    }
+  });
+
+  const settings = settingsData || {};
+
   const article = response?.data;
   const seoData = response?.seo;
   const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://bkpsdm.acehtamiangkab.go.id/berita/${slug}`;
@@ -288,27 +303,29 @@ export default function BeritaDetail() {
           <aside className="lg:col-span-4 space-y-6">
             <TrendingNewsWidget trendingNews={trendingNews} />
 
-            {/* Layanan Kepegawaian & SiKEPO Quick Access */}
-            <div className="bg-gradient-to-br from-[#052e16] to-[#064e3b] text-white rounded-3xl p-6 space-y-4 border border-emerald-800 shadow-md">
-              <span className="text-[10px] font-black uppercase text-amber-300">SiKEPO Digital ASN</span>
-              <h4 className="font-bold text-sm">Aplikasi Manajemen Kepegawaian Online</h4>
-              <p className="text-xs text-emerald-200">
-                Akses formulir E-Cuti, pemutakhiran data profil, usul kenaikan pangkat, dan KGB langsung di SiKEPO.
+            {/* Dynamic Agency & Service Quick Access Card */}
+            <div className="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white rounded-3xl p-6 space-y-4 border border-blue-600/50 shadow-md">
+              <span className="text-[10px] font-black uppercase text-blue-200 tracking-wider">
+                {settings.site_name || 'Layanan & Informasi'}
+              </span>
+              <h4 className="font-bold text-sm">
+                {settings.site_tagline || 'Pusat Informasi & Pelayanan Terpadu'}
+              </h4>
+              <p className="text-xs text-blue-100/90 leading-relaxed">
+                {settings.site_description || 'Akses dokumen resmi, arsip pengumuman, formulir pelayanan, dan panduan publik terverifikasi.'}
               </p>
               <div className="pt-2 flex flex-col gap-2">
-                <a
-                  href="https://sikepo.acehtamiangkab.go.id"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block w-full py-2.5 text-center bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs transition-colors shadow-sm"
-                >
-                  Buka Portal SiKEPO →
-                </a>
                 <Link
                   to="/katalog"
+                  className="block w-full py-2.5 text-center bg-white text-blue-900 hover:bg-blue-50 font-black rounded-xl text-xs transition-colors shadow-sm"
+                >
+                  Katalog Layanan & Arsip →
+                </Link>
+                <Link
+                  to="/berita"
                   className="block w-full py-2.5 text-center bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs border border-white/20 transition-colors"
                 >
-                  Katalog Layanan BKPSDM
+                  Indeks Seluruh Berita
                 </Link>
               </div>
             </div>

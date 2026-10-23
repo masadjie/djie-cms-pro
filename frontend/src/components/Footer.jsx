@@ -42,7 +42,7 @@ export default function Footer() {
     <footer className="w-full bg-white border-t border-slate-100 text-slate-600 mt-16 sm:mt-24">
       {/* ── TOP HIGHLIGHT BANNER: Floating Clean Green Curved Container (mirip foto referensi) ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -translate-y-8 sm:-translate-y-12">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white p-8 sm:p-12 shadow-xl shadow-emerald-900/10">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white p-8 sm:p-12 shadow-xl shadow-blue-900/10">
           
           {/* Subtle Organic Background Vector Elements */}
           <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-white/10 blur-2xl pointer-events-none" />
@@ -51,32 +51,32 @@ export default function Footer() {
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="space-y-3 max-w-2xl text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-xs text-emerald-100 text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-xs text-blue-100 text-xs font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-blue-300" />
                 <span>Pelayanan Terpadu & Responsif</span>
               </div>
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-                Konsultasi & Layanan Kepegawaian Tanpa Hambatan
+                {settings.footer_cta_heading || settings.site_tagline || 'Konsultasi & Layanan Informasi Publik Tanpa Hambatan'}
               </h3>
-              <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal">
-                Dapatkan pendampingan langsung dari Helpdesk BKPSDM Aceh Tamiang untuk usul mutasi, kenaikan pangkat SIASN, presensi SiKEPO, dan administrasi CASN.
+              <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed font-normal">
+                {settings.footer_cta_sub || 'Punya pertanyaan atau memerlukan pendampingan informasi? Hubungi tim helpdesk kami.'}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
               <a
-                href={`https://wa.me/62${wa.replace(/^0/, '')}?text=Halo%20Helpdesk%20BKPSDM%20Aceh%20Tamiang,%20saya%20ingin%20berkonsultasi`}
+                href={`https://wa.me/62${wa.replace(/^0/, '')}?text=Halo%20Helpdesk,%20saya%20ingin%20berkonsultasi`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white text-emerald-900 text-xs font-bold hover:bg-emerald-50 transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white text-blue-900 text-xs font-bold hover:bg-blue-50 transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <MessageCircle className="w-4 h-4 text-blue-600" />
                 <span>Hubungi Helpdesk WA</span>
               </a>
 
               <Link
                 to="/katalog"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-800/60 hover:bg-emerald-800 text-white text-xs font-semibold border border-white/20 transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition-all cursor-pointer"
               >
                 <span>Eksplor Katalog Layanan</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -93,25 +93,30 @@ export default function Footer() {
           {/* Brand & Organization Identity (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <img
-                src="/logo-tamiang.webp"
-                alt="Lambang Aceh Tamiang"
-                width="42"
-                height="42"
-                className="w-10 h-10 object-contain drop-shadow-xs"
-              />
+              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 shadow-xs flex items-center justify-center p-1 overflow-hidden shrink-0">
+                <img
+                  src="/logo-djie-cms-pro-square.png"
+                  alt="Logo Instansi"
+                  width="42"
+                  height="42"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
               <div>
                 <span className="font-extrabold text-base text-slate-900 leading-tight block">
-                  BKPSDM Kab. Aceh Tamiang
+                  {settings.site_name || 'Djie CMS Pro'}
                 </span>
-                <span className="text-xs text-emerald-700 font-semibold block">
-                  Pemerintah Kabupaten Aceh Tamiang
+                <span className="text-xs text-blue-700 font-semibold block">
+                  {settings.instansi_name || 'Portal Resmi Publikasi'}
                 </span>
               </div>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed pr-4">
-              Portal resmi pelayanan administrasi kepegawaian, pengembangan talenta, dan transformasi digital ASN berintegritas untuk mewujudkan birokrasi yang melayani.
+              {settings.site_description || 'Portal resmi penyebaran berita terverifikasi, keterbukaan informasi, dan transformasi digital yang melayani publik secara transparan dan terpercaya.'}
             </p>
 
             {/* Social Media Link Pills */}
