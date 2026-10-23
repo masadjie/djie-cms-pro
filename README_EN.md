@@ -40,39 +40,26 @@ Built with a decoupled architecture (**Node.js REST API + React 18 SPA**), it in
 
 ---
 
-## ✨ Key Features
+## 💎 14 Core Feature Modules
 
-### 1. 🛠️ Interactive Installation Wizard (`/install`)
-* **Auto-Detection**: Automatically detects fresh database setups and launches the setup wizard.
-* **Health & Dependency Check**: Real-time visual status checks for Node.js, MySQL/MariaDB, Redis cache, and S3 MinIO storage.
-* **Identity Configuration**: Set your portal title, slogan, contact information, and meta descriptions without touching code.
-* **Master Super Admin Creation**: Create your primary administrative account securely with `bcrypt` salt rounds.
-* **Optional Sample Data Migration**: Toggle demo articles, hero sliders, public documents, and media galleries for instant testing, or begin with a clean slate.
+Djie CMS Pro provides **14 comprehensive, ready-to-use management modules** to power professional online newsrooms, digital media magazines, corporate sites, and community portals:
 
-### 2. 🕒 Scheduled Publishing
-* Editorial teams can set publication dates and times in the future (`published_at`).
-* **Embargo Guard**: Drafts remain completely hidden from direct URL access and public queries until the scheduled timestamp.
-* Articles automatically publish in real-time when the embargo lifts.
-
-### 3. 💾 Auto-Save Draft & Crash Recovery
-* Form state and WYSIWYG content automatically persist to browser `localStorage` every 15 seconds.
-* Automatic recovery prompts appear if a browser crashes or is accidentally closed: *"Unsaved local draft detected. Restore your manuscript?"*.
-
-### 4. 🚧 1-Click Maintenance Mode
-* Flip a single toggle in the admin settings to shield public traffic with an elegant, responsive dark-ambient maintenance page.
-* Features countdown timers and emergency helpdesk contacts while keeping admin routes fully accessible.
-
-### 5. 👥 Granular Role-Based Access Control (RBAC)
-* Built-in user roles: `SUPER_ADMIN`, `ADMIN_OPD`, `EDITOR`, `VERIFIKATOR`, and `WARGA` (Standard User).
-
-### 6. 🛡️ Comprehensive Security & Audit Trail
-* Full audit logging records timestamps, actions, IP addresses, and User-Agents for all administrative operations.
-* Protected against brute-force attacks via rate limiters and strict JWT session handling.
-
-### 7. ⚡ Performance & Built-in SEO Studio
-* Automated on-the-fly image conversion to modern **WebP** format.
-* Native Schema.org JSON-LD structured data, OpenGraph cards, Twitter Cards, and automated canonical URL tags.
-* Memory caching powered by **Redis** with resilient fallbacks.
+| No | Feature Module | Functional Overview |
+| :---: | :--- | :--- |
+| **1** | **News & Article Management** | Advanced WYSIWYG editor, **Scheduled Publishing**, **Local Browser Auto-Save**, crash manuscript recovery, sticky/pinned posts, and automatic read-time calculation. |
+| **2** | **Comment & Moderation System** | Multi-tier reader comment approvals (*Pending / Approved / Spam / Rejected*), sensitive word filters, and anti-spam protection. |
+| **3** | **News Category Management** | Flexible rubric and topical grouping with automated SEO-friendly URL slug generation. |
+| **4** | **Static Pages Management** | Clean visual authoring for About Us, Company Profiles, Terms of Service, and Privacy Policies. |
+| **5** | **Events & Agenda Management** | Event calendars, meeting announcements, coverage schedules, and webinars with location badges (*Online / Offline / Hybrid*). |
+| **6** | **Document & Digital Repository** | Centralized file downloads (PDFs, spreadsheets, forms) equipped with an automatic download counter. |
+| **7** | **Banner & Slider Management** | Visual homepage hero sliders with link controls, active/inactive statuses, and custom sorting. |
+| **8** | **Testimonials & Review Management** | Reader surveys, user testimonials, executive quotes, and star ratings to build digital credibility. |
+| **9** | **User & Role Management (RBAC)** | Multi-tier permission levels (`SUPER_ADMIN`, `ADMIN_OPD`, `EDITOR`, `VERIFIKATOR`, `WARGA`), staff accounts, and secure password reset workflows. |
+| **10** | **Sidebar & Widget Management** | Configurable dynamic sidebars (popular news widgets, live visitor counter, working hours, and contact cards). |
+| **11** | **SEO Suite Studio** | Google keyword optimization, Meta Titles, Meta Descriptions, Social Media OpenGraph cards, and automated Schema.org JSON-LD. |
+| **12** | **Theme & Visual Customizer** | Accent color palettes, header/footer logo branding, typography, and a **1-Click Public Maintenance Mode**. |
+| **13** | **Menu & Navigation Management** | Header menu architect, nested multi-level dropdowns, and responsive interactive mobile mega-menus. |
+| **14** | **Security & Audit Trail** | Transparent logging of all administrative logins, content changes, and data modifications with IP and User-Agent tracking. |
 
 ---
 

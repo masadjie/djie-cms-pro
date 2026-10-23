@@ -40,44 +40,26 @@ Dibangun dengan arsitektur modern (*Node.js + React*), Djie CMS Pro memberikan k
 
 ---
 
-## ✨ Fitur Kunci & Keunggulan
+## 💎 14 Modul Fitur Unggulan
 
-### 1. 🛠️ Interactive Setup Wizard (`/install`)
-* **Sistem Deteksi Otomatis**: Jika database baru belum dikonfigurasi, sistem otomatis mengarahkan pengunjung ke Setup Wizard `/install`.
-* **Pengecekan Kesiapan Sistem**: Verifikasi versi Node.js, status koneksi MySQL/MariaDB, Redis Cache, dan S3 MinIO secara visual.
-* **Konfigurasi Identitas Portal**: Input nama situs/portal, slogan, kontak, alamat, dan deskripsi SEO tanpa perlu menyentuh kode.
-* **Akun Master Super Admin**: Pembuatan akun admin utama pertama kali dengan enkripsi aman (`bcrypt`).
-* **Opsi Migrasi Dummy Data (Pilihan)**: Tersedia pilihan untuk langsung memasang sampel artikel berita, slider hero, arsip dokumen, galeri foto, dan ulasan agar website langsung terlihat hidup dan siap demo, atau mulai dari database kosong (*clean slate*).
+Djie CMS Pro menghadirkan **14 modul manajemen komprehensif** yang siap pakai untuk mengelola operasional portal berita, media online, maupun website organisasi secara profesional:
 
-### 2. 🕒 Jadwal Publikasi Berita (Scheduled Publishing)
-* Penulis dan redaksi dapat menjadwalkan tanggal dan jam publikasi artikel di masa mendatang (`published_at`).
-* **Sistem Embargo**: Artikel tidak akan bocor ke publik atau tautan langsung (*direct slug*) sebelum waktu terbit tiba.
-* Begitu waktu tayang tercapai, artikel otomatis tampil di portal publik secara real-time tanpa perlu login admin manual.
-
-### 3. 💾 Auto-Save Draft & Crash Recovery Naskah
-* Ketikan naskah di editor tersimpan otomatis ke browser (`localStorage`) setiap 15 detik.
-* Jika laptop mati mendadak, kuota habis, atau tab tertutup tidak sengaja, sistem langsung menampilkan banner pemulihan: *"Ditemukan draf lokal belum tersimpan. Pulihkan tulisan Anda?"*.
-
-### 4. 🚧 Mode Pemeliharaan Publik (1-Click Maintenance Mode)
-* Sakelar cepat di panel admin untuk mengunci sementara akses publik saat portal sedang diperbarui.
-* Tampilan publik pemeliharaan bergaya *dark-ambient glassmorphism* dilengkapi hitungan estimasi waktu online kembali dan kontak darurat.
-* **Jalur Admin Tetap Terbuka**: Staf admin tetap leluasa login dan bekerja normal di dalam dashboard.
-
-### 5. 👥 Granular Role-Based Access Control (RBAC)
-* Pembagian peran pengguna berjenjang:
-  * `SUPER_ADMIN`: Pengaturan sistem penuh, konfigurasi tema, audit log, dan database.
-  * `ADMIN_OPD`: Manajemen kategori, dokumen, dan data layanan portal.
-  * `EDITOR`: Penulisan, kurasi konten, jadwal terbit, dan moderasi artikel/galeri.
-  * `VERIFIKATOR`: Peninjauan dan validasi data/permohonan masuk.
-  * `WARGA`: Akun pengguna/member umum untuk berinteraksi dan komentar.
-
-### 6. 🛡️ Audit Trail & Keamanan Menyeluruh
-* Log audit real-time mencatat setiap aksi login, pembuatan naskah, pengeditan, penghapusan data, dan manipulasi sistem lengkap dengan alamat IP dan User-Agent.
-
-### 7. ⚡ Performa Super Cepat & SEO Suite Studio
-* Otomasi kompresi gambar upload ke format modern **WebP** guna menghemat kuota dan mempercepat loading.
-* Dukungan penuh Schema.org (JSON-LD `NewsArticle`), Open Graph Facebook, Twitter Cards, dan Canonical URL otomatis.
-* Akselerasi cache memori **Redis** dengan fallback cerdas.
+| No | Modul Fitur | Deskripsi Fungsional |
+| :---: | :--- | :--- |
+| **1** | **Manajemen Berita & Artikel** | Editor WYSIWYG canggih, **Jadwal Publikasi Berita (*Scheduled Publishing*)**, **Auto-Save Draf ke Browser**, fitur crash recovery naskah, sematkan berita utama (*sticky/pinned*), dan hitung estimasi waktu baca (*read time*). |
+| **2** | **Manajemen Komentar & Moderasi** | Sistem peninjauan komentar pembaca berjenjang (*Pending / Approved / Spam / Rejected*), filter kata sensitif, dan pelindung anti-spam. |
+| **3** | **Manajemen Kategori Berita** | Pengelompokan topik/rubrik artikel yang fleksibel dengan pembuatan otomatis URL SEO-friendly (*slug generator*). |
+| **4** | **Manajemen Halaman Statis (Pages)** | Pembuatan halaman profil, tentang kami, visi-misi, kebijakan privasi (*privacy policy*), dan syarat ketentuan dengan layout visual bersih. |
+| **5** | **Manajemen Agenda & Acara** | Kalender kegiatan, jadwal pertemuan, liputan acara, dan webinar lengkap dengan penanda lokasi dan status *Online / Offline / Hybrid*. |
+| **6** | **Manajemen Dokumen & Berkas** | Repositori arsip digital terpusat (PDF, spreadsheet, formulir) dengan pelacak statistik jumlah unduhan (*download counter*). |
+| **7** | **Manajemen Banner & Slider** | Pengaturan visual banner utama di beranda dengan kontrol link tujuan, status aktif/nonaktif, dan urutan sorotan visual. |
+| **8** | **Manajemen Testimoni & Ulasan** | Pengelolaan survei kepuasan, ulasan pembaca/klien, kutipan tokoh, dan rating bintang untuk membangun kredibilitas portal. |
+| **9** | **Manajemen User & Role (RBAC)** | Kontrol hak akses multi-level (`SUPER_ADMIN`, `ADMIN_OPD`, `EDITOR`, `VERIFIKATOR`, `WARGA`), manajemen akun staf, dan reset password aman. |
+| **10** | **Manajemen Sidebar & Widget** | Pengaturan komponen dinamis di bilah samping (widget berita terpopuler, live visitor counter, jam operasional, dan info kontak). |
+| **11** | **Manajemen SEO Studio** | Optimasi kata kunci Google, Meta Title, Meta Description, OpenGraph preview medsos, dan Schema.org JSON-LD otomatis. |
+| **12** | **Manajemen Tema & Tampilan** | Kustomisasi palet warna aksen primer, logo header/footer, favicon, tipografi, dan mode pemeliharaan publik (*1-Click Maintenance Mode*). |
+| **13** | **Manajemen Menu & Navigasi** | Penata struktur menu header, navigasi bertingkat (*dropdown multi-level*), dan mega-menu interaktif yang responsif di smartphone. |
+| **14** | **Audit Trail & Keamanan Sistem** | Rekam jejak seluruh aktivitas login, perubahan naskah, dan penghapusan data secara transparan dengan alamat IP dan User-Agent. |
 
 ---
 
