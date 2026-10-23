@@ -1,95 +1,164 @@
-<div align="center">
-  <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro Logo" width="380" />
-  <p><strong>Sistem Manajemen Konten & Portal Informasi Publik Modern Terpadu untuk Instansi Pemerintah & Organisasi</strong></p>
+# 🌐 Djie CMS Pro — Enterprise Open Source Government & Portal CMS
 
-  <p>
-    <a href="#fitur-utama"><img src="https://img.shields.io/badge/Versi-1.0%20Pro-10b981?style=for-the-badge" alt="Version" /></a>
-    <a href="#lisensi"><img src="https://img.shields.io/badge/Lisensi-MIT-amber?style=for-the-badge" alt="License" /></a>
-    <a href="#tech-stack"><img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20React%20%7C%20MySQL-3b82f6?style=for-the-badge" alt="Stack" /></a>
+<div align="center">
+  <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro Banner" width="460" />
+  
+  <p align="center">
+    <strong>Content Management System (CMS) Modern Level Enterprise Khusus Portal Pemerintah, OPD, Lembaga & Organisasi Publik</strong>
+  </p>
+
+  <p align="center">
+    <a href="https://github.com/masadjie/djie-cms-pro/releases/latest"><img src="https://img.shields.io/badge/Release-v1.0.0-10b981?style=for-the-badge&logo=github" alt="Latest Release" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-amber?style=for-the-badge" alt="License" /></a>
+    <a href="#arsitektur--tech-stack"><img src="https://img.shields.io/badge/Stack-Node.js%20%7C%20React%20%7C%20MySQL%20%7C%20Redis-blue?style=for-the-badge" alt="Tech Stack" /></a>
+    <a href="#installation-setup-wizard"><img src="https://img.shields.io/badge/Setup-Interactive%20Wizard-emerald?style=for-the-badge" alt="Setup Wizard" /></a>
   </p>
 </div>
 
 ---
 
-## 📌 Tentang Djie CMS Pro
+## 📖 Ringkasan Proyek
 
-**Djie CMS Pro** adalah Content Management System (CMS) modern level Enterprise yang dirancang khusus untuk portal pemerintahan (OPD, Dinas, Lembaga, Pemkab/Pemkot) maupun organisasi publik. Dilengkapi dengan **Installation Setup Wizard interaktif**, fitur keamanan RBAC granular, jadwal publikasi berita otomatis, auto-save draft, dan mode pemeliharaan publik 1-klik.
+**Djie CMS Pro** adalah platform portal informasi dan manajemen konten (CMS) berstandar industri modern yang dirancang untuk instansi pemerintahan (Dinas/Badan/OPD, Pemkab/Pemkot, Lembaga Publik) serta organisasi profesional. 
 
-Ketika repositori pertama kali di-*clone* dan dijalankan pada database baru, sistem berada dalam status **`Uninstalled`**. Siapa pun yang membuka browser akan langsung dipandu melalui **Installation Wizard 4-Langkah** tanpa perlu setup database secara manual!
-
----
-
-## 🚀 Fitur Unggulan
-
-* 🛠️ **Interactive Installation Setup Wizard (`/install`)**:
-  * Pengecekan otomatis kesiapan sistem (Node.js, DB, Cache).
-  * Formulir identitas instansi & branding portal.
-  * Pembuatan akun Master Super Administrator pertama.
-  * **Opsi Migrasi Dummy Data**: Anda dapat memilih apakah ingin memasang contoh berita, dokumen, banner, dan testimoni bawaan atau mulai dari database kosong.
-* 🕒 **Jadwal Publikasi Berita (Scheduled Publishing)**:
-  * Artikel dapat dijadwalkan untuk terbit pada tanggal dan jam tertentu di masa depan (`published_at`).
-  * Sistem otomatis menahan embargo berita dan mempublikasikannya ke publik tepat waktu.
-* 💾 **Auto-Save Draft & Crash Recovery**:
-  * Ketikan editor tersimpan otomatis ke browser setiap 15 detik.
-  * Fitur pemulihan naskah jika browser tertutup atau laptop mati secara tiba-tiba.
-* 🚧 **Mode Pemeliharaan Publik (Maintenance Mode 1-Klik)**:
-  * Sakelar cepat di panel admin untuk mengunci akses publik saat pembaruan server.
-  * Halaman publik pemeliharaan berdesain eksklusif dengan kontak darurat, sementara akses admin tetap terbuka.
-* 👥 **Role-Based Access Control (RBAC)**:
-  * Pembagian peran yang jelas: `SUPER_ADMIN`, `ADMIN_OPD`, `EDITOR`, `VERIFIKATOR`, dan `WARGA`.
-* 🛡️ **Audit Trail & Log Keamanan Lengkap**:
-  * Mencatat setiap aksi login, pembuatan naskah, penghapusan, dan perubahan sistem.
-* ⚡ **High Performance & Cache Ready**:
-  * Integrasi Redis Cache otomatis dengan fallback in-memory, kompresi gambar otomatis ke format WebP modern, serta pagination server-side.
+Berbeda dari CMS konvensional, **Djie CMS Pro** hadir dengan **Fresh-Install Engine**: saat pertama kali di-clone, sistem berstatus **`Uninstalled`**. Siapa pun yang membuka web langsung disambut oleh **Setup Wizard Interaktif 4-Langkah** dengan opsi migrasi dummy data bawaan.
 
 ---
 
-## 💻 Tech Stack
+## ✨ Fitur Kunci & Keunggulan
 
-* **Backend**: Node.js (v18+ / v20+), Express.js, Sequelize ORM, MySQL 8 / MariaDB, Redis, MinIO S3 Object Storage.
-* **Frontend**: React 18, Vite, Tailwind CSS, Lucide Icons, React Query (TanStack), TipTap WYSIWYG Editor.
+### 1. 🛠️ Interactive Setup Wizard (`/install`)
+* **Sistem Deteksi Otomatis**: Jika database baru belum dikonfigurasi, pengunjung otomatis diarahkan ke Wizard `/install`.
+* **Pengecekan Kesiapan Lingkungan**: Verifikasi versi Node.js, koneksi MySQL/MariaDB, Redis Cache, dan S3 MinIO.
+* **Konfigurasi Identitas Instansi**: Pengisian nama situs, tagline, kontak, logo, dan profil wilayah tanpa coding.
+* **Akun Master Super Admin**: Pembuatan akun admin pertama dengan enkripsi bcrypt yang aman.
+* **Opsi Migrasi Dummy Data**: Disediakan tombol centang apakah ingin memasang sampel artikel berita, SOP regulasi, banner slider, dan testimoni bawaan atau mulai dari database kosong.
+
+### 2. 🕒 Jadwal Publikasi Otomatis (Scheduled Publishing)
+* Penulis berita dapat menjadwalkan tanggal dan jam publikasi artikel di masa mendatang (`published_at`).
+* **Sistem Embargo**: Artikel tidak akan bocor ke publik atau tautan langsung (*direct slug*) sebelum waktu terbit tiba.
+* Begitu waktu tayang tercapai, artikel otomatis tampil di portal publik tanpa perlu intervensi staf.
+
+### 3. 💾 Auto-Save Draft & Crash Recovery Naskah
+* Naskah di editor tersimpan otomatis ke browser (`localStorage`) setiap 15 detik.
+* Jika laptop mati mendadak, kuota habis, atau tab tertutup, sistem langsung menampilkan banner pemulihan: *"Ditemukan draf lokal belum tersimpan. Pulihkan tulisan Anda?"*.
+
+### 4. 🚧 Mode Pemeliharaan Publik (1-Click Maintenance Mode)
+* Sakelar cepat di panel admin untuk mengunci akses warga saat server sedang diperbarui.
+* Tampilan publik pemeliharaan bergaya *dark-ambient glassmorphism* dilengkapi hitungan estimasi waktu online kembali dan kontak WhatsApp darurat.
+* **Jalur Admin Tetap Terbuka**: Administrator tetap bebas login dan mengelola sistem seperti biasa.
+
+### 5. 👥 Granular Role-Based Access Control (RBAC)
+* Hak akses berjenjang:
+  * `SUPER_ADMIN`: Akses penuh konfigurasi sistem, database, audit log, dan tema.
+  * `ADMIN_OPD`: Manajemen layanan, dokumen publik, dan data sektoral.
+  * `EDITOR`: Penulisan, kurasi, dan publikasi artikel berita/galeri.
+  * `VERIFIKATOR`: Peninjauan dan validasi permohonan layanan publik.
+  * `WARGA`: Akses akun pemohon layanan dan pelacakan tiket permohonan.
+
+### 6. 🛡️ Audit Trail & Keamanan Menyeluruh
+* Log audit real-time mencatat setiap aksi login, pembuatan naskah, penghapusan data, dan manipulasi sistem lengkap dengan alamat IP dan User-Agent.
+
+### 7. ⚡ Performa Tinggi & SEO Suite
+* Otomasi kompresi gambar upload ke format modern **WebP**.
+* Dukungan penuh Schema.org (JSON-LD), Open Graph, Twitter Cards, dan generator Canonical URL otomatis.
+* Akselerasi cache memori **Redis** dengan fallback cerdas.
 
 ---
 
-## 📦 Panduan Instalasi Cepat
+## 🏗️ Arsitektur & Tech Stack
 
-### 1. Clone Repositori
+```
+djie-cms-pro/
+├── backend/                  # Node.js + Express REST API Server
+│   ├── src/
+│   │   ├── config/           # Database Sequelize, Redis, MinIO, Winston Logger
+│   │   ├── controllers/      # Logika Bisnis (CMS, Berita, RBAC, Layanan, Storage)
+│   │   ├── middlewares/      # JWT Auth, Rate Limiter, Security, Audit Log
+│   │   ├── models/           # Sequelize ORM Schema
+│   │   ├── routes/           # RESTful API Endpoints
+│   │   └── utils/            # Migrator, Seeder, dan Dummy Generator
+│   ├── .env.example
+│   └── package.json
+└── frontend/                 # React 18 + Vite SPA Single Page Application
+    ├── src/
+    │   ├── components/       # UI Komponen Reusable, Navbar, Sidebar, Editor
+    │   ├── context/          # Auth Context, Theme Context
+    │   ├── pages/            # Home, Katalog, Berita, Admin, Setup Wizard, Maintenance
+    │   └── services/         # Axios API Client Interceptor
+    ├── vite.config.js
+    └── tailwind.config.js
+```
+
+---
+
+## 🚀 Panduan Instalasi Cepat
+
+### Prasyarat Sistem
+* **Node.js**: Versi 18.x atau 20.x ke atas
+* **Database**: MySQL 8.0+ atau MariaDB 10.5+
+* **Redis** (Opsional, untuk akselerasi cache)
+* **MinIO / S3 Storage** (Opsional, untuk penyimpanan berkas dokumen awan)
+
+---
+
+### Langkah 1: Clone Repositori
 ```bash
 git clone https://github.com/masadjie/djie-cms-pro.git
 cd djie-cms-pro
 ```
 
-### 2. Konfigurasi Backend
+### Langkah 2: Konfigurasi & Jalankan Backend
 ```bash
 cd backend
 cp .env.example .env
-# Sesuaikan pengaturan database (DB_NAME, DB_USER, DB_PASS) pada file .env
-npm install
-npm run dev
 ```
+> Buka file `.env` dan sesuaikan kredensial database Anda (`DB_NAME`, `DB_USER`, `DB_PASS`). Buat database kosong terlebih dahulu di MySQL (misal: `CREATE DATABASE djie_cms_pro;`).
 
-### 3. Konfigurasi Frontend
+Lalu jalankan backend:
 ```bash
-cd ../frontend
 npm install
 npm run dev
 ```
 
-### 4. Buka Browser & Jalankan Setup Wizard
-Buka browser Anda di:
+### Langkah 3: Konfigurasi & Jalankan Frontend
+Buka terminal baru di folder proyek:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Langkah 4: Buka Setup Wizard di Browser
+Kunjungi alamat web lokal Anda:
 👉 **`http://localhost:5173`**
 
-Sistem otomatis mendeteksi bahwa CMS belum terinstall dan akan mengarahkan Anda ke:
+Sistem otomatis mendeteksi status instalasi dan mengarahkan Anda ke:
 👉 **`http://localhost:5173/install`**
 
-Ikuti 4 langkah mudah:
-1. Pengecekan spesifikasi server.
-2. Isi identitas instansi / organisasi Anda.
-3. Buat email dan password Super Admin pertama, serta tentukan apakah ingin memasang **Data Dummy / Sample Data**.
-4. Selesai! Anda langsung diarahkan ke Dashboard Admin untuk mulai mengelola portal.
+Ikuti 4 langkah pada antarmuka:
+1. **Pemeriksaan Sistem**: Memastikan server siap digunakan.
+2. **Identitas Portal**: Masukkan nama instansi/organisasi dan informasi kontak.
+3. **Akun Super Admin**: Tentukan email dan password admin utama Anda, serta pilih opsi data contoh (*dummy migration*).
+4. **Selesai**: Klik tombol luncurkan dan masuk ke Dashboard Administrator!
+
+---
+
+## 🤝 Berkontribusi
+
+Kontribusi dari seluruh pengembang sangat terbuka!
+1. Fork repositori ini
+2. Buat branch fitur baru (`git checkout -b feature/FiturKeren`)
+3. Commit perubahan Anda (`git commit -m 'Menambahkan fitur keren'`)
+4. Push ke branch (`git push origin feature/FiturKeren`)
+5. Buat **Pull Request** baru
 
 ---
 
 ## 📄 Lisensi
 
-Djie CMS Pro dirilis di bawah lisensi open source **[MIT License](LICENSE)**. Anda bebas menggunakan, memodifikasi, dan mendistribusikannya untuk kebutuhan instansi pemerintah, swasta, maupun komersial.
+Proyek ini dirilis di bawah lisensi resmi **[MIT License](LICENSE)**. Anda bebas menggunakan, memodifikasi, dan menyebarluaskannya untuk kepentingan instansi pemerintah, swasta, akademis, maupun komersial.
+
+<div align="center">
+  <p>Dibuat dengan dedikasi untuk akselerasi transformasi digital pelayanan publik Indonesia.</p>
+</div>
