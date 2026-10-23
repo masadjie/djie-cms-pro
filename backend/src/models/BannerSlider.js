@@ -24,7 +24,7 @@ function initBannerSliderModel(sequelize) {
       allowNull: true
     },
     tipe: {
-      type: DataTypes.ENUM('HERO_SLIDER', 'POPUP_ALERT', 'SIKEPO_BANNER', 'SIDEBAR_BANNER'),
+      type: DataTypes.ENUM('HERO_SLIDER', 'POPUP_ALERT', 'SIKEPO_BANNER', 'PROMO_BANNER', 'SIDEBAR_BANNER'),
       allowNull: false,
       defaultValue: 'HERO_SLIDER'
     },

@@ -181,19 +181,49 @@ async function seedDummyData() {
     if (bannerCount === 0) {
       await BannerSlider.bulkCreate([
         {
-          judul: 'Portal Layanan Publik Modern & Transparan',
-          subjudul: 'Akses cepat informasi resmi dan layanan terpadu dalam satu pintu',
-          gambar_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=85',
-          link_url: '/katalog',
+          judul: 'Portal Berita & Media Informasi Terpercaya',
+          subjudul: 'Menyajikan kabar terkini, liputan mendalam, dan analisis akurat',
+          gambar_url: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1920&q=85',
+          target_url: '/berita',
+          tipe: 'HERO_SLIDER',
           urutan: 1,
           is_active: true
         },
         {
-          judul: 'Transformasi Pelayanan Prima Berbasis Digital',
-          subjudul: 'Mudah, cepat, akuntabel, dan bebas pungutan liar',
+          judul: 'Ruang Kolaborasi & Komunitas Digital',
+          subjudul: 'Dapatkan wawasan seputar teknologi, bisnis, dan perkembangan industri',
           gambar_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=85',
-          link_url: '/berita',
+          target_url: '/katalog',
+          tipe: 'HERO_SLIDER',
           urutan: 2,
+          is_active: true
+        },
+        // Promo / Highlight Banners
+        {
+          judul: 'Pusat Informasi & Ekosistem Digital Terpadu',
+          subjudul: 'Akses cepat seluruh layanan, arsip dokumen, agenda kegiatan, dan portal mitra terpercaya.',
+          gambar_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85',
+          target_url: '/katalog',
+          tipe: 'SIKEPO_BANNER',
+          urutan: 1,
+          is_active: true
+        },
+        {
+          judul: 'Portal Publikasi & Media Partner',
+          subjudul: 'Kanal informasi terintegrasi dengan jaringan pers dan media partner terkemuka.',
+          gambar_url: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=85',
+          target_url: '/berita',
+          tipe: 'SIKEPO_BANNER',
+          urutan: 2,
+          is_active: true
+        },
+        {
+          judul: 'Layanan Pengaduan & Evaluasi Publik',
+          subjudul: 'Sampaikan aspirasi, kritik, dan saran untuk kemajuan kualitas portal bersama.',
+          gambar_url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=85',
+          target_url: '/page/profil-instansi',
+          tipe: 'SIKEPO_BANNER',
+          urutan: 3,
           is_active: true
         }
       ]);

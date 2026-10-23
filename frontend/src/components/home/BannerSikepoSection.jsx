@@ -77,6 +77,23 @@ export default function BannerSikepoSection() {
     refetchInterval: 120000
   });
 
+  // 4. Fetch Live Promo / Highlight Banners from CMS
+  const { data: bannersData } = useQuery({
+    queryKey: ['homePromoBanners'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/cms/banner');
+        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+        return list.filter(b => 
+          (b.tipe === 'PROMO_BANNER' || b.tipe === 'SIKEPO_BANNER') && 
+          (b.is_active === true || b.is_active === 1 || b.is_active === 'true')
+        ).sort((a, b) => (a.urutan || 1) - (b.urutan || 1));
+      } catch (err) {
+        return [];
+      }
+    }
+  });
+
   const settings = settingsData || {};
   const agendasList = Array.isArray(agendaData) ? agendaData : [];
   const upcomingAgenda = agendasList.length > 0 ? agendasList[0] : null;
@@ -96,59 +113,79 @@ export default function BannerSikepoSection() {
   const showAgendaWidget = settings.widget_agenda_active !== 'false' && settings.widget_agenda_active !== false;
   const showCustomWidget = settings.widget_custom_active === 'true';
 
+  // Section Header Settings (Dynamic from Widget & Web Settings)
+  const isSectionActive = settings.section_promo_active !== 'false' && settings.section_promo_active !== false;
+  const sectionTitle = settings.section_promo_title || 'Satu Pintu Layanan Digital Karir ASN';
+  const sectionDesc = settings.section_promo_desc || 'Integrasi terpadu SiKEPO Kabupaten Aceh Tamiang dengan ekosistem BKN RI untuk pelayanan kenaikan pangkat, e-Kinerja, dan mutasi tanpa hambatan.';
+
+  // If entire section is disabled by admin, don't render
+  if (!isSectionActive) {
+    return null;
+  }
+
+  // Get dynamic promo banners from database (fallback to default flagship if empty)
+  const promoBanners = Array.isArray(bannersData) ? bannersData : [];
+  const mainBanner = promoBanners[0] || null;
+  const secondaryBanners = promoBanners.slice(1, 3);
+
   return (
     <section className="w-full px-4 sm:px-6 lg:px-12 pt-14 sm:pt-20 pb-12 sm:pb-16 bg-[#f8faf9]/80 border-t border-slate-100/60">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
         
-        {/* Section Header */}
+        {/* Section Header (100% Dynamic from CMS Settings) */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
-            Satu Pintu Layanan Digital Karir ASN
+            {sectionTitle}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Integrasi terpadu SiKEPO Kabupaten Aceh Tamiang dengan ekosistem BKN RI untuk pelayanan kenaikan pangkat, e-Kinerja, dan mutasi tanpa hambatan.
-          </p>
+          {sectionDesc && (
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              {sectionDesc}
+            </p>
+          )}
         </div>
 
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
-          {/* LEFT 8 COLS: 3 Main Ecosystem Platforms (SiKEPO, ASN Digital, E-Kinerja) */}
+          {/* LEFT 8 COLS: 3 Main Ecosystem Platforms / Dynamic Promo Banners */}
           <div className="lg:col-span-8 flex flex-col gap-6">
             
-            {/* Top Large Hero Card: SiKEPO Flagship */}
+            {/* Top Large Hero Card: Dynamic from Banner Database (Fallback to SiKEPO default) */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-md transition-all relative overflow-hidden flex flex-col justify-between">
               
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 z-10">
                 <div className="space-y-4 max-w-xl">
-                  {/* Official Logo Banner */}
+                  {/* Banner / Organization Logo */}
                   <div className="flex items-center gap-3">
                     <img 
-                      src="/logo-sikepo.webp" 
-                      alt="SiKEPO Aceh Tamiang Logo" 
+                      src={mainBanner?.gambar_url || "/logo-sikepo.webp"} 
+                      alt={mainBanner?.judul || "Logo Banner"} 
                       width="180"
                       height="48"
-                      className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs"
+                      className="h-10 sm:h-12 w-auto max-w-[200px] object-contain drop-shadow-xs"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/logo-sikepo.webp";
+                      }}
                     />
                   </div>
 
                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 leading-tight">
-                    SiKEPO (Sistem Kepegawaian Online)
+                    {mainBanner?.judul || 'SiKEPO (Sistem Kepegawaian Online)'}
                   </h3>
 
                   <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                    Sistem resmi pengelolaan administrasi ASN Pemkab Aceh Tamiang. Akses pengusulan Kenaikan Pangkat, Izin Belajar, E-Cuti, dan SK Pensiun secara mandiri.
+                    {mainBanner?.subjudul || 'Sistem resmi pengelolaan administrasi ASN Pemkab Aceh Tamiang. Akses pengusulan Kenaikan Pangkat, Izin Belajar, E-Cuti, dan SK Pensiun secara mandiri.'}
                   </p>
 
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <a
-                      href="https://sikepo.acehtamiangkab.go.id"
-                      target="_blank"
+                      href={mainBanner?.target_url || "https://sikepo.acehtamiangkab.go.id"}
+                      target={mainBanner?.target_url?.startsWith('http') ? "_blank" : "_self"}
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white font-black rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-emerald-900/20 transition-all group"
                     >
-                      <span>Buka SiKEPO Online</span>
+                      <span>{mainBanner ? 'Kunjungi Layanan' : 'Buka SiKEPO Online'}</span>
                       <ArrowUpRight className="w-4 h-4 text-amber-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </a>
 
@@ -165,12 +202,15 @@ export default function BannerSikepoSection() {
                 {/* Prominent Logo Badge for desktop/tablet */}
                 <div className="hidden sm:flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 border border-slate-100/90 shadow-2xs shrink-0 self-center">
                   <img 
-                    src="/logo-sikepo.webp" 
-                    alt="Logo SiKEPO" 
+                    src={mainBanner?.gambar_url || "/logo-sikepo.webp"} 
+                    alt="Logo Banner Utama" 
                     width="208"
                     height="64"
                     loading="lazy"
-                    className="w-44 sm:w-52 h-auto object-contain hover:scale-105 transition-transform"
+                    className="w-44 sm:w-52 h-auto max-h-24 object-contain hover:scale-105 transition-transform"
+                    onError={(e) => {
+                      e.currentTarget.src = "/logo-sikepo.webp";
+                    }}
                   />
                   <span className="text-[10px] font-bold text-slate-400 mt-2">Versi Resmi 2.0</span>
                 </div>
@@ -180,7 +220,7 @@ export default function BannerSikepoSection() {
               <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Domain Resmi: <strong className="text-slate-800 font-bold">sikepo.acehtamiangkab.go.id</strong></span>
+                  <span>Domain / Akses: <strong className="text-slate-800 font-bold">{mainBanner?.target_url || 'sikepo.acehtamiangkab.go.id'}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full text-[11px]">
@@ -191,106 +231,208 @@ export default function BannerSikepoSection() {
 
             </div>
 
-            {/* Bottom 2 Split Cards: ASN Digital & E-Kinerja */}
+            {/* Bottom 2 Split Cards: Dynamic Secondary Banners (Fallback to ASN Digital & E-Kinerja) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               
-              {/* Card 2: ASN Digital BKN */}
-              <a
-                href="https://asndigital.bkn.go.id"
-                target="_blank"
-                rel="noreferrer"
-                className="group bg-white hover:bg-slate-50/80 rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-full h-24 bg-gradient-to-br from-blue-50 to-indigo-50/60 rounded-2xl p-3 border border-blue-100/80 flex items-center justify-between mb-4 relative overflow-hidden group-hover:scale-[1.01] transition-transform">
-                    <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm border border-slate-100 flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center p-1 shrink-0">
-                        <img 
-                          src="/logo-bkn.png" 
-                          alt="Logo BKN" 
-                          className="w-full h-full object-contain filter drop-shadow-2xs" 
-                        />
+              {/* Card 2: Dynamic / Fallback ASN Digital */}
+              {secondaryBanners[0] ? (
+                <a
+                  href={secondaryBanners[0].target_url || '#'}
+                  target={secondaryBanners[0].target_url?.startsWith('http') ? '_blank' : '_self'}
+                  rel="noreferrer"
+                  className="group bg-white hover:bg-slate-50/80 rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="w-full h-24 bg-gradient-to-br from-blue-50 to-indigo-50/60 rounded-2xl p-3 border border-blue-100/80 flex items-center justify-between mb-4 relative overflow-hidden group-hover:scale-[1.01] transition-transform">
+                      <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm border border-slate-100 flex items-center gap-2.5 max-w-[80%]">
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                          <img 
+                            src={secondaryBanners[0].gambar_url || "/logo-bkn.png"} 
+                            alt={secondaryBanners[0].judul} 
+                            className="w-full h-full object-contain filter drop-shadow-2xs" 
+                            onError={(e) => { e.currentTarget.src = "/logo-bkn.png"; }}
+                          />
+                        </div>
+                        <div className="text-left truncate">
+                          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">Layanan Prioritas</span>
+                          <span className="text-xs font-black text-slate-800 leading-tight truncate block">{secondaryBanners[0].judul}</span>
+                        </div>
                       </div>
-                      <div className="text-left">
-                        <span className="text-[10px] text-slate-400 block font-semibold leading-tight">Satu Data ASN</span>
-                        <span className="text-xs font-black text-slate-800 leading-tight">MyASN Terpadu</span>
+                      <div className="p-2 rounded-xl bg-blue-600 text-white shadow-sm shrink-0">
+                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-blue-600 text-white shadow-sm">
-                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider bg-blue-50 px-2 py-0.5 rounded-md">
+                          Sorotan
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                      </div>
+                      <h4 className="text-base font-black text-slate-900 pt-1 group-hover:text-blue-700 transition-colors line-clamp-1">
+                        {secondaryBanners[0].judul}
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                        {secondaryBanners[0].subjudul || 'Kunjungi tautan resmi layanan informasi dan portal terpadu.'}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider bg-blue-50 px-2 py-0.5 rounded-md">
-                        BKN Pusat
-                      </span>
-                      <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
-                    </div>
-                    <h4 className="text-base font-black text-slate-900 pt-1 group-hover:text-blue-700 transition-colors">
-                      ASN Digital (BKN)
-                    </h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Layanan terintegrasi data kepegawaian nasional untuk pemutakhiran profil, riwayat pangkat, dan SK digital.
-                    </p>
+                  <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-700">
+                    <span className="truncate max-w-[220px]">Buka Tautan</span>
+                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
-                </div>
-
-                <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-700">
-                  <span>Akses asndigital.bkn.go.id</span>
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </a>
-
-              {/* Card 3: E-Kinerja BKN dan SKP */}
-              <a
-                href="https://kinerja.bkn.go.id/login"
-                target="_blank"
-                rel="noreferrer"
-                className="group bg-white hover:bg-slate-50/80 rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-full h-24 bg-gradient-to-br from-emerald-50 to-teal-50/60 rounded-2xl p-3 border border-emerald-100/80 flex items-center justify-between mb-4 relative overflow-hidden group-hover:scale-[1.01] transition-transform">
-                    <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm border border-slate-100 flex items-center gap-2.5">
-                      <div className="h-8 max-w-[90px] rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center px-1.5 shrink-0">
-                        <img 
-                          src="/logo-ekinerja.png" 
-                          alt="Logo e-Kinerja BKN" 
-                          className="h-6 w-auto object-contain filter drop-shadow-2xs" 
-                        />
+                </a>
+              ) : (
+                <a
+                  href="https://asndigital.bkn.go.id"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group bg-white hover:bg-slate-50/80 rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="w-full h-24 bg-gradient-to-br from-blue-50 to-indigo-50/60 rounded-2xl p-3 border border-blue-100/80 flex items-center justify-between mb-4 relative overflow-hidden group-hover:scale-[1.01] transition-transform">
+                      <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm border border-slate-100 flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center p-1 shrink-0">
+                          <img 
+                            src="/logo-bkn.png" 
+                            alt="Logo BKN" 
+                            className="w-full h-full object-contain filter drop-shadow-2xs" 
+                          />
+                        </div>
+                        <div className="text-left">
+                          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">Satu Data ASN</span>
+                          <span className="text-xs font-black text-slate-800 leading-tight">MyASN Terpadu</span>
+                        </div>
                       </div>
-                      <div className="text-left">
-                        <span className="text-[10px] text-slate-400 block font-semibold leading-tight">SKP Real-Time</span>
-                        <span className="text-xs font-black text-slate-800 leading-tight">Evaluasi Periodik</span>
+                      <div className="p-2 rounded-xl bg-blue-600 text-white shadow-sm">
+                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-emerald-700 text-white shadow-sm">
-                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider bg-blue-50 px-2 py-0.5 rounded-md">
+                          BKN Pusat
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                      </div>
+                      <h4 className="text-base font-black text-slate-900 pt-1 group-hover:text-blue-700 transition-colors">
+                        ASN Digital (BKN)
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        Layanan terintegrasi data kepegawaian nasional untuk pemutakhiran profil, riwayat pangkat, dan SK digital.
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-md">
-                        Penilaian SKP
-                      </span>
-                      <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
-                    </div>
-                    <h4 className="text-base font-black text-slate-900 pt-1 group-hover:text-emerald-700 transition-colors">
-                      E-Kinerja BKN & SKP
-                    </h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Portal penyusunan Sasaran Kinerja Pegawai (SKP), ekspektasi pimpinan, dan pelaporan kinerja ASN berkala.
-                    </p>
+                  <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-700">
+                    <span>Akses asndigital.bkn.go.id</span>
+                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
-                </div>
+                </a>
+              )}
 
-                <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
-                  <span>Akses kinerja.bkn.go.id</span>
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </a>
+              {/* Card 3: Dynamic / Fallback E-Kinerja */}
+              {secondaryBanners[1] ? (
+                <a
+                  href={secondaryBanners[1].target_url || '#'}
+                  target={secondaryBanners[1].target_url?.startsWith('http') ? '_blank' : '_self'}
+                  rel="noreferrer"
+                  className="group bg-white hover:bg-slate-50/80 rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="w-full h-24 bg-gradient-to-br from-emerald-50 to-teal-50/60 rounded-2xl p-3 border border-emerald-100/80 flex items-center justify-between mb-4 relative overflow-hidden group-hover:scale-[1.01] transition-transform">
+                      <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm border border-slate-100 flex items-center gap-2.5 max-w-[80%]">
+                        <div className="h-8 max-w-[90px] rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center px-1.5 shrink-0 overflow-hidden">
+                          <img 
+                            src={secondaryBanners[1].gambar_url || "/logo-ekinerja.png"} 
+                            alt={secondaryBanners[1].judul} 
+                            className="h-6 w-auto object-contain filter drop-shadow-2xs" 
+                            onError={(e) => { e.currentTarget.src = "/logo-ekinerja.png"; }}
+                          />
+                        </div>
+                        <div className="text-left truncate">
+                          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">Layanan Mitra</span>
+                          <span className="text-xs font-black text-slate-800 leading-tight truncate block">{secondaryBanners[1].judul}</span>
+                        </div>
+                      </div>
+                      <div className="p-2 rounded-xl bg-emerald-700 text-white shadow-sm shrink-0">
+                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-md">
+                          Portal Terkait
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                      </div>
+                      <h4 className="text-base font-black text-slate-900 pt-1 group-hover:text-emerald-700 transition-colors line-clamp-1">
+                        {secondaryBanners[1].judul}
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                        {secondaryBanners[1].subjudul || 'Kunjungi tautan resmi layanan informasi dan portal terpadu.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+                    <span className="truncate max-w-[220px]">Buka Tautan</span>
+                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </div>
+                </a>
+              ) : (
+                <a
+                  href="https://kinerja.bkn.go.id/login"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group bg-white hover:bg-slate-50/80 rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="w-full h-24 bg-gradient-to-br from-emerald-50 to-teal-50/60 rounded-2xl p-3 border border-emerald-100/80 flex items-center justify-between mb-4 relative overflow-hidden group-hover:scale-[1.01] transition-transform">
+                      <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm border border-slate-100 flex items-center gap-2.5">
+                        <div className="h-8 max-w-[90px] rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center px-1.5 shrink-0">
+                          <img 
+                            src="/logo-ekinerja.png" 
+                            alt="Logo e-Kinerja BKN" 
+                            className="h-6 w-auto object-contain filter drop-shadow-2xs" 
+                          />
+                        </div>
+                        <div className="text-left">
+                          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">SKP Real-Time</span>
+                          <span className="text-xs font-black text-slate-800 leading-tight">Evaluasi Periodik</span>
+                        </div>
+                      </div>
+                      <div className="p-2 rounded-xl bg-emerald-700 text-white shadow-sm">
+                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-md">
+                          Penilaian SKP
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                      </div>
+                      <h4 className="text-base font-black text-slate-900 pt-1 group-hover:text-emerald-700 transition-colors">
+                        E-Kinerja BKN & SKP
+                      </h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        Portal penyusunan Sasaran Kinerja Pegawai (SKP), ekspektasi pimpinan, dan pelaporan kinerja ASN berkala.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+                    <span>Akses kinerja.bkn.go.id</span>
+                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </a>
+              )}
 
             </div>
 

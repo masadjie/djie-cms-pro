@@ -44,6 +44,11 @@ export default function WidgetManagerTab() {
     widget_agenda_active: 'true',
     widget_agenda_title: 'Agenda & Kegiatan Kedinasan',
 
+    // Section Header Sorotan (Banner & Layanan Digital)
+    section_promo_title: 'Satu Pintu Layanan Digital Karir ASN',
+    section_promo_desc: 'Integrasi terpadu SiKEPO Kabupaten Aceh Tamiang dengan ekosistem BKN RI untuk pelayanan kenaikan pangkat, e-Kinerja, dan mutasi tanpa hambatan.',
+    section_promo_active: 'true',
+
     // Widget 4: Quick Contact & Call Center
     widget_contact_active: 'true',
     widget_contact_title: 'Helpdesk & Konsultasi ASN',
@@ -342,6 +347,61 @@ export default function WidgetManagerTab() {
                 />
               </div>
             </div>
+          </div>
+
+          {/* 5. PENGATURAN HEADER SECTION SOROTAN / PROMO BERANDA */}
+          <div className="p-5 rounded-2xl border border-slate-200 bg-white space-y-4 shadow-xs hover:border-emerald-500/50 transition-all md:col-span-2">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                  <Layout className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900">Header Section Promo & Layanan Unggulan (Beranda)</h3>
+                  <p className="text-[11px] text-slate-500">Sesuaikan judul dan deskripsi yang tampil di atas kartu banner promo/layanan beranda</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => toggleField('section_promo_active')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  form.section_promo_active !== 'false'
+                    ? 'bg-emerald-800 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
+              >
+                {form.section_promo_active !== 'false' ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                <span>{form.section_promo_active !== 'false' ? 'Section Tampil' : 'Section Disembunyikan'}</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Judul Utama Section</label>
+                <input
+                  type="text"
+                  value={form.section_promo_title || ''}
+                  onChange={(e) => setForm({ ...form, section_promo_title: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  placeholder="Misal: Satu Pintu Layanan Digital Karir ASN / Layanan & Publikasi Unggulan"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Deskripsi / Sub-judul Section</label>
+                <input
+                  type="text"
+                  value={form.section_promo_desc || ''}
+                  onChange={(e) => setForm({ ...form, section_promo_desc: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  placeholder="Penjelasan ringkas seputar layanan terintegrasi..."
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-400 italic">
+              *Catatan: Kartu banner di dalam section ini dapat ditambah, diedit gambarnya, diubah judulnya, dan diganti tautan link-nya di tab <strong>Manajemen Banner</strong> (Pilih filter tipe <strong>Promo / Layanan</strong>).
+            </p>
           </div>
 
         </div>

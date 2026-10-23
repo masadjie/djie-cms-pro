@@ -26,7 +26,7 @@ import { compressImageToWebP } from '../../utils/imageCompressor';
 const BANNER_TYPES = [
   { id: 'HERO_SLIDER', label: 'Hero Slider Utama', desc: 'Tampil sebagai background slide dan headline di beranda depan' },
   { id: 'POPUP_ALERT', label: 'Alert / Pengumuman Prioritas', desc: 'Tampil sebagai banner notifikasi highlight di atas headline portal' },
-  { id: 'SIKEPO_BANNER', label: 'Promo SiKEPO', desc: 'Banner integrasi layanan kepegawaian SiKEPO digital' },
+  { id: 'PROMO_BANNER', label: 'Banner Promo / Layanan Unggulan', desc: 'Kartu interaktif di section sorotan beranda depan (bisa disesuaikan teks, logo & link)' },
   { id: 'SIDEBAR_BANNER', label: 'Sidebar / Widget Banner', desc: 'Banner pendukung di sidebar berita atau halaman informasi' }
 ];
 
@@ -241,7 +241,7 @@ export default function BannerManagerTab() {
           { id: 'ALL', label: `Semua Banner (${bannerItems.length})` },
           { id: 'HERO_SLIDER', label: `Hero Slider (${bannerItems.filter(b => b.tipe === 'HERO_SLIDER').length})` },
           { id: 'POPUP_ALERT', label: `Alert Prioritas (${bannerItems.filter(b => b.tipe === 'POPUP_ALERT').length})` },
-          { id: 'SIKEPO_BANNER', label: `Promo SiKEPO (${bannerItems.filter(b => b.tipe === 'SIKEPO_BANNER').length})` },
+          { id: 'PROMO_BANNER', label: `Promo / Layanan (${bannerItems.filter(b => b.tipe === 'PROMO_BANNER' || b.tipe === 'SIKEPO_BANNER').length})` },
           { id: 'SIDEBAR_BANNER', label: `Sidebar (${bannerItems.filter(b => b.tipe === 'SIDEBAR_BANNER').length})` }
         ].map((tab) => (
           <button

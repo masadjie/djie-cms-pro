@@ -139,7 +139,7 @@ CREATE TABLE `banner_slider` (
   `subjudul` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `gambar_url` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `target_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tipe` enum('HERO_SLIDER','POPUP_ALERT','SIKEPO_BANNER','SIDEBAR_BANNER') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'HERO_SLIDER',
+  `tipe` enum('HERO_SLIDER','POPUP_ALERT','SIKEPO_BANNER','PROMO_BANNER','SIDEBAR_BANNER') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'HERO_SLIDER',
   `urutan` int DEFAULT '1',
   `is_active` tinyint(1) DEFAULT '1',
   `created_at` datetime NOT NULL,
