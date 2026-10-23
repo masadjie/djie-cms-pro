@@ -8,7 +8,8 @@
   </p>
 
   <p align="center">
-    <strong>Bahasa Indonesia</strong> | <strong><a href="README_EN.md">English</a></strong>
+    <a href="README.md"><img src="https://img.shields.io/badge/Language-Bahasa%20Indonesia-10b981?style=for-the-badge&logo=google-translate&logoColor=white" alt="Bahasa Indonesia" /></a>
+    <a href="README_EN.md"><img src="https://img.shields.io/badge/Language-English-3b82f6?style=for-the-badge&logo=google-translate&logoColor=white" alt="English Documentation" /></a>
   </p>
 
   <p align="center">
