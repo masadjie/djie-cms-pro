@@ -156,34 +156,42 @@ export default function InstallWizard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fcfcff] text-slate-800 flex flex-col justify-between p-4 md:p-8 font-sans selection:bg-violet-600 selection:text-white">
-      {/* Subtle Editorial Background Accent */}
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col justify-between p-4 md:p-8 font-sans selection:bg-blue-600 selection:text-white">
+      {/* Brand Royal Blue Background Soft Accents */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-violet-100/60 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -left-32 w-80 h-80 bg-indigo-50/70 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 right-1/4 w-96 h-96 bg-purple-50/60 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -left-32 w-80 h-80 bg-sky-100/50 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 right-1/4 w-96 h-96 bg-blue-50/70 rounded-full blur-3xl" />
       </div>
 
       {/* Header Bar */}
       <header className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between pb-6 border-b border-slate-200">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 font-black text-xl">
-            D
+          <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center p-1.5 overflow-hidden">
+            <img 
+              src="/logo-djie-cms-pro-square.png" 
+              alt="Djie CMS Pro" 
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<span class="text-white font-black text-xl bg-blue-600 w-full h-full rounded-xl flex items-center justify-center">D</span>';
+              }}
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-bold text-lg text-slate-900 tracking-tight">Djie CMS Pro</h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                 Setup Wizard
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">Instalasi & Konfigurasi Ekosistem Web Editorial</p>
+            <p className="text-xs text-slate-500 font-medium">Instalasi & Konfigurasi Ekosistem Web Publishing</p>
           </div>
         </div>
 
         <Link 
           to="/" 
-          className="text-xs font-semibold text-slate-600 hover:text-violet-700 flex items-center gap-1.5 transition-colors bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs"
+          className="text-xs font-semibold text-slate-600 hover:text-blue-700 flex items-center gap-1.5 transition-colors bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs"
         >
           <span>Buka Beranda</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -204,24 +212,24 @@ export default function InstallWizard() {
                     key={s.num}
                     className={`relative p-3 rounded-2xl border transition-all duration-200 ${
                       isActive 
-                        ? 'bg-white border-violet-500 text-slate-900 shadow-sm ring-2 ring-violet-500/10' 
+                        ? 'bg-white border-blue-600 text-slate-900 shadow-sm ring-2 ring-blue-500/10' 
                         : isPassed 
-                        ? 'bg-violet-50/70 border-violet-200 text-violet-900' 
+                        ? 'bg-blue-50/70 border-blue-200 text-blue-900' 
                         : 'bg-white/60 border-slate-200 text-slate-400'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold transition-colors ${
                         isActive 
-                          ? 'bg-violet-600 text-white shadow-xs' 
+                          ? 'bg-blue-600 text-white shadow-xs' 
                           : isPassed 
-                          ? 'bg-violet-200 text-violet-800' 
+                          ? 'bg-blue-100 text-blue-700' 
                           : 'bg-slate-100 text-slate-400'
                       }`}>
                         {isPassed ? <Check className="w-4 h-4 stroke-[3]" /> : s.num}
                       </div>
                       <div className="overflow-hidden">
-                        <p className={`text-xs font-bold truncate leading-tight ${isActive ? 'text-violet-950' : ''}`}>
+                        <p className={`text-xs font-bold truncate leading-tight ${isActive ? 'text-blue-950' : ''}`}>
                           {s.title}
                         </p>
                         <p className="text-[10px] text-slate-500 truncate mt-0.5">{s.desc}</p>
@@ -265,7 +273,7 @@ export default function InstallWizard() {
                 {installStatus?.config?.installed_at && (
                   <div className="flex justify-between items-center text-slate-700">
                     <span className="text-slate-500">Waktu Inisialisasi:</span>
-                    <span className="font-mono text-violet-700 font-medium">
+                    <span className="font-mono text-blue-700 font-medium">
                       {new Date(installStatus.config.installed_at).toLocaleString('id-ID')}
                     </span>
                   </div>
@@ -275,7 +283,7 @@ export default function InstallWizard() {
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
                   to="/admin/login"
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <KeyRound className="w-4 h-4" />
                   <span>Masuk ke Panel Administrator</span>
@@ -305,19 +313,19 @@ export default function InstallWizard() {
               {currentStep === 1 && (
                 <div className="space-y-6">
                   <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
                       <Database className="w-3.5 h-3.5" />
                       Koneksi Basis Data Terdeteksi
                     </div>
                     <h2 className="text-2xl font-black text-slate-900 tracking-tight">Kesiapan Lingkungan & Sistem</h2>
                     <p className="text-sm text-slate-600 mt-1">
-                      Koneksi basis data MySQL telah terhubung secara otomatis via environment runtime. Sistem siap diinisialisasi tanpa perlu input host DB manual.
+                      Koneksi basis data MySQL telah terhubung secara otomatis via environment runtime. Sistem siap diinisialisasi tanpa konfigurasi manual.
                     </p>
                   </div>
 
                   {loadingStatus ? (
                     <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-500">
-                      <RefreshCw className="w-8 h-8 animate-spin text-violet-600" />
+                      <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
                       <p className="text-xs font-medium">Memeriksa kesiapan engine dan tabel basis data...</p>
                     </div>
                   ) : (
@@ -325,7 +333,7 @@ export default function InstallWizard() {
                       <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
-                            <div className="p-2 rounded-xl bg-violet-100 text-violet-700">
+                            <div className="p-2 rounded-xl bg-blue-100 text-blue-700">
                               <Server className="w-4 h-4" />
                             </div>
                             <div>
@@ -346,7 +354,7 @@ export default function InstallWizard() {
                       <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
-                            <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
+                            <div className="p-2 rounded-xl bg-sky-100 text-sky-700">
                               <Laptop2 className="w-4 h-4" />
                             </div>
                             <div>
@@ -369,7 +377,7 @@ export default function InstallWizard() {
                       <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
-                            <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
+                            <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
                               <ShieldCheck className="w-4 h-4" />
                             </div>
                             <div>
@@ -438,7 +446,7 @@ export default function InstallWizard() {
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
                       <Building2 className="w-3.5 h-3.5" />
                       Langkah 2: Profil & Tema Visual
                     </div>
@@ -451,7 +459,7 @@ export default function InstallWizard() {
                   {/* THEME SELECTION CARD (HIGHLIGHTED) */}
                   <div className="space-y-2">
                     <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      Pilih Gaya Tampilan (Theme Layout) <span className="text-violet-600 font-normal lowercase">(dapat diubah nanti di admin)</span>
+                      Pilih Gaya Tampilan (Theme Layout) <span className="text-blue-600 font-normal lowercase">(dapat diubah nanti di admin)</span>
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Editorial News Theme */}
@@ -460,33 +468,33 @@ export default function InstallWizard() {
                         onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'editorial', home_layout_mode: 'EDITORIAL' }))}
                         className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
                           formData.selected_theme === 'editorial'
-                            ? 'border-violet-600 bg-violet-50/50 shadow-md ring-2 ring-violet-500/20'
+                            ? 'border-blue-600 bg-blue-50/50 shadow-md ring-2 ring-blue-500/20'
                             : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
                         }`}
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow-xs">
+                            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
                               <Newspaper className="w-5 h-5" />
                             </div>
                             <div>
                               <p className="text-sm font-black text-slate-900">Revision Editorial</p>
-                              <p className="text-[11px] font-bold text-violet-700">Portal Berita & Majalah Digital</p>
+                              <p className="text-[11px] font-bold text-blue-700">Portal Berita & Majalah Digital</p>
                             </div>
                           </div>
                           {formData.selected_theme === 'editorial' && (
-                            <span className="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs shadow-xs">
+                            <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-xs">
                               <Check className="w-4 h-4 stroke-[3]" />
                             </span>
                           )}
                         </div>
                         <p className="text-xs text-slate-600 leading-relaxed">
-                          Layout 2-kolom editorial modern, trending topics pills, sidebar redaksi bergradasi ungu lembut, dan box newsletter interaktif. Sangat cocok untuk publikasi berita intensif.
+                          Layout 2-kolom editorial modern, trending topics pills, sidebar redaksi elegan, dan box newsletter interaktif. Sangat cocok untuk publikasi berita intensif.
                         </p>
-                        <div className="mt-3.5 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[10px] font-bold text-violet-800">
+                        <div className="mt-3.5 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[10px] font-bold text-blue-800">
                           <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">2-Column Layout</span>
                           <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Trending Bar</span>
-                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Soft Violet Accent</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Blue Accent</span>
                         </div>
                       </button>
 
@@ -542,7 +550,7 @@ export default function InstallWizard() {
                             value={formData.site_name}
                             onChange={handleChange}
                             placeholder="Contoh: Djie CMS Pro Editorial"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                             required
                           />
                         </div>
@@ -560,7 +568,7 @@ export default function InstallWizard() {
                             value={formData.instansi_name}
                             onChange={handleChange}
                             placeholder="Contoh: Media Redaksi Nusantara"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                             required
                           />
                         </div>
@@ -577,7 +585,7 @@ export default function InstallWizard() {
                         value={formData.site_tagline}
                         onChange={handleChange}
                         placeholder="Contoh: Berita Terkini & Analisis Mendalam Terpercaya"
-                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                       />
                     </div>
 
@@ -591,7 +599,7 @@ export default function InstallWizard() {
                         value={formData.site_description}
                         onChange={handleChange}
                         placeholder="Deskripsi singkat untuk meta tag Google & pengantar landing page..."
-                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                       />
                     </div>
 
@@ -608,7 +616,7 @@ export default function InstallWizard() {
                             value={formData.email_kontak}
                             onChange={handleChange}
                             placeholder="redaksi@example.com"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                           />
                         </div>
                       </div>
@@ -625,7 +633,7 @@ export default function InstallWizard() {
                             value={formData.telepon_kontak}
                             onChange={handleChange}
                             placeholder="(021) 555-0199"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                           />
                         </div>
                       </div>
@@ -643,7 +651,7 @@ export default function InstallWizard() {
                           value={formData.alamat_kantor}
                           onChange={handleChange}
                           placeholder="Gedung Cyber Media Lt. 3, Jakarta"
-                          className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                          className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                         />
                       </div>
                     </div>
@@ -655,7 +663,7 @@ export default function InstallWizard() {
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Langkah 3: Akun Super Admin & Data Awal
                     </div>
@@ -679,7 +687,7 @@ export default function InstallWizard() {
                             value={formData.admin_name}
                             onChange={handleChange}
                             placeholder="Super Administrator"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                             required
                           />
                         </div>
@@ -697,7 +705,7 @@ export default function InstallWizard() {
                             value={formData.admin_email}
                             onChange={handleChange}
                             placeholder="admin@example.com"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                             required
                           />
                         </div>
@@ -717,7 +725,7 @@ export default function InstallWizard() {
                             value={formData.admin_password}
                             onChange={handleChange}
                             placeholder="Minimal 6 karakter"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                           />
                         </div>
                       </div>
@@ -734,32 +742,32 @@ export default function InstallWizard() {
                             value={formData.admin_password_confirm}
                             onChange={handleChange}
                             placeholder="Ketik ulang kata sandi"
-                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 shadow-xs"
                           />
                         </div>
                       </div>
                     </div>
 
                     <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-start gap-2.5">
-                      <ShieldCheck className="w-4 h-4 text-violet-600 flex-shrink-0 mt-0.5" />
+                      <ShieldCheck className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                       <span>
-                        Bila kata sandi dikosongkan pada inisialisasi awal, sistem akan menyetel kata sandi default (<code className="text-violet-700 font-mono font-semibold">admin123</code>) yang dapat langsung diubah di profil admin.
+                        Bila kata sandi dikosongkan pada inisialisasi awal, sistem akan menyetel kata sandi default (<code className="text-blue-700 font-mono font-semibold">admin123</code>) yang dapat langsung diubah di profil admin.
                       </span>
                     </div>
 
                     {/* DUMMY MIGRATION DATA CARD (LOREM IPSUM) */}
                     <div className="pt-2">
-                      <label className="flex items-start gap-3.5 p-4 rounded-2xl bg-violet-50/60 border border-violet-200 hover:border-violet-300 cursor-pointer transition-all shadow-xs">
+                      <label className="flex items-start gap-3.5 p-4 rounded-2xl bg-blue-50/60 border border-blue-200 hover:border-blue-300 cursor-pointer transition-all shadow-xs">
                         <input
                           type="checkbox"
                           name="install_dummy_data"
                           checked={formData.install_dummy_data}
                           onChange={(e) => setFormData(prev => ({ ...prev, install_dummy_data: e.target.checked }))}
-                          className="w-4 h-4 mt-0.5 rounded text-violet-600 focus:ring-violet-500 bg-white border-slate-300"
+                          className="w-4 h-4 mt-0.5 rounded text-blue-600 focus:ring-blue-500 bg-white border-slate-300"
                         />
                         <div className="space-y-1">
-                          <p className="text-xs font-bold text-violet-950 flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+                          <p className="text-xs font-bold text-blue-950 flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                             <span>Pasang Data Contoh Berita Standar (Lorem Ipsum Migration)</span>
                           </p>
                           <p className="text-[11px] text-slate-600 leading-relaxed">
@@ -776,7 +784,7 @@ export default function InstallWizard() {
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
                       <Sparkles className="w-3.5 h-3.5" />
                       Langkah 4: Konfirmasi Konfigurasi
                     </div>
@@ -798,7 +806,7 @@ export default function InstallWizard() {
                       </div>
                       <div className="py-3 flex justify-between items-center">
                         <span className="text-slate-500 font-medium">Gaya Tema Terpilih:</span>
-                        <span className="font-bold text-violet-700">
+                        <span className="font-bold text-blue-700">
                           {formData.selected_theme === 'editorial' ? '📰 Revision Editorial Magazine' : '🏛️ Portal Layanan & Berita Terpadu'}
                         </span>
                       </div>
@@ -808,7 +816,7 @@ export default function InstallWizard() {
                       </div>
                       <div className="py-3 flex justify-between items-center">
                         <span className="text-slate-500 font-medium">Super Admin Login:</span>
-                        <span className="text-violet-700 font-mono font-bold">{formData.admin_email}</span>
+                        <span className="text-blue-700 font-mono font-bold">{formData.admin_email}</span>
                       </div>
                       <div className="py-3 flex justify-between items-center">
                         <span className="text-slate-500 font-medium">Kata Sandi:</span>
@@ -822,14 +830,14 @@ export default function InstallWizard() {
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 text-violet-900 text-xs space-y-1.5">
+                    <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs space-y-1.5">
                       <p className="font-bold flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-violet-700" /> Eksekusi Otomasi Inisialisasi:
+                        <CheckCircle2 className="w-4 h-4 text-blue-700" /> Eksekusi Otomasi Inisialisasi:
                       </p>
                       <ul className="list-disc list-inside space-y-1 text-slate-700 pl-1 pt-0.5">
                         <li>Menyimpan konfigurasi parameter situs dan tema aktif ke basis data</li>
                         <li>Membuat akun kredensial Super Admin dengan hak akses RBAC penuh</li>
-                        <li>Mengaktifkan proteksi <code className="text-violet-800 font-semibold font-mono">cms_is_installed: true</code></li>
+                        <li>Mengaktifkan proteksi <code className="text-blue-800 font-semibold font-mono">cms_is_installed: true</code></li>
                       </ul>
                     </div>
                   </div>
@@ -839,7 +847,7 @@ export default function InstallWizard() {
               {/* STEP 5: Sukses & Selesai */}
               {currentStep === 5 && (
                 <div className="text-center py-6 space-y-6">
-                  <div className="w-16 h-16 rounded-3xl bg-violet-600 text-white flex items-center justify-center mx-auto shadow-md shadow-violet-500/30">
+                  <div className="w-16 h-16 rounded-3xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-md shadow-blue-500/30">
                     <Check className="w-9 h-9 stroke-[3]" />
                   </div>
 
@@ -854,11 +862,11 @@ export default function InstallWizard() {
                     <p className="font-bold text-slate-900">Kredensial Login Administrator:</p>
                     <div className="flex justify-between items-center text-slate-700">
                       <span>URL Admin Panel:</span>
-                      <span className="font-mono text-violet-700 font-semibold">/admin/login</span>
+                      <span className="font-mono text-blue-700 font-semibold">/admin/login</span>
                     </div>
                     <div className="flex justify-between items-center text-slate-700">
                       <span>Email Admin:</span>
-                      <span className="font-mono text-violet-700 font-semibold">{formData.admin_email}</span>
+                      <span className="font-mono text-blue-700 font-semibold">{formData.admin_email}</span>
                     </div>
                     <div className="flex justify-between items-center text-slate-700">
                       <span>Kata Sandi:</span>
@@ -871,7 +879,7 @@ export default function InstallWizard() {
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                     <Link
                       to="/admin/login"
-                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-violet-600 text-white font-bold text-sm shadow-sm hover:bg-violet-700 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-sm hover:bg-blue-700 flex items-center justify-center gap-2 transition-all cursor-pointer"
                     >
                       <Lock className="w-4 h-4" />
                       <span>Masuk ke Panel Admin</span>
@@ -909,7 +917,7 @@ export default function InstallWizard() {
                     {installStatus?.is_installed && currentStep === 1 ? (
                       <Link
                         to="/admin/login"
-                        className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-sm flex items-center gap-2 transition-all cursor-pointer"
+                        className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm flex items-center gap-2 transition-all cursor-pointer"
                       >
                         <Lock className="w-4 h-4" />
                         <span>CMS Terkunci — Ke Panel Admin</span>
@@ -919,7 +927,7 @@ export default function InstallWizard() {
                         type="button"
                         onClick={handleNext}
                         disabled={loadingStatus}
-                        className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-sm flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                        className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
                       >
                         <span>Langkah Selanjutnya</span>
                         <ArrowRight className="w-4 h-4" />
@@ -929,7 +937,7 @@ export default function InstallWizard() {
                         type="button"
                         onClick={handleRunSetup}
                         disabled={submitting}
-                        className="px-7 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-md shadow-violet-500/20 flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                        className="px-7 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
                       >
                         {submitting ? (
                           <>
@@ -956,7 +964,7 @@ export default function InstallWizard() {
       <footer className="relative z-10 max-w-4xl mx-auto w-full pt-4 text-center text-xs text-slate-500 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-2">
         <p>© 2026 Djie CMS Pro. Open Source Publishing Engine.</p>
         <div className="flex items-center gap-4 text-slate-500 text-[11px] font-medium">
-          <span>Revision Editorial Theme</span>
+          <span>Official Brand Theme</span>
           <span>•</span>
           <span>Security Hardened</span>
           <span>•</span>
