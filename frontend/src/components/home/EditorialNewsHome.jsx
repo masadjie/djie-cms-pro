@@ -240,8 +240,8 @@ export default function EditorialNewsHome() {
     }
   ];
 
-  // Merge real articles with fallbacks
-  const articles = rawArticles.length > 0 ? rawArticles.map((a, i) => ({
+  // Combine real articles with fallback articles so sections always have rich, balanced content
+  const mappedRealArticles = rawArticles.map((a, i) => ({
     id: a.id,
     title: a.title,
     slug: a.slug,
@@ -253,15 +253,20 @@ export default function EditorialNewsHome() {
     comments: a.comments_count || Math.floor(Math.random() * 8) + 1,
     readTime: `${a.read_time_minutes || 4} min`,
     image: a.cover_image || fallbackArticles[i % fallbackArticles.length].image
-  })) : fallbackArticles;
+  }));
+
+  // Ensure total articles is always at least 8 items for a complete, symmetrical magazine layout
+  const articles = mappedRealArticles.length >= 8 
+    ? mappedRealArticles 
+    : [...mappedRealArticles, ...fallbackArticles.slice(mappedRealArticles.length)];
 
   // Slices for each Neeon magazine section
   const tickerItems = articles.slice(0, 5);
   const heroMain = articles[0];
-  const heroSide = articles.slice(1, 4);
+  const heroSide = articles.slice(1, 4); // Always exactly 3 cards for right sidebar
   const topStories = articles.slice(0, 4);
   const whatsNewLead = articles[4] || articles[0];
-  const whatsNewList = articles.slice(5, 8).length > 0 ? articles.slice(5, 8) : articles.slice(1, 4);
+  const whatsNewList = articles.slice(5, 8).length >= 3 ? articles.slice(5, 8) : articles.slice(1, 4);
   const circularHighlights = customHighlights;
 
   // Auto-rotating animated ticker for trending topics
@@ -371,21 +376,21 @@ export default function EditorialNewsHome() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
           {/* Main Huge Feature Card (Col 8) */}
-          <div className="lg:col-span-7 xl:col-span-8 relative rounded-3xl overflow-hidden group shadow-sm bg-slate-900 min-h-[380px] sm:min-h-[460px] flex flex-col justify-end">
+          <div className="lg:col-span-7 xl:col-span-8 relative rounded-3xl overflow-hidden group shadow-sm bg-slate-900 min-h-[420px] lg:min-h-[500px] flex flex-col justify-end">
             <img
               src={heroMain?.image}
               alt={heroMain?.title}
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
             />
             {/* Dark gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
 
             <div className="relative z-10 p-6 sm:p-8 space-y-3">
-              <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider text-white ${heroMain?.catColor || 'bg-rose-600'} shadow-sm`}>
-                {heroMain?.category || 'FASHION'}
+              <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider text-white ${heroMain?.catColor || 'bg-blue-600'} shadow-sm`}>
+                {heroMain?.category || 'BERITA & PENGUMUMAN'}
               </span>
 
-              <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-md">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-md">
                 <Link to={`/berita/${heroMain?.slug}`} className="hover:underline">
                   {heroMain?.title}
                 </Link>
@@ -405,20 +410,20 @@ export default function EditorialNewsHome() {
           </div>
 
           {/* 3 Right Hand Cards (Col 5 / 4) */}
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-between gap-4">
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-4 justify-between h-full">
             {heroSide.map((item, idx) => (
               <div 
                 key={idx}
-                className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex items-center gap-4 group"
+                className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex items-center gap-4 group flex-1"
               >
-                <div className="w-28 h-24 sm:w-32 sm:h-28 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
+                <div className="w-28 h-24 sm:w-32 sm:h-28 rounded-2xl overflow-hidden bg-slate-100 shrink-0 relative">
                   <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <div className="space-y-1.5 min-w-0">
+                <div className="space-y-1.5 min-w-0 flex-1">
                   <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white ${item.catColor || 'bg-blue-600'}`}>
                     {item.category}
                   </span>
@@ -427,7 +432,7 @@ export default function EditorialNewsHome() {
                       {item.title}
                     </Link>
                   </h3>
-                  <div className="text-[10px] text-slate-400 font-medium">
+                  <div className="text-[10px] text-slate-400 font-medium truncate">
                     BY {item.author.toUpperCase()} • {item.date}
                   </div>
                 </div>
