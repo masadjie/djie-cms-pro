@@ -50,6 +50,18 @@ export const themes = [
     accentText: 'text-amber-400',
     primaryBtn: 'bg-amber-400 hover:bg-amber-300 text-slate-950',
     badgeText: 'text-amber-300'
+  },
+  {
+    id: 'editorial',
+    name: 'Revision Editorial News & Magazine (Ungu Pastel)',
+    primaryColor: '#5b21b6', // Deep Purple / Violet
+    accentColor: '#8b5cf6',  // Vibrant Lavender / Purple
+    badgeBg: 'bg-violet-100',
+    heroGradient: 'from-white via-[#faf9ff] to-[#f3f0ff]',
+    navbarBg: 'bg-white',
+    accentText: 'text-violet-600',
+    primaryBtn: 'bg-violet-600 hover:bg-violet-700 text-white font-bold',
+    badgeText: 'text-violet-700'
   }
 ];
 

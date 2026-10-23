@@ -108,6 +108,63 @@ export default function ThemeSettingTab() {
           </div>
         </div>
 
+        {/* Layout Mode Selector (Portal vs Editorial Revision) */}
+        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs font-black text-slate-800 block">Layout Beranda (Homepage Layout Mode)</span>
+              <span className="text-[11px] text-slate-500">Tentukan apakah halaman utama tampil sebagai Portal Multi-Layanan atau Portal Berita Editorial (Revision Magazine).</span>
+            </div>
+            <span className="text-xs font-bold text-violet-700 bg-violet-100 px-3 py-1 rounded-xl">
+              {currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL' ? 'Mode Editorial Berita Aktif' : 'Mode Portal Layanan Aktif'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                changeTheme('emerald');
+                setForm(prev => ({ ...prev, home_layout_mode: 'PORTAL' }));
+              }}
+              className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
+                currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL'
+                  ? 'border-emerald-600 bg-white shadow-xs'
+                  : 'border-slate-200 bg-slate-100/60 hover:bg-white'
+              }`}
+            >
+              <div>
+                <span className="text-xs font-black text-slate-800 block">🏛️ Portal Layanan & Berita Terpadu</span>
+                <span className="text-[10px] text-slate-500 block">Hero pencarian besar, katalog layanan, banner sorotan, dan agenda kegiatan.</span>
+              </div>
+              {currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL' && (
+                <Check className="w-4 h-4 text-emerald-600 stroke-[3] shrink-0" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                changeTheme('editorial');
+                setForm(prev => ({ ...prev, home_layout_mode: 'EDITORIAL' }));
+              }}
+              className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
+                currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL'
+                  ? 'border-violet-600 bg-white shadow-xs'
+                  : 'border-slate-200 bg-slate-100/60 hover:bg-white'
+              }`}
+            >
+              <div>
+                <span className="text-xs font-black text-violet-900 block">📰 Revision Editorial & Digital Magazine</span>
+                <span className="text-[10px] text-slate-500 block">Desain majalah modern, pills kategori warna-warni, grid 2-kolom, sidebar profil, & newsletter.</span>
+              </div>
+              {(currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL') && (
+                <Check className="w-4 h-4 text-violet-600 stroke-[3] shrink-0" />
+              )}
+            </button>
+          </div>
+        </div>
+
         {/* Theme Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {themes.map((theme) => {

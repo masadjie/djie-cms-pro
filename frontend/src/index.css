@@ -51,6 +51,18 @@
   --theme-hero-to: #1e293b;
 }
 
+[data-theme="editorial"] {
+  --theme-primary: #5b21b6;
+  --theme-primary-dark: #2e1065;
+  --theme-primary-light: #7c3aed;
+  --theme-accent: #8b5cf6;
+  --theme-accent-light: #c4b5fd;
+  --theme-navbar-bg: #ffffff;
+  --theme-hero-from: #ffffff;
+  --theme-hero-via: #fbfbfe;
+  --theme-hero-to: #f3f0ff;
+}
+
 @layer base {
   html, body {
     overflow-x: hidden;
