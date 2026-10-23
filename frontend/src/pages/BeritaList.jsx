@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import api from '../services/api';
+import { useTheme } from '../context/ThemeContext';
 import SEOHead from '../components/common/SEOHead';
 import FloatingActionBars from '../components/common/FloatingActionBars';
 import Badge from '../components/common/Badge';
@@ -13,12 +14,29 @@ import { Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function BeritaList() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { currentTheme } = useTheme();
   const kategoriParam = searchParams.get('kategori') || '';
   const searchParam = searchParams.get('search') || '';
   const pageParam = parseInt(searchParams.get('page') || '1', 10);
   const sortParam = searchParams.get('sort') || 'latest';
 
   const [searchInput, setSearchInput] = useState(searchParam);
+
+  // Fetch Settings for dynamic title & layout mode
+  const { data: settingsData } = useQuery({
+    queryKey: ['cmsWebSettings'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/cms/pengaturan');
+        return res?.data || res || {};
+      } catch (err) {
+        return {};
+      }
+    }
+  });
+
+  const settings = settingsData || {};
+  const isTemplateA = currentTheme === 'editorial' || settings.home_layout_mode === 'EDITORIAL';
 
   // Fetch Categories
   const { data: kategoriList } = useQuery({
@@ -85,11 +103,11 @@ export default function BeritaList() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#f8faf8] pb-20 pt-28 sm:pt-32">
+    <div className={`w-full min-h-screen pb-20 pt-28 sm:pt-32 ${isTemplateA ? 'bg-[#f8fafc]' : 'bg-[#f8faf8]'}`}>
       <SEOHead
-        title="Berita & Pengumuman Resmi ASN | BKPSDM Kab. Aceh Tamiang"
-        description="Pusat informasi berita kepegawaian terkini, pengumuman seleksi CASN/PPPK, kenaikan pangkat, uji kompetensi, dan kebijakan ASN Kabupaten Aceh Tamiang."
-        canonicalUrl="https://bkpsdm.acehtamiangkab.go.id/berita"
+        title={`Berita & Publikasi Resmi | ${settings.site_name || 'Portal Berita'}`}
+        description={settings.site_description || 'Pusat informasi berita terkini, pengumuman, dan artikel publikasi resmi.'}
+        canonicalUrl={settings.seo_canonical_url || 'https://bkpsdm.acehtamiangkab.go.id/berita'}
       />
 
       <FloatingActionBars />
@@ -97,26 +115,28 @@ export default function BeritaList() {
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 space-y-8">
         
         {/* Header Title */}
-        <div className="space-y-1.5 border-b border-emerald-100/80 pb-6">
+        <div className={`space-y-1.5 border-b pb-6 ${isTemplateA ? 'border-slate-200' : 'border-emerald-100/80'}`}>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Kabar Kepegawaian & SDM Aparatur
+            {settings.editorial_news_heading || (isTemplateA ? 'Kabar Berita & Publikasi Terkini' : 'Kabar Kepegawaian & SDM Aparatur')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
-            Informasi terkini pelaksanaan manajemen ASN, seleksi CASN, diklat aparatur, dan regulasi kepegawaian Pemerintah Kabupaten Aceh Tamiang.
+            {settings.editorial_news_subheading || (isTemplateA ? 'Liputan berita, artikel redaksi, rilis pers terpercaya, dan informasi digital terlengkap.' : 'Informasi terkini pelaksanaan manajemen ASN, seleksi CASN, diklat aparatur, dan regulasi kepegawaian Pemerintah Daerah.')}
           </p>
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="bg-white p-4 sm:p-6 rounded-3xl border border-emerald-100 shadow-sm space-y-4">
+        <div className={`bg-white p-4 sm:p-6 rounded-3xl border shadow-sm space-y-4 ${
+          isTemplateA ? 'border-slate-200' : 'border-emerald-100'
+        }`}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="w-full sm:max-w-md">
               <SearchInput
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onSubmit={handleSearchSubmit}
-                placeholder="Cari pengumuman, CASN, pangkat..."
+                placeholder="Cari pengumuman, berita, topik..."
                 buttonText="Cari"
-                variant="light"
+                variant={isTemplateA ? "blue" : "light"}
               />
             </div>
 
@@ -126,7 +146,9 @@ export default function BeritaList() {
               <select
                 value={sortParam}
                 onChange={(e) => handleSortChange(e.target.value)}
-                className="text-xs font-bold px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-slate-700 cursor-pointer"
+                className={`text-xs font-bold px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 text-slate-700 cursor-pointer ${
+                  isTemplateA ? 'focus:ring-blue-600' : 'focus:ring-emerald-600'
+                }`}
               >
                 <option value="latest">Terbaru</option>
                 <option value="popular">Terpopuler</option>
@@ -142,8 +164,8 @@ export default function BeritaList() {
               onClick={() => handleKategoriClick('')}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 !kategoriParam
-                  ? 'bg-emerald-700 text-white shadow-sm'
-                  : 'bg-slate-100 hover:bg-emerald-50 text-slate-600'
+                  ? (isTemplateA ? 'bg-blue-600 text-white shadow-sm' : 'bg-emerald-700 text-white shadow-sm')
+                  : (isTemplateA ? 'bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600' : 'bg-slate-100 hover:bg-emerald-50 text-slate-600')
               }`}
             >
               Semua Kategori
@@ -155,8 +177,8 @@ export default function BeritaList() {
                 onClick={() => handleKategoriClick(k.slug)}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   kategoriParam === k.slug
-                    ? 'bg-emerald-700 text-white shadow-sm'
-                    : 'bg-slate-100 hover:bg-emerald-50 text-slate-600'
+                    ? (isTemplateA ? 'bg-blue-600 text-white shadow-sm' : 'bg-emerald-700 text-white shadow-sm')
+                    : (isTemplateA ? 'bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600' : 'bg-slate-100 hover:bg-emerald-50 text-slate-600')
                 }`}
               >
                 {k.nama_kategori}
@@ -200,7 +222,7 @@ export default function BeritaList() {
                 {newsData?.totalPages > 1 && (
                   <div className="pt-8 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200/80">
                     <p className="text-xs text-slate-500 font-medium">
-                      Menampilkan halaman <strong className="text-slate-800">{pageParam}</strong> dari <strong className="text-slate-800">{newsData.totalPages}</strong> (Total <strong className="text-emerald-700">{newsData.total}</strong> Berita)
+                      Menampilkan halaman <strong className="text-slate-800">{pageParam}</strong> dari <strong className="text-slate-800">{newsData.totalPages}</strong> (Total <strong className={isTemplateA ? 'text-blue-600' : 'text-emerald-700'}>{newsData.total}</strong> Berita)
                     </p>
 
                     <div className="flex items-center gap-1.5">
@@ -208,7 +230,9 @@ export default function BeritaList() {
                         type="button"
                         disabled={pageParam <= 1}
                         onClick={() => handlePageChange(pageParam - 1)}
-                        className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-700 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                        className={`px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-700 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1 shadow-xs ${
+                          isTemplateA ? 'hover:bg-blue-50 hover:text-blue-800 hover:border-blue-200' : 'hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200'
+                        }`}
                       >
                         <ChevronLeft className="w-3.5 h-3.5" />
                         <span>Sebelumnya</span>
@@ -238,8 +262,14 @@ export default function BeritaList() {
                               onClick={() => handlePageChange(p)}
                               className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                 isActive
-                                  ? 'bg-emerald-700 text-white font-black shadow-sm ring-2 ring-emerald-600/30'
-                                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:border-emerald-200'
+                                  ? (isTemplateA 
+                                      ? 'bg-blue-600 text-white font-black shadow-sm ring-2 ring-blue-500/30' 
+                                      : 'bg-emerald-700 text-white font-black shadow-sm ring-2 ring-emerald-600/30'
+                                    )
+                                  : (isTemplateA 
+                                      ? 'bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:border-blue-200' 
+                                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:border-emerald-200'
+                                    )
                               }`}
                             >
                               {p}
@@ -252,7 +282,9 @@ export default function BeritaList() {
                         type="button"
                         disabled={pageParam >= newsData.totalPages}
                         onClick={() => handlePageChange(pageParam + 1)}
-                        className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-700 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                        className={`px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-700 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center gap-1 shadow-xs ${
+                          isTemplateA ? 'hover:bg-blue-50 hover:text-blue-800 hover:border-blue-200' : 'hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200'
+                        }`}
                       >
                         <span>Selanjutnya</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -273,18 +305,24 @@ export default function BeritaList() {
             )}
 
             {/* RSS & Sitemap Syndicate Box */}
-            <div className="bg-gradient-to-br from-[#052e16] to-[#064e3b] rounded-3xl p-6 text-white space-y-3 border border-emerald-800 shadow-md">
-              <span className="text-[10px] font-black uppercase text-amber-300">Sindikasi Berita</span>
-              <h4 className="font-bold text-sm leading-snug">Berlangganan Kabar ASN Melalui RSS Feed & Google News</h4>
-              <p className="text-xs text-emerald-200 leading-relaxed">
-                Dapatkan update otomatis pengumuman kepegawaian melalui XML RSS resmi BKPSDM.
+            <div className={`rounded-3xl p-6 text-white space-y-3 shadow-md border ${
+              isTemplateA 
+                ? 'bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 border-blue-600' 
+                : 'bg-gradient-to-br from-[#052e16] to-[#064e3b] border-emerald-800'
+            }`}>
+              <span className={`text-[10px] font-black uppercase ${isTemplateA ? 'text-blue-200' : 'text-amber-300'}`}>Sindikasi Berita</span>
+              <h4 className="font-bold text-sm leading-snug">Berlangganan Kabar & Rilis Pers Melalui RSS Feed</h4>
+              <p className={`text-xs leading-relaxed ${isTemplateA ? 'text-blue-100' : 'text-emerald-200'}`}>
+                Dapatkan update otomatis publikasi artikel dan pengumuman resmi melalui format XML RSS terpadu.
               </p>
               <div className="pt-2 flex items-center gap-2">
                 <a
                   href="/rss.xml"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs shadow-sm transition-colors"
+                  className={`px-4 py-2 font-black rounded-xl text-xs shadow-sm transition-colors ${
+                    isTemplateA ? 'bg-white hover:bg-slate-100 text-blue-900' : 'bg-amber-400 hover:bg-amber-300 text-slate-950'
+                  }`}
                 >
                   Buka RSS Feed
                 </a>

@@ -58,6 +58,47 @@ export default function EditorialNewsHome() {
     }
   });
 
+  const settings = settingsData || {};
+
+  // Custom highlights & promo banner from database if edited in admin
+  const highlightPromoTitle = settings.editorial_promo_title || 'Djie CMS Pro — High-Speed Digital Publishing Engine';
+  const highlightPromoDesc = settings.editorial_promo_desc || 'Dapatkan akses penuh ke seluruh modul berita redaksi, integrasi dokumen publik, dan performa tinggi React 18 SPA.';
+  const highlightPromoBtn = settings.editorial_promo_btn || 'Masuk Dashboard';
+  const highlightPromoUrl = settings.editorial_promo_url || '/admin/login';
+  const highlightPromoTag = settings.editorial_promo_tag || 'SPECIAL HIGHLIGHT PROMO';
+
+  // Custom 4 Circular Highlights from Settings
+  const customHighlights = [
+    {
+      num: 1,
+      title: settings.editorial_hl1_title || 'Ducati Has All The Cards To Win Championship',
+      cat: settings.editorial_hl1_cat || 'SPORTS',
+      img: settings.editorial_hl1_img || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=250&q=80',
+      url: settings.editorial_hl1_url || '#'
+    },
+    {
+      num: 2,
+      title: settings.editorial_hl2_title || 'If You Went Round The World Which Path To Choose',
+      cat: settings.editorial_hl2_cat || 'TRAVEL',
+      img: settings.editorial_hl2_img || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=250&q=80',
+      url: settings.editorial_hl2_url || '#'
+    },
+    {
+      num: 3,
+      title: settings.editorial_hl3_title || 'The Best Ways To Start A Motorsport Career',
+      cat: settings.editorial_hl3_cat || 'FASHION',
+      img: settings.editorial_hl3_img || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=250&q=80',
+      url: settings.editorial_hl3_url || '#'
+    },
+    {
+      num: 4,
+      title: settings.editorial_hl4_title || 'Moon Mission Landings: How Near Are Commercial Bases',
+      cat: settings.editorial_hl4_cat || 'HEALTH',
+      img: settings.editorial_hl4_img || 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=250&q=80',
+      url: settings.editorial_hl4_url || '#'
+    }
+  ];
+
   // 2. Fetch Categories
   const { data: categoriesData } = useQuery({
     queryKey: ['editorialCategories'],
@@ -86,7 +127,6 @@ export default function EditorialNewsHome() {
     }
   });
 
-  const settings = settingsData || {};
   const rawArticles = beritaData?.data || (Array.isArray(beritaData) ? beritaData : []);
   const categories = categoriesData || [];
 
@@ -137,7 +177,7 @@ export default function EditorialNewsHome() {
       slug: 'how-to-have-fantastic-trips-without-blowing-your-budget',
       excerpt: 'Mastering off-peak travel passes, local rail networks, and homestays lets digital nomads travel the world on a modest budget.',
       category: 'TRAVEL',
-      catColor: 'bg-emerald-600',
+      catColor: 'bg-blue-600',
       author: 'Admin',
       date: 'December 7, 2026',
       comments: 2,
@@ -176,7 +216,7 @@ export default function EditorialNewsHome() {
       slug: 'if-you-went-round-the-world-which-hidden-places',
       excerpt: 'A curated itinerary of uncharted islands, alpine villages, and ancient trade routes that remain untouched by mass tourism.',
       category: 'TRAVEL',
-      catColor: 'bg-emerald-600',
+      catColor: 'bg-blue-600',
       author: 'Admin',
       date: 'December 4, 2026',
       comments: 9,
@@ -205,7 +245,7 @@ export default function EditorialNewsHome() {
     slug: a.slug,
     excerpt: a.excerpt || 'Baca artikel dan liputan informasi mendalam selengkapnya.',
     category: a.kategori?.nama_kategori?.toUpperCase() || (fallbackArticles[i % fallbackArticles.length].category),
-    catColor: ['bg-blue-600', 'bg-rose-500', 'bg-emerald-600', 'bg-amber-500', 'bg-indigo-600'][i % 5],
+    catColor: ['bg-blue-600', 'bg-sky-600', 'bg-indigo-600', 'bg-blue-700', 'bg-slate-700'][i % 5],
     author: a.author_name || 'Admin',
     date: a.published_at ? new Date(a.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'December 2026',
     comments: a.comments_count || Math.floor(Math.random() * 8) + 1,
@@ -220,12 +260,7 @@ export default function EditorialNewsHome() {
   const topStories = articles.slice(0, 4);
   const whatsNewLead = articles[4] || articles[0];
   const whatsNewList = articles.slice(5, 8).length > 0 ? articles.slice(5, 8) : articles.slice(1, 4);
-  const circularHighlights = [
-    { num: 1, title: 'Ducati Has All The Cards To Win Championship', cat: 'SPORTS', date: 'October 14, 2026', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=250&q=80' },
-    { num: 2, title: 'If You Went Round The World Which Path To Choose', cat: 'TRAVEL', date: 'October 12, 2026', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=250&q=80' },
-    { num: 3, title: 'The Best Ways To Start A Motorsport Career', cat: 'FASHION', date: 'October 10, 2026', img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=250&q=80' },
-    { num: 4, title: 'Moon Mission Landings: How Near Are Commercial Bases', cat: 'HEALTH', date: 'October 08, 2026', img: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=250&q=80' }
-  ];
+  const circularHighlights = customHighlights;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -265,10 +300,10 @@ export default function EditorialNewsHome() {
             <span>•</span>
             <div className="flex items-center gap-2">
               <span className="text-slate-500">FOLLOW US:</span>
-              <a href="#" className="hover:text-blue-400 transition-colors"><Facebook className="w-3.5 h-3.5" /></a>
-              <a href="#" className="hover:text-sky-400 transition-colors"><Twitter className="w-3.5 h-3.5" /></a>
-              <a href="#" className="hover:text-pink-400 transition-colors"><Instagram className="w-3.5 h-3.5" /></a>
-              <a href="#" className="hover:text-red-400 transition-colors"><Youtube className="w-3.5 h-3.5" /></a>
+              <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="hover:text-blue-400 transition-colors"><Facebook className="w-3.5 h-3.5" /></a>
+              <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="hover:text-sky-400 transition-colors"><Twitter className="w-3.5 h-3.5" /></a>
+              <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="hover:text-pink-400 transition-colors"><Instagram className="w-3.5 h-3.5" /></a>
+              <a href={settings.social_youtube || '#'} target="_blank" rel="noreferrer" className="hover:text-red-400 transition-colors"><Youtube className="w-3.5 h-3.5" /></a>
             </div>
           </div>
         </div>
@@ -295,7 +330,7 @@ export default function EditorialNewsHome() {
                   <span className="text-[10px] font-black uppercase text-blue-600 tracking-wider block">
                     {item.cat}
                   </span>
-                  <Link to={`/berita/${tickerItems[idx % tickerItems.length]?.slug || '#'}`} className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 leading-snug block">
+                  <Link to={item.url && item.url !== '#' ? item.url : `/berita/${tickerItems[idx % tickerItems.length]?.slug || '#'}`} className="text-xs font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 leading-snug block">
                     {item.title}
                   </Link>
                   <span className="text-[10px] text-slate-400 block font-medium">
@@ -385,22 +420,34 @@ export default function EditorialNewsHome() {
             </div>
             <div>
               <span className="text-[11px] font-black uppercase tracking-widest text-blue-200 block">
-                SPECIAL HIGHLIGHT PROMO
+                {highlightPromoTag}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-white">
-                Djie CMS Pro — High-Speed Digital Publishing Engine
+                {highlightPromoTitle}
               </h2>
               <p className="text-xs text-blue-100/90 mt-1 max-w-xl">
-                Dapatkan akses penuh ke seluruh modul berita redaksi, integrasi dokumen publik, dan performa tinggi React 18 SPA.
+                {highlightPromoDesc}
               </p>
             </div>
           </div>
-          <Link
-            to="/admin/login"
-            className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all shrink-0 active:scale-95"
-          >
-            Masuk Dashboard
-          </Link>
+          {highlightPromoUrl.startsWith('http') ? (
+            <a
+              href={highlightPromoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all shrink-0 active:scale-95 flex items-center gap-1.5"
+            >
+              <span>{highlightPromoBtn}</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          ) : (
+            <Link
+              to={highlightPromoUrl}
+              className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all shrink-0 active:scale-95"
+            >
+              {highlightPromoBtn}
+            </Link>
+          )}
         </div>
 
         {/* ── 5. TOP STORIES SECTION (4 EQUAL COLUMNS) ─────────────────────────── */}
@@ -559,36 +606,36 @@ export default function EditorialNewsHome() {
               </h3>
 
               <div className="space-y-2.5">
-                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-[#1877f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_facebook || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-[#1877f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
                   <div className="flex items-center gap-3">
                     <Facebook className="w-4 h-4 fill-white" />
                     <span>Facebook</span>
                   </div>
-                  <span className="font-normal opacity-90">12.5k Fans</span>
+                  <span className="font-normal opacity-90">{settings.social_facebook_fans || '12.5k Fans'}</span>
                 </a>
 
-                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-[#1da1f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_twitter || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-[#1da1f2] text-white font-bold text-xs hover:opacity-95 transition-opacity">
                   <div className="flex items-center gap-3">
                     <Twitter className="w-4 h-4 fill-white" />
                     <span>Twitter / X</span>
                   </div>
-                  <span className="font-normal opacity-90">28.4k Followers</span>
+                  <span className="font-normal opacity-90">{settings.social_twitter_fans || '28.4k Followers'}</span>
                 </a>
 
-                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_instagram || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs hover:opacity-95 transition-opacity">
                   <div className="flex items-center gap-3">
                     <Instagram className="w-4 h-4" />
                     <span>Instagram</span>
                   </div>
-                  <span className="font-normal opacity-90">45.2k Followers</span>
+                  <span className="font-normal opacity-90">{settings.social_instagram_fans || '45.2k Followers'}</span>
                 </a>
 
-                <a href="#" className="flex items-center justify-between p-3 rounded-xl bg-[#ff0000] text-white font-bold text-xs hover:opacity-95 transition-opacity">
+                <a href={settings.social_youtube || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-[#ff0000] text-white font-bold text-xs hover:opacity-95 transition-opacity">
                   <div className="flex items-center gap-3">
                     <Youtube className="w-4 h-4 fill-white" />
                     <span>YouTube</span>
                   </div>
-                  <span className="font-normal opacity-90">8.9k Subscribers</span>
+                  <span className="font-normal opacity-90">{settings.social_youtube_fans || '8.9k Subscribers'}</span>
                 </a>
               </div>
             </div>
@@ -606,7 +653,7 @@ export default function EditorialNewsHome() {
               </p>
 
               {newsletterSent ? (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bold">
+                <div className="p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-bold">
                   ✓ Terima kasih telah bergabung!
                 </div>
               ) : (

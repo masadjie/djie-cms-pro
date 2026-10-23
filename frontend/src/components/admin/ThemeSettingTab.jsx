@@ -367,6 +367,271 @@ export default function ThemeSettingTab() {
           </div>
 
         </div>
+
+        {/* ── EDIT KONTEN TEMPLATE A (EDITORIAL MAGAZINE) ── */}
+        {(currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL') && (
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-50/70 via-white to-sky-50/40 border-2 border-blue-200/80 space-y-6 animate-in fade-in duration-300">
+            <div className="flex items-center gap-3 border-b border-blue-100 pb-4">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
+                <LayoutTemplate className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-slate-900">
+                  Pengaturan Konten Template A (Revision Editorial Magazine)
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Sesuaikan teks horizontal banner promo, highlight cards lingkaran, dan statistik followers secara dinamis.
+                </p>
+              </div>
+            </div>
+
+            {/* Horizontal Promo Banner Fields */}
+            <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-700">
+                <Sparkles className="w-4 h-4" />
+                <span>1. Banner Promo / Spotlight Display (Horizontal)</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Tag / Subjudul Banner</label>
+                  <input
+                    type="text"
+                    value={form.editorial_promo_tag || ''}
+                    onChange={(e) => setForm({ ...form, editorial_promo_tag: e.target.value })}
+                    placeholder="SPECIAL HIGHLIGHT PROMO"
+                    className="w-full p-2.5 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Judul Utama Banner</label>
+                  <input
+                    type="text"
+                    value={form.editorial_promo_title || ''}
+                    onChange={(e) => setForm({ ...form, editorial_promo_title: e.target.value })}
+                    placeholder="Djie CMS Pro — High-Speed Digital Publishing Engine"
+                    className="w-full p-2.5 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Deskripsi Singkat Banner</label>
+                  <textarea
+                    rows="2"
+                    value={form.editorial_promo_desc || ''}
+                    onChange={(e) => setForm({ ...form, editorial_promo_desc: e.target.value })}
+                    placeholder="Dapatkan akses penuh ke seluruh modul berita redaksi, integrasi dokumen publik, dan performa tinggi React 18 SPA."
+                    className="w-full p-2.5 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Teks Tombol CTA</label>
+                  <input
+                    type="text"
+                    value={form.editorial_promo_btn || ''}
+                    onChange={(e) => setForm({ ...form, editorial_promo_btn: e.target.value })}
+                    placeholder="Masuk Dashboard"
+                    className="w-full p-2.5 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">URL Target Tombol CTA</label>
+                  <input
+                    type="text"
+                    value={form.editorial_promo_url || ''}
+                    onChange={(e) => setForm({ ...form, editorial_promo_url: e.target.value })}
+                    placeholder="/admin/login atau https://..."
+                    className="w-full p-2.5 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Circular Highlights Customization */}
+            <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-700">
+                <Clock className="w-4 h-4" />
+                <span>2. 4 Bar Highlight Thumbnail Lingkaran (Top Bar)</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* HL 1 */}
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                  <span className="text-[11px] font-black text-blue-600 block">Item #01</span>
+                  <input
+                    type="text"
+                    value={form.editorial_hl1_title || ''}
+                    onChange={(e) => setForm({ ...form, editorial_hl1_title: e.target.value })}
+                    placeholder="Judul Highlight 1"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={form.editorial_hl1_cat || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl1_cat: e.target.value })}
+                      placeholder="Kategori (e.g. SPORTS)"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                    />
+                    <input
+                      type="text"
+                      value={form.editorial_hl1_url || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl1_url: e.target.value })}
+                      placeholder="URL Tautan"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* HL 2 */}
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                  <span className="text-[11px] font-black text-blue-600 block">Item #02</span>
+                  <input
+                    type="text"
+                    value={form.editorial_hl2_title || ''}
+                    onChange={(e) => setForm({ ...form, editorial_hl2_title: e.target.value })}
+                    placeholder="Judul Highlight 2"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={form.editorial_hl2_cat || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl2_cat: e.target.value })}
+                      placeholder="Kategori (e.g. TRAVEL)"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                    />
+                    <input
+                      type="text"
+                      value={form.editorial_hl2_url || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl2_url: e.target.value })}
+                      placeholder="URL Tautan"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* HL 3 */}
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                  <span className="text-[11px] font-black text-blue-600 block">Item #03</span>
+                  <input
+                    type="text"
+                    value={form.editorial_hl3_title || ''}
+                    onChange={(e) => setForm({ ...form, editorial_hl3_title: e.target.value })}
+                    placeholder="Judul Highlight 3"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={form.editorial_hl3_cat || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl3_cat: e.target.value })}
+                      placeholder="Kategori (e.g. FASHION)"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                    />
+                    <input
+                      type="text"
+                      value={form.editorial_hl3_url || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl3_url: e.target.value })}
+                      placeholder="URL Tautan"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* HL 4 */}
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                  <span className="text-[11px] font-black text-blue-600 block">Item #04</span>
+                  <input
+                    type="text"
+                    value={form.editorial_hl4_title || ''}
+                    onChange={(e) => setForm({ ...form, editorial_hl4_title: e.target.value })}
+                    placeholder="Judul Highlight 4"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={form.editorial_hl4_cat || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl4_cat: e.target.value })}
+                      placeholder="Kategori (e.g. HEALTH)"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white"
+                    />
+                    <input
+                      type="text"
+                      value={form.editorial_hl4_url || ''}
+                      onChange={(e) => setForm({ ...form, editorial_hl4_url: e.target.value })}
+                      placeholder="URL Tautan"
+                      className="p-2 text-xs border border-slate-200 rounded-lg bg-white font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Followers Counters Widget */}
+            <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-700">
+                <Share2 className="w-4 h-4" />
+                <span>3. Teks Statistik Pengikut Sosial Media (Stay Connected Box)</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">Facebook Fans</label>
+                  <input
+                    type="text"
+                    value={form.social_facebook_fans || ''}
+                    onChange={(e) => setForm({ ...form, social_facebook_fans: e.target.value })}
+                    placeholder="12.5k Fans"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">Twitter Followers</label>
+                  <input
+                    type="text"
+                    value={form.social_twitter_fans || ''}
+                    onChange={(e) => setForm({ ...form, social_twitter_fans: e.target.value })}
+                    placeholder="28.4k Followers"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">Instagram Followers</label>
+                  <input
+                    type="text"
+                    value={form.social_instagram_fans || ''}
+                    onChange={(e) => setForm({ ...form, social_instagram_fans: e.target.value })}
+                    placeholder="45.2k Followers"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">YouTube Subscribers</label>
+                  <input
+                    type="text"
+                    value={form.social_youtube_fans || ''}
+                    onChange={(e) => setForm({ ...form, social_youtube_fans: e.target.value })}
+                    placeholder="8.9k Subscribers"
+                    className="w-full p-2 text-xs border border-slate-200 rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={saveMutation.isPending}
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                <span>{saveMutation.isPending ? 'Menyimpan...' : 'Simpan Konten Template A'}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 2. SECTION: PENGELOLAAN MEDIA SOSIAL & FLOATING ACTION BAR */}
