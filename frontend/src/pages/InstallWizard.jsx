@@ -4,7 +4,8 @@ import {
   Building2, Globe, ShieldCheck, Database, CheckCircle2, 
   ArrowRight, ArrowLeft, Sparkles, Server, Mail, Phone, 
   MapPin, User, Lock, AlertCircle, RefreshCw, KeyRound, 
-  Laptop2, Check, ExternalLink, HardDriveDownload
+  Laptop2, Check, ExternalLink, HardDriveDownload, Newspaper,
+  LayoutGrid, BookOpen, Layers
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -52,7 +53,6 @@ export default function InstallWizard() {
     setErrorMsg('');
     try {
       const res = await api.get('/cms/install/status');
-      // Axios response interceptor unwraps to response.data
       const statusData = res?.data || res;
       if (statusData && (statusData.success || statusData.is_installed !== undefined)) {
         setInstallStatus(statusData);
@@ -126,15 +126,19 @@ export default function InstallWizard() {
         alamat_kantor: formData.alamat_kantor,
         admin_name: formData.admin_name,
         admin_email: formData.admin_email,
-        admin_password: formData.admin_password || undefined
+        admin_password: formData.admin_password || undefined,
+        selected_theme: formData.selected_theme,
+        home_layout_mode: formData.home_layout_mode,
+        install_dummy_data: formData.install_dummy_data
       };
 
       const res = await api.post('/cms/install/setup', payload);
-      if (res.data && res.data.success) {
-        setSuccessResult(res.data);
+      const resData = res?.data || res;
+      if (resData && (resData.success || resData.installed)) {
+        setSuccessResult(resData);
         setCurrentStep(5); // completion step
       } else {
-        setErrorMsg(res.data?.message || 'Instalasi gagal dijalankan.');
+        setErrorMsg(resData?.message || 'Instalasi gagal dijalankan.');
       }
     } catch (err) {
       console.error('Installation error:', err);
@@ -145,79 +149,82 @@ export default function InstallWizard() {
   };
 
   const steps = [
-    { num: 1, title: 'Prasyarat & Database', desc: 'Validasi engine & koneksi' },
-    { num: 2, title: 'Identitas Portal Web', desc: 'Nama OPD, slogan & kontak' },
-    { num: 3, title: 'Akun Administrator', desc: 'Kredensial Super Admin' },
-    { num: 4, title: 'Konfirmasi & Eksekusi', desc: 'Review konfigurasi akhir' },
+    { num: 1, title: 'Prasyarat & Database', desc: 'Validasi koneksi DB & server' },
+    { num: 2, title: 'Identitas & Pilihan Tema', desc: 'Nama portal, kontak & gaya UI' },
+    { num: 3, title: 'Kredensial Admin', desc: 'Akun Super Administrator' },
+    { num: 4, title: 'Tinjauan & Eksekusi', desc: 'Konfirmasi akhir 1-klik' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-slate-100 flex flex-col justify-between p-4 md:p-8 font-sans selection:bg-emerald-500 selection:text-white">
-      {/* Background Decor */}
+    <div className="min-h-screen bg-[#fcfcff] text-slate-800 flex flex-col justify-between p-4 md:p-8 font-sans selection:bg-violet-600 selection:text-white">
+      {/* Subtle Editorial Background Accent */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-violet-100/60 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -left-32 w-80 h-80 bg-indigo-50/70 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 right-1/4 w-96 h-96 bg-purple-50/60 rounded-full blur-3xl" />
       </div>
 
       {/* Header Bar */}
-      <header className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between pb-6 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/20 font-black text-xl border border-white/20">
+      <header className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between pb-6 border-b border-slate-200">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 font-black text-xl">
             D
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-bold text-lg text-white tracking-wide">Djie CMS Pro — Setup Wizard</h1>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
-                Fresh Install
+              <h1 className="font-bold text-lg text-slate-900 tracking-tight">Djie CMS Pro</h1>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200">
+                Setup Wizard
               </span>
             </div>
-            <p className="text-xs text-slate-400">Content Management System Modern & Publishing Engine</p>
+            <p className="text-xs text-slate-500 font-medium">Instalasi & Konfigurasi Ekosistem Web Editorial</p>
           </div>
         </div>
 
         <Link 
           to="/" 
-          className="text-xs font-semibold text-slate-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors bg-white/5 px-3 py-1.5 rounded-lg border border-white/10"
+          className="text-xs font-semibold text-slate-600 hover:text-violet-700 flex items-center gap-1.5 transition-colors bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs"
         >
-          <span>Buka Portal Utama</span>
+          <span>Buka Beranda</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </header>
 
       {/* Main Container */}
       <main className="relative z-10 max-w-4xl mx-auto w-full my-6 flex-1 flex flex-col justify-center">
-        {/* Progress Bar Header */}
+        {/* Step Progress Pills */}
         {currentStep <= 4 && (
-          <div className="mb-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
               {steps.map((s) => {
                 const isActive = currentStep === s.num;
                 const isPassed = currentStep > s.num;
                 return (
                   <div 
                     key={s.num}
-                    className={`relative p-3 rounded-xl border transition-all duration-300 ${
+                    className={`relative p-3 rounded-2xl border transition-all duration-200 ${
                       isActive 
-                        ? 'bg-emerald-500/15 border-emerald-500/50 text-white shadow-lg shadow-emerald-500/10' 
+                        ? 'bg-white border-violet-500 text-slate-900 shadow-sm ring-2 ring-violet-500/10' 
                         : isPassed 
-                        ? 'bg-white/5 border-emerald-500/30 text-emerald-300' 
-                        : 'bg-white/[0.02] border-white/10 text-slate-500'
+                        ? 'bg-violet-50/70 border-violet-200 text-violet-900' 
+                        : 'bg-white/60 border-slate-200 text-slate-400'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
+                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold transition-colors ${
                         isActive 
-                          ? 'bg-emerald-500 text-slate-950 font-black' 
+                          ? 'bg-violet-600 text-white shadow-xs' 
                           : isPassed 
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' 
-                          : 'bg-white/10 text-slate-400'
+                          ? 'bg-violet-200 text-violet-800' 
+                          : 'bg-slate-100 text-slate-400'
                       }`}>
                         {isPassed ? <Check className="w-4 h-4 stroke-[3]" /> : s.num}
                       </div>
                       <div className="overflow-hidden">
-                        <p className="text-xs font-bold truncate leading-tight">{s.title}</p>
-                        <p className="text-[10px] text-slate-400 truncate mt-0.5">{s.desc}</p>
+                        <p className={`text-xs font-bold truncate leading-tight ${isActive ? 'text-violet-950' : ''}`}>
+                          {s.title}
+                        </p>
+                        <p className="text-[10px] text-slate-500 truncate mt-0.5">{s.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -227,38 +234,38 @@ export default function InstallWizard() {
           </div>
         )}
 
-        {/* Wizard Card */}
-        <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        {/* Wizard White Card */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm relative overflow-hidden">
           {/* Permanent Security Lock View if CMS is already installed */}
           {installStatus?.is_installed && currentStep !== 5 ? (
-            <div className="py-8 text-center space-y-6 max-w-xl mx-auto">
-              <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-xl shadow-amber-500/10">
+            <div className="py-6 text-center space-y-6 max-w-xl mx-auto">
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-sm">
                 <Lock className="w-8 h-8" />
               </div>
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-                  <ShieldCheck className="w-4 h-4" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span>Sistem Telah Terpasang & Diamankan</span>
                 </div>
-                <h2 className="text-2xl font-black text-white tracking-tight">Halaman Instalasi Telah Dikunci</h2>
-                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                  CMS Portal Layanan & Informasi Publik BKPSDM Kabupaten Aceh Tamiang telah berhasil diinstal sebelumnya. Demi keamanan sistem sesuai standar ISO 27001, instalasi ulang diblokir secara otomatis untuk mencegah penimpaan data.
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight">Halaman Instalasi Telah Dikunci</h2>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  CMS Portal telah berhasil diinisialisasi sebelumnya. Demi keamanan sistem, akses instalasi ulang dibatasi secara otomatis untuk mencegah penimpaan data website secara tidak disengaja.
                 </p>
               </div>
 
-              <div className="bg-white/[0.03] p-4 rounded-xl border border-white/10 text-left space-y-2 text-xs">
-                <div className="flex justify-between items-center text-slate-300">
-                  <span className="text-slate-400">Nama Situs:</span>
-                  <span className="font-semibold text-white">{installStatus?.config?.site_name}</span>
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-left space-y-2.5 text-xs">
+                <div className="flex justify-between items-center text-slate-700">
+                  <span className="text-slate-500">Nama Situs:</span>
+                  <span className="font-semibold text-slate-900">{installStatus?.config?.site_name}</span>
                 </div>
-                <div className="flex justify-between items-center text-slate-300">
-                  <span className="text-slate-400">Instansi:</span>
-                  <span className="font-semibold text-white">{installStatus?.config?.instansi_name}</span>
+                <div className="flex justify-between items-center text-slate-700">
+                  <span className="text-slate-500">Instansi:</span>
+                  <span className="font-semibold text-slate-900">{installStatus?.config?.instansi_name}</span>
                 </div>
                 {installStatus?.config?.installed_at && (
-                  <div className="flex justify-between items-center text-slate-300">
-                    <span className="text-slate-400">Waktu Inisialisasi:</span>
-                    <span className="font-mono text-emerald-300">
+                  <div className="flex justify-between items-center text-slate-700">
+                    <span className="text-slate-500">Waktu Inisialisasi:</span>
+                    <span className="font-mono text-violet-700 font-medium">
                       {new Date(installStatus.config.installed_at).toLocaleString('id-ID')}
                     </span>
                   </div>
@@ -268,14 +275,14 @@ export default function InstallWizard() {
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
                   to="/admin/login"
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <KeyRound className="w-4 h-4" />
                   <span>Masuk ke Panel Administrator</span>
                 </Link>
                 <Link
                   to="/"
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center gap-2 transition-colors"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs flex items-center justify-center gap-2 transition-colors"
                 >
                   <Globe className="w-4 h-4" />
                   <span>Buka Beranda Portal</span>
@@ -285,651 +292,673 @@ export default function InstallWizard() {
           ) : (
             <>
               {errorMsg && (
-                <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-start gap-3 text-sm animate-shake">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
+                <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-3 text-sm">
+                  <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-600 mt-0.5" />
                   <div>
-                    <p className="font-semibold">Perhatian</p>
-                    <p className="text-xs mt-0.5 opacity-90">{errorMsg}</p>
+                    <p className="font-bold">Perhatian</p>
+                    <p className="text-xs mt-0.5 text-rose-700">{errorMsg}</p>
                   </div>
                 </div>
               )}
 
-          {/* STEP 1: Prasyarat & Status DB */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-                  <Database className="w-3.5 h-3.5" />
-                  Koneksi Database Terkonfigurasi Otomatis
-                </div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">Status Lingkungan & Prasyarat Sistem</h2>
-                <p className="text-sm text-slate-400 mt-1">
-                  Koneksi basis data MySQL telah terhubung secara otomatis via environment server. CMS siap diinisialisasi tanpa konfigurasi DB manual.
-                </p>
-              </div>
-
-              {loadingStatus ? (
-                <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400">
-                  <RefreshCw className="w-8 h-8 animate-spin text-emerald-400" />
-                  <p className="text-xs">Memeriksa konektivitas sistem & database MySQL...</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <Server className="w-5 h-5 text-emerald-400" />
-                        <div>
-                          <p className="text-sm font-semibold text-white">Database Engine</p>
-                          <p className="text-xs text-slate-400">MySQL Connection Pool</p>
-                        </div>
-                      </div>
-                      <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Terhubung
-                      </span>
+              {/* STEP 1: Prasyarat & Status DB */}
+              {currentStep === 1 && (
+                <div className="space-y-6">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                      <Database className="w-3.5 h-3.5" />
+                      Koneksi Basis Data Terdeteksi
                     </div>
-                    <div className="pt-2 border-t border-white/5 text-xs text-slate-400 flex justify-between">
-                      <span>Status Tabel:</span>
-                      <span className="text-slate-200 font-mono">Siap Sinkronisasi</span>
-                    </div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Kesiapan Lingkungan & Sistem</h2>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Koneksi basis data MySQL telah terhubung secara otomatis via environment runtime. Sistem siap diinisialisasi tanpa perlu input host DB manual.
+                    </p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <Laptop2 className="w-5 h-5 text-teal-400" />
-                        <div>
-                          <p className="text-sm font-semibold text-white">Backend Server</p>
-                          <p className="text-xs text-slate-400">Node.js Express REST API</p>
+                  {loadingStatus ? (
+                    <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-500">
+                      <RefreshCw className="w-8 h-8 animate-spin text-violet-600" />
+                      <p className="text-xs font-medium">Memeriksa kesiapan engine dan tabel basis data...</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="p-2 rounded-xl bg-violet-100 text-violet-700">
+                              <Server className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">Database Engine</p>
+                              <p className="text-xs text-slate-500">MySQL Connection Pool</p>
+                            </div>
+                          </div>
+                          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Terhubung
+                          </span>
+                        </div>
+                        <div className="pt-2 border-t border-slate-200/60 text-xs text-slate-500 flex justify-between">
+                          <span>Status Skema:</span>
+                          <span className="text-slate-800 font-mono font-medium">Siap Sinkronisasi</span>
                         </div>
                       </div>
-                      <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Aktif (v1 API)
-                      </span>
-                    </div>
-                    <div className="pt-2 border-t border-white/5 text-xs text-slate-400 flex justify-between">
-                      <span>Status CMS Saat Ini:</span>
-                      <span className={installStatus?.is_installed ? "text-emerald-400 font-semibold" : "text-amber-400 font-semibold"}>
-                        {installStatus?.is_installed ? "Sudah Pernah Diinstal (Tersedia Re-init)" : "Belum Diinisialisasi"}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <ShieldCheck className="w-5 h-5 text-indigo-400" />
-                        <div>
-                          <p className="text-sm font-semibold text-white">Modul RBAC & Keamanan</p>
-                          <p className="text-xs text-slate-400">JWT Token & Role Enforcer</p>
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="p-2 rounded-xl bg-indigo-100 text-indigo-700">
+                              <Laptop2 className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">Backend Server</p>
+                              <p className="text-xs text-slate-500">Node.js Express REST API</p>
+                            </div>
+                          </div>
+                          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Aktif (v1 API)
+                          </span>
+                        </div>
+                        <div className="pt-2 border-t border-slate-200/60 text-xs text-slate-500 flex justify-between">
+                          <span>Status CMS:</span>
+                          <span className={installStatus?.is_installed ? "text-emerald-700 font-semibold" : "text-amber-700 font-semibold"}>
+                            {installStatus?.is_installed ? "Terpasang (Re-init Tersedia)" : "Belum Diinisialisasi"}
+                          </span>
                         </div>
                       </div>
-                      <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Siap
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <HardDriveDownload className="w-5 h-5 text-amber-400" />
-                        <div>
-                          <p className="text-sm font-semibold text-white">Storage & Media</p>
-                          <p className="text-xs text-slate-400">Upload Folder & CDN Local</p>
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
+                              <ShieldCheck className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">Modul RBAC & Auth</p>
+                              <p className="text-xs text-slate-500">JWT Token & Role Enforcer</p>
+                            </div>
+                          </div>
+                          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Siap
+                          </span>
                         </div>
                       </div>
-                      <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Siap
-                      </span>
+
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="p-2 rounded-xl bg-amber-100 text-amber-700">
+                              <HardDriveDownload className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">Storage & Media</p>
+                              <p className="text-xs text-slate-500">Upload Directory & CDN</p>
+                            </div>
+                          </div>
+                          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Siap
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {installStatus?.is_installed && (
+                    <div className="p-5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
+                          <Lock className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-amber-900">CMS Sudah Terinstall & Terkunci (Locked)</p>
+                          <p className="text-[11px] text-amber-700">Proteksi Keamanan: Re-instalasi otomatis dibatasi.</p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-slate-600 leading-relaxed">
+                        Website ini sudah pernah diinisialisasi. Untuk mencegah reset data yang tidak disengaja, sistem mengunci wizard. Anda dapat langsung mengelola konten melalui Dashboard Admin.
+                      </p>
+
+                      <div className="p-3.5 rounded-xl bg-white border border-amber-200 text-slate-700 space-y-2">
+                        <p className="font-semibold text-slate-900 flex items-center gap-1.5 text-[11px]">
+                          <KeyRound className="w-3.5 h-3.5 text-amber-600" /> Ingin Melakukan Instalasi Ulang Penuh?
+                        </p>
+                        <p className="text-[11px] text-slate-600 leading-relaxed">
+                          Jalankan query SQL berikut di database untuk membuka proteksi:
+                        </p>
+                        <pre className="p-2.5 rounded-lg bg-slate-900 font-mono text-[11px] text-emerald-400 overflow-x-auto select-all">
+                          UPDATE `pengaturan_web` SET `value` = 'false' WHERE `key_name` = 'cms_is_installed';
+                        </pre>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {installStatus?.is_installed && (
-                <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-300">
-                      <Lock className="w-4 h-4" />
+              {/* STEP 2: Identitas & Pilihan Tema */}
+              {currentStep === 2 && (
+                <div className="space-y-6">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                      <Building2 className="w-3.5 h-3.5" />
+                      Langkah 2: Profil & Tema Visual
                     </div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Identitas Portal & Pemilihan Tema</h2>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Tentukan informasi identitas website dan pilih gaya tampilan yang ingin langsung diterapkan saat peluncuran.
+                    </p>
+                  </div>
+
+                  {/* THEME SELECTION CARD (HIGHLIGHTED) */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider">
+                      Pilih Gaya Tampilan (Theme Layout) <span className="text-violet-600 font-normal lowercase">(dapat diubah nanti di admin)</span>
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Editorial News Theme */}
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'editorial', home_layout_mode: 'EDITORIAL' }))}
+                        className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+                          formData.selected_theme === 'editorial'
+                            ? 'border-violet-600 bg-violet-50/50 shadow-md ring-2 ring-violet-500/20'
+                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow-xs">
+                              <Newspaper className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-black text-slate-900">Revision Editorial</p>
+                              <p className="text-[11px] font-bold text-violet-700">Portal Berita & Majalah Digital</p>
+                            </div>
+                          </div>
+                          {formData.selected_theme === 'editorial' && (
+                            <span className="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs shadow-xs">
+                              <Check className="w-4 h-4 stroke-[3]" />
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          Layout 2-kolom editorial modern, trending topics pills, sidebar redaksi bergradasi ungu lembut, dan box newsletter interaktif. Sangat cocok untuk publikasi berita intensif.
+                        </p>
+                        <div className="mt-3.5 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[10px] font-bold text-violet-800">
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">2-Column Layout</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Trending Bar</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Soft Violet Accent</span>
+                        </div>
+                      </button>
+
+                      {/* Portal Layanan Theme */}
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'emerald', home_layout_mode: 'PORTAL' }))}
+                        className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+                          formData.selected_theme === 'emerald'
+                            ? 'border-emerald-600 bg-emerald-50/40 shadow-md ring-2 ring-emerald-500/20'
+                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow-xs">
+                              <LayoutGrid className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-black text-slate-900">Portal Layanan Publik</p>
+                              <p className="text-[11px] font-bold text-emerald-800">Instansi Pemerintah & BUMN</p>
+                            </div>
+                          </div>
+                          {formData.selected_theme === 'emerald' && (
+                            <span className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs shadow-xs">
+                              <Check className="w-4 h-4 stroke-[3]" />
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          Layout korporat dan pemerintahan dengan hero search bar pencarian cepat, kartu grid layanan publik terpadu, dan widget status jam operasional.
+                        </p>
+                        <div className="mt-3.5 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[10px] font-bold text-emerald-800">
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Service Grid</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Hero Search</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Emerald / Teal</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Nama Website / Portal <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Globe className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="text"
+                            name="site_name"
+                            value={formData.site_name}
+                            onChange={handleChange}
+                            placeholder="Contoh: Djie CMS Pro Editorial"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Nama Instansi / Media Publisher <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Building2 className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="text"
+                            name="instansi_name"
+                            value={formData.instansi_name}
+                            onChange={handleChange}
+                            placeholder="Contoh: Media Redaksi Nusantara"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                     <div>
-                      <p className="font-bold text-sm text-amber-200">CMS Sudah Terinstall & Terkunci (Locked)</p>
-                      <p className="text-[11px] text-amber-300/80">Proteksi Keamanan Aktif: Re-instalasi otomatis diblokir.</p>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Slogan / Tagline Website
+                      </label>
+                      <input 
+                        type="text"
+                        name="site_tagline"
+                        value={formData.site_tagline}
+                        onChange={handleChange}
+                        placeholder="Contoh: Berita Terkini & Analisis Mendalam Terpercaya"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                      />
                     </div>
-                  </div>
-                  
-                  <p className="text-slate-300 leading-relaxed">
-                    Portal website ini telah resmi diinisialisasi. Untuk mencegah penimpaan data dan pengambilalihan hak akses oleh pihak tidak berwenang, sistem melarang instalasi ulang langsung dari web browser.
-                  </p>
 
-                  <div className="p-3.5 rounded-xl bg-slate-950/70 border border-white/10 text-slate-300 space-y-2">
-                    <p className="font-semibold text-white flex items-center gap-1.5 text-[11px]">
-                      <KeyRound className="w-3.5 h-3.5 text-amber-400" /> Cara Membuka Kunci Re-Instalasi (Admin/Dev):
-                    </p>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Jika Anda adalah pemilik server dan ingin melakukan re-instalasi sengaja, jalankan query SQL berikut di database MySQL:
-                    </p>
-                    <pre className="p-2.5 rounded-lg bg-black/60 font-mono text-[11px] text-emerald-400 overflow-x-auto select-all border border-emerald-500/20">
-                      UPDATE `pengaturan_web` SET `value` = 'false' WHERE `key_name` = 'cms_is_installed';
-                    </pre>
-                    <p className="text-[10px] text-slate-500">
-                      Atau cukup login ke Panel Admin (<Link to="/admin/login" className="text-emerald-400 underline font-semibold">/admin/login</Link>) dan sesuaikan identitas web di menu Pengaturan tanpa perlu menginstal ulang.
-                    </p>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Deskripsi Ringkas Portal (SEO & Metadata)
+                      </label>
+                      <textarea 
+                        name="site_description"
+                        rows={2}
+                        value={formData.site_description}
+                        onChange={handleChange}
+                        placeholder="Deskripsi singkat untuk meta tag Google & pengantar landing page..."
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Email Kontak Resmi
+                        </label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="email"
+                            name="email_kontak"
+                            value={formData.email_kontak}
+                            onChange={handleChange}
+                            placeholder="redaksi@example.com"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Nomor Telepon / Redaksi
+                        </label>
+                        <div className="relative">
+                          <Phone className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="text"
+                            name="telepon_kontak"
+                            value={formData.telepon_kontak}
+                            onChange={handleChange}
+                            placeholder="(021) 555-0199"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Alamat Lengkap Kantor / Redaksi
+                      </label>
+                      <div className="relative">
+                        <MapPin className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                        <input 
+                          type="text"
+                          name="alamat_kantor"
+                          value={formData.alamat_kantor}
+                          onChange={handleChange}
+                          placeholder="Gedung Cyber Media Lt. 3, Jakarta"
+                          className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
-            </div>
-          )}
 
-          {/* STEP 2: Identitas & Informasi Portal */}
-          {currentStep === 2 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-                  <Building2 className="w-3.5 h-3.5" />
-                  Langkah 2: Profil & Metadata
-                </div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">Identitas Portal Web & Instansi</h2>
-                <p className="text-sm text-slate-400 mt-1">
-                  Informasi ini akan ditampilkan secara global pada header, footer, SEO meta tags, dan identitas resmi website.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* STEP 3: Akun Administrator & Data Demo */}
+              {currentStep === 3 && (
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Nama Website / Portal <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <Globe className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="text"
-                        name="site_name"
-                        value={formData.site_name}
-                        onChange={handleChange}
-                        placeholder="Contoh: BKPSDM Kabupaten Aceh Tamiang"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                        required
-                      />
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      Langkah 3: Akun Super Admin & Data Awal
                     </div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Kredensial Super Administrator</h2>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Akun ini memegang hak akses tertinggi untuk mengelola seluruh konten, artikel berita, media, dan konfigurasi portal.
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Nama Instansi / OPD <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <Building2 className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="text"
-                        name="instansi_name"
-                        value={formData.instansi_name}
-                        onChange={handleChange}
-                        placeholder="Pemerintah Kabupaten Aceh Tamiang"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Slogan / Tagline Website
-                  </label>
-                  <input 
-                    type="text"
-                    name="site_tagline"
-                    value={formData.site_tagline}
-                    onChange={handleChange}
-                    placeholder="Contoh: Badan Kepegawaian & Pengembangan Sumber Daya Manusia"
-                    className="w-full px-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Deskripsi Ringkas Portal (SEO & Metadata)
-                  </label>
-                  <textarea 
-                    name="site_description"
-                    rows={2}
-                    value={formData.site_description}
-                    onChange={handleChange}
-                    placeholder="Deskripsi singkat untuk pencarian Google & pengantar landing page..."
-                    className="w-full px-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Email Kontak Resmi
-                    </label>
-                    <div className="relative">
-                      <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="email"
-                        name="email_kontak"
-                        value={formData.email_kontak}
-                        onChange={handleChange}
-                        placeholder="bkpsdm@acehtamiangkab.go.id"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Nomor Telepon / Helpdesk
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="text"
-                        name="telepon_kontak"
-                        value={formData.telepon_kontak}
-                        onChange={handleChange}
-                        placeholder="(0641) 333444"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* THEME SELECTION CARD */}
-                <div className="pt-2">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">
-                    Pilih Tema & Gaya Visual Portal
-                  </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'editorial', home_layout_mode: 'EDITORIAL' }))}
-                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                        formData.selected_theme === 'editorial'
-                          ? 'border-violet-500 bg-violet-950/40 shadow-lg shadow-violet-500/10'
-                          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-black text-violet-300 flex items-center gap-1.5">
-                          <span>📰</span>
-                          <span>Revision Editorial Magazine</span>
-                        </span>
-                        {formData.selected_theme === 'editorial' && (
-                          <span className="w-5 h-5 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">
-                            <Check className="w-3.5 h-3.5 stroke-[3]" />
-                          </span>
-                        )}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Nama Lengkap Admin <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <User className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="text"
+                            name="admin_name"
+                            value={formData.admin_name}
+                            onChange={handleChange}
+                            placeholder="Super Administrator"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            required
+                          />
+                        </div>
                       </div>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Khusus portal berita, media digital & blog. Layout 2-kolom, trending topics pills, sidebar redaksi, dan newsletter.
-                      </p>
-                    </button>
 
-                    <button
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'emerald', home_layout_mode: 'PORTAL' }))}
-                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                        formData.selected_theme === 'emerald'
-                          ? 'border-emerald-500 bg-emerald-950/40 shadow-lg shadow-emerald-500/10'
-                          : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-black text-emerald-300 flex items-center gap-1.5">
-                          <span>🏛️</span>
-                          <span>Portal Layanan & Berita Terpadu</span>
-                        </span>
-                        {formData.selected_theme === 'emerald' && (
-                          <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">
-                            <Check className="w-3.5 h-3.5 stroke-[3]" />
-                          </span>
-                        )}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Email Login Admin <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="email"
+                            name="admin_email"
+                            value={formData.admin_email}
+                            onChange={handleChange}
+                            placeholder="admin@example.com"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                            required
+                          />
+                        </div>
                       </div>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Cocok untuk website instansi, korporat, & multi-layanan. Dilengkapi hero search besar, katalog layanan & widget publik.
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Kata Sandi Baru {installStatus?.is_installed && <span className="text-slate-500 font-normal">(Kosongkan bila tetap)</span>}
+                        </label>
+                        <div className="relative">
+                          <Lock className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="password"
+                            name="admin_password"
+                            value={formData.admin_password}
+                            onChange={handleChange}
+                            placeholder="Minimal 6 karakter"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Ulangi Kata Sandi
+                        </label>
+                        <div className="relative">
+                          <KeyRound className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                          <input 
+                            type="password"
+                            name="admin_password_confirm"
+                            value={formData.admin_password_confirm}
+                            onChange={handleChange}
+                            placeholder="Ketik ulang kata sandi"
+                            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 shadow-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-start gap-2.5">
+                      <ShieldCheck className="w-4 h-4 text-violet-600 flex-shrink-0 mt-0.5" />
+                      <span>
+                        Bila kata sandi dikosongkan pada inisialisasi awal, sistem akan menyetel kata sandi default (<code className="text-violet-700 font-mono font-semibold">admin123</code>) yang dapat langsung diubah di profil admin.
+                      </span>
+                    </div>
+
+                    {/* DUMMY MIGRATION DATA CARD (LOREM IPSUM) */}
+                    <div className="pt-2">
+                      <label className="flex items-start gap-3.5 p-4 rounded-2xl bg-violet-50/60 border border-violet-200 hover:border-violet-300 cursor-pointer transition-all shadow-xs">
+                        <input
+                          type="checkbox"
+                          name="install_dummy_data"
+                          checked={formData.install_dummy_data}
+                          onChange={(e) => setFormData(prev => ({ ...prev, install_dummy_data: e.target.checked }))}
+                          className="w-4 h-4 mt-0.5 rounded text-violet-600 focus:ring-violet-500 bg-white border-slate-300"
+                        />
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-violet-950 flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+                            <span>Pasang Data Contoh Berita Standar (Lorem Ipsum Migration)</span>
+                          </p>
+                          <p className="text-[11px] text-slate-600 leading-relaxed">
+                            Sistem akan otomatis mengisikan artikel berita contoh Lorem Ipsum, kategori topik, dan banner redaksi agar tema langsung tampil penuh dan siap dievaluasi. Data dapat diedit atau dihapus kapan saja melalui panel admin.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: Konfirmasi Akhir */}
+              {currentStep === 4 && (
+                <div className="space-y-6">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold mb-2">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Langkah 4: Konfirmasi Konfigurasi
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Tinjauan Akhir & Inisialisasi</h2>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Periksa ringkasan konfigurasi sebelum sistem mengeksekusi migrasi tabel dan mengunci setup portal.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 divide-y divide-slate-200/80 text-xs">
+                      <div className="pb-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Nama Portal / Web:</span>
+                        <span className="text-slate-900 font-bold">{formData.site_name}</span>
+                      </div>
+                      <div className="py-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Instansi / Penerbit:</span>
+                        <span className="text-slate-900 font-semibold">{formData.instansi_name}</span>
+                      </div>
+                      <div className="py-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Gaya Tema Terpilih:</span>
+                        <span className="font-bold text-violet-700">
+                          {formData.selected_theme === 'editorial' ? '📰 Revision Editorial Magazine' : '🏛️ Portal Layanan & Berita Terpadu'}
+                        </span>
+                      </div>
+                      <div className="py-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Email Kontak:</span>
+                        <span className="text-slate-800 font-mono">{formData.email_kontak || '-'}</span>
+                      </div>
+                      <div className="py-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Super Admin Login:</span>
+                        <span className="text-violet-700 font-mono font-bold">{formData.admin_email}</span>
+                      </div>
+                      <div className="py-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Kata Sandi:</span>
+                        <span className="text-slate-700">{formData.admin_password ? '•••••••• (Diperbarui)' : 'admin123 (Standar)'}</span>
+                      </div>
+                      <div className="pt-3 flex justify-between items-center">
+                        <span className="text-slate-500 font-medium">Data Dummy (Lorem Ipsum):</span>
+                        <span className={`font-bold ${formData.install_dummy_data ? 'text-emerald-700' : 'text-slate-500'}`}>
+                          {formData.install_dummy_data ? 'Ya (Dipasang Lengkap)' : 'Tidak (Mulai Bersih)'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 text-violet-900 text-xs space-y-1.5">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-violet-700" /> Eksekusi Otomasi Inisialisasi:
                       </p>
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Alamat Lengkap Kantor
-                  </label>
-                  <div className="relative">
-                    <MapPin className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                    <input 
-                      type="text"
-                      name="alamat_kantor"
-                      value={formData.alamat_kantor}
-                      onChange={handleChange}
-                      placeholder="Gedung Cyber Media Lt. 3, Jakarta"
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Akun Administrator Utama */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Langkah 3: Keamanan & Administrator
-                </div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">Akun Super Administrator Utama</h2>
-                <p className="text-sm text-slate-400 mt-1">
-                  Akun ini akan memegang hak akses tertinggi (Super Admin) untuk mengelola seluruh konten, pengguna, modul RBAC, dan audit log.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Nama Lengkap Admin <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <User className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="text"
-                        name="admin_name"
-                        value={formData.admin_name}
-                        onChange={handleChange}
-                        placeholder="Administrator BKPSDM"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                        required
-                      />
+                      <ul className="list-disc list-inside space-y-1 text-slate-700 pl-1 pt-0.5">
+                        <li>Menyimpan konfigurasi parameter situs dan tema aktif ke basis data</li>
+                        <li>Membuat akun kredensial Super Admin dengan hak akses RBAC penuh</li>
+                        <li>Mengaktifkan proteksi <code className="text-violet-800 font-semibold font-mono">cms_is_installed: true</code></li>
+                      </ul>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 5: Sukses & Selesai */}
+              {currentStep === 5 && (
+                <div className="text-center py-6 space-y-6">
+                  <div className="w-16 h-16 rounded-3xl bg-violet-600 text-white flex items-center justify-center mx-auto shadow-md shadow-violet-500/30">
+                    <Check className="w-9 h-9 stroke-[3]" />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Email Login Admin <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="email"
-                        name="admin_email"
-                        value={formData.admin_email}
-                        onChange={handleChange}
-                        placeholder="admin@acehtamiangkab.go.id"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                        required
-                      />
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Instalasi CMS Berhasil!</h2>
+                    <p className="text-sm text-slate-600 max-w-md mx-auto mt-2">
+                      Portal {formData.site_name} telah berhasil diinisialisasi dan siap digunakan sepenuhnya.
+                    </p>
+                  </div>
+
+                  <div className="max-w-md mx-auto p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs space-y-2.5">
+                    <p className="font-bold text-slate-900">Kredensial Login Administrator:</p>
+                    <div className="flex justify-between items-center text-slate-700">
+                      <span>URL Admin Panel:</span>
+                      <span className="font-mono text-violet-700 font-semibold">/admin/login</span>
+                    </div>
+                    <div className="flex justify-between items-center text-slate-700">
+                      <span>Email Admin:</span>
+                      <span className="font-mono text-violet-700 font-semibold">{formData.admin_email}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-slate-700">
+                      <span>Kata Sandi:</span>
+                      <span className="font-mono text-slate-600">
+                        {formData.admin_password ? '(Kata sandi yang Anda tentukan)' : 'admin123'}
+                      </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                    <Link
+                      to="/admin/login"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-violet-600 text-white font-bold text-sm shadow-sm hover:bg-violet-700 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    >
+                      <Lock className="w-4 h-4" />
+                      <span>Masuk ke Panel Admin</span>
+                    </Link>
+
+                    <Link
+                      to="/"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-semibold text-sm border border-slate-200 shadow-xs flex items-center justify-center gap-2 transition-all"
+                    >
+                      <Globe className="w-4 h-4" />
+                      <span>Kunjungi Beranda Web</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons for Step 1-4 */}
+              {currentStep <= 4 && (
+                <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Kata Sandi Baru {installStatus?.is_installed && <span className="text-slate-400 font-normal">(Kosongkan jika tetap lama)</span>}
-                    </label>
-                    <div className="relative">
-                      <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="password"
-                        name="admin_password"
-                        value={formData.admin_password}
-                        onChange={handleChange}
-                        placeholder="Minimal 6 karakter"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Ulangi Kata Sandi
-                    </label>
-                    <div className="relative">
-                      <KeyRound className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                      <input 
-                        type="password"
-                        name="admin_password_confirm"
-                        value={formData.admin_password_confirm}
-                        onChange={handleChange}
-                        placeholder="Ketik ulang kata sandi"
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-950/60 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-slate-400 flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span>
-                    Jika kata sandi dikosongkan pada instalasi awal, sistem akan mempertahankan akun admin bawaan atau menetapkan kata sandi standar yang aman (<code className="text-emerald-300 font-mono">admin123</code>).
-                  </span>
-                </div>
-
-                {/* Option to Install Dummy / Sample Data */}
-                <div className="pt-2">
-                  <label className="flex items-start gap-3 p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 hover:border-emerald-500/50 cursor-pointer transition-all">
-                    <input
-                      type="checkbox"
-                      name="install_dummy_data"
-                      checked={formData.install_dummy_data}
-                      onChange={(e) => setFormData(prev => ({ ...prev, install_dummy_data: e.target.checked }))}
-                      className="w-4 h-4 mt-0.5 rounded text-emerald-500 focus:ring-emerald-500 bg-slate-900 border-white/20"
-                    />
-                    <div className="space-y-1">
-                      <p className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>Pasang Data Contoh / Dummy Migration (Lorem Ipsum)</span>
-                      </p>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Sistem akan mengisikan contoh artikel berita standar Lorem Ipsum, kategori, banner, dokumen, dan agenda agar layout visual langsung rapi dan mudah diuji coba. Anda dapat mengedit atau menghapusnya kapan saja di Dashboard Admin.
-                      </p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Konfirmasi & Peluncuran */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Langkah 4: Konfirmasi Akhir
-                </div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">Tinjauan Konfigurasi & Inisialisasi</h2>
-                <p className="text-sm text-slate-400 mt-1">
-                  Harap periksa kembali rangkuman konfigurasi portal sebelum sistem memproses penyimpanan dan mengaktifkan CMS.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 divide-y divide-white/5 text-xs">
-                  <div className="pb-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Nama Portal / Web:</span>
-                    <span className="text-white font-bold">{formData.site_name}</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Instansi / OPD:</span>
-                    <span className="text-white font-semibold">{formData.instansi_name}</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Tagline:</span>
-                    <span className="text-slate-200">{formData.site_tagline || '-'}</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Email Kontak:</span>
-                    <span className="text-emerald-300 font-mono">{formData.email_kontak || '-'}</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Super Admin Email:</span>
-                    <span className="text-emerald-400 font-mono font-semibold">{formData.admin_email}</span>
-                  </div>
-                  <div className="pt-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Kata Sandi Admin:</span>
-                    <span className="text-slate-300">{formData.admin_password ? '•••••••• (Diperbarui)' : '(Default / Tetap)'}</span>
-                  </div>
-                  <div className="py-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Tema & Layout Dipilih:</span>
-                    <span className="text-violet-300 font-semibold">
-                      {formData.selected_theme === 'editorial' ? '📰 Revision Editorial Magazine' : '🏛️ Portal Layanan & Berita Terpadu'}
-                    </span>
-                  </div>
-                  <div className="pt-3 flex justify-between items-center">
-                    <span className="text-slate-400 font-medium">Data Contoh / Dummy:</span>
-                    <span className={`font-bold ${formData.install_dummy_data ? 'text-emerald-400' : 'text-slate-400'}`}>
-                      {formData.install_dummy_data ? 'Ya (Dipasang - Lorem Ipsum)' : 'Tidak (Mulai Kosong)'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-200 text-xs space-y-1">
-                  <p className="font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Otomasi yang akan dijalankan:
-                  </p>
-                  <ul className="list-disc list-inside space-y-0.5 text-slate-300 pl-1 pt-1">
-                    <li>Sinkronisasi tabel <code className="text-emerald-300">PengaturanWeb</code> dengan nilai parameter di atas</li>
-                    <li>Inisialisasi akun Super Admin & penetapan role RBAC penuh</li>
-                    <li>Pembuatan menu navigasi publik default (jika belum ada)</li>
-                    <li>Pencatatan penanda instalasi resmi <code className="text-emerald-300">cms_is_installed: true</code></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 5: Sukses & Peluncuran */}
-          {currentStep === 5 && (
-            <div className="text-center py-6 space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20 animate-bounce">
-                <Check className="w-9 h-9 stroke-[3]" />
-              </div>
-
-              <div>
-                <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Instalasi CMS Berhasil!</h2>
-                <p className="text-sm text-slate-300 max-w-md mx-auto mt-2">
-                  Portal Layanan & Informasi Publik BKPSDM Kabupaten Aceh Tamiang telah berhasil diinisialisasi dan siap digunakan sepenuhnya.
-                </p>
-              </div>
-
-              <div className="max-w-md mx-auto p-4 rounded-xl bg-white/[0.04] border border-white/10 text-left text-xs space-y-2">
-                <p className="font-semibold text-slate-200">Kredensial Login Administrator:</p>
-                <div className="flex justify-between items-center text-slate-300">
-                  <span>URL Admin Panel:</span>
-                  <span className="font-mono text-emerald-400">/admin/login</span>
-                </div>
-                <div className="flex justify-between items-center text-slate-300">
-                  <span>Email Admin:</span>
-                  <span className="font-mono text-emerald-400">{formData.admin_email}</span>
-                </div>
-                <div className="flex justify-between items-center text-slate-300">
-                  <span>Kata Sandi:</span>
-                  <span className="font-mono text-slate-400">
-                    {formData.admin_password ? '(Kata sandi yang Anda tentukan)' : 'admin123'}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                <Link
-                  to="/admin/login"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 hover:from-emerald-400 hover:to-teal-400 flex items-center justify-center gap-2 transition-all"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span>Masuk ke Panel Admin</span>
-                </Link>
-
-                <Link
-                  to="/"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-sm border border-white/10 flex items-center justify-center gap-2 transition-all"
-                >
-                  <Globe className="w-4 h-4" />
-                  <span>Kunjungi Beranda Web</span>
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons for Step 1-4 */}
-          {currentStep <= 4 && (
-            <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-              <div>
-                {currentStep > 1 && (
-                  <button
-                    type="button"
-                    onClick={handlePrev}
-                    disabled={submitting}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-1.5 transition-colors disabled:opacity-50"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Kembali</span>
-                  </button>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3">
-                {installStatus?.is_installed && currentStep === 1 ? (
-                  <Link
-                    to="/admin/login"
-                    className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 border border-amber-500/30 flex items-center gap-2 transition-all cursor-pointer shadow-lg"
-                  >
-                    <Lock className="w-4 h-4 text-amber-400" />
-                    <span>CMS Terkunci — Ke Panel Admin</span>
-                  </Link>
-                ) : currentStep < 4 ? (
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={loadingStatus}
-                    className="px-6 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    <span>Langkah Selanjutnya</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleRunSetup}
-                    disabled={submitting}
-                    className="px-7 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 hover:from-emerald-300 hover:to-teal-200 shadow-xl shadow-emerald-500/30 flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    {submitting ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>Menginisialisasi CMS...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4" />
-                        <span>Selesaikan & Luncurkan CMS</span>
-                      </>
+                    {currentStep > 1 && (
+                      <button
+                        type="button"
+                        onClick={handlePrev}
+                        disabled={submitting}
+                        className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Kembali</span>
+                      </button>
                     )}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          </>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    {installStatus?.is_installed && currentStep === 1 ? (
+                      <Link
+                        to="/admin/login"
+                        className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-sm flex items-center gap-2 transition-all cursor-pointer"
+                      >
+                        <Lock className="w-4 h-4" />
+                        <span>CMS Terkunci — Ke Panel Admin</span>
+                      </Link>
+                    ) : currentStep < 4 ? (
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        disabled={loadingStatus}
+                        className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-sm flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        <span>Langkah Selanjutnya</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleRunSetup}
+                        disabled={submitting}
+                        className="px-7 py-2.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 shadow-md shadow-violet-500/20 flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        {submitting ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span>Menginisialisasi CMS...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4" />
+                            <span>Selesaikan & Luncurkan CMS</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-4xl mx-auto w-full pt-4 text-center text-xs text-slate-500 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-2">
+      <footer className="relative z-10 max-w-4xl mx-auto w-full pt-4 text-center text-xs text-slate-500 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-2">
         <p>© 2026 Djie CMS Pro. Open Source Publishing Engine.</p>
-        <div className="flex items-center gap-4 text-slate-400 text-[11px]">
-          <span>Security Hardened</span>
+        <div className="flex items-center gap-4 text-slate-500 text-[11px] font-medium">
+          <span>Revision Editorial Theme</span>
           <span>•</span>
-          <span>Sequelize ORM</span>
+          <span>Security Hardened</span>
           <span>•</span>
           <span>React 18 SPA</span>
         </div>
