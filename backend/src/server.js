@@ -14,15 +14,15 @@ async function startServer() {
     await sequelize.authenticate();
     logger.info('✅ Koneksi ke database MySQL berhasil tersambung.');
 
-    // 1. Eksekusi database migrations berurutan (pasti aman dari kehilangan data)
-    await runMigrations(sequelize);
-
-    // 2. Pastikan kolom baru dan indeks performa tersedia
-    await ensureTableColumns(sequelize);
-
-    // 3. Sinkronisasi model ke tabel (hanya CREATE IF NOT EXISTS, tidak pernah hapus data)
+    // 1. Sinkronisasi model ke tabel terlebih dahulu (CREATE TABLE IF NOT EXISTS)
     await sequelize.sync();
     logger.info('✅ Sinkronisasi model database selesai.');
+
+    // 2. Eksekusi database migrations berurutan (pasti aman dari kehilangan data)
+    await runMigrations(sequelize);
+
+    // 3. Pastikan kolom baru dan indeks performa tersedia
+    await ensureTableColumns(sequelize);
 
     // Cek apakah sistem sudah pernah diinstal lewat Installation Wizard
     const { PengaturanWeb } = require('./models');

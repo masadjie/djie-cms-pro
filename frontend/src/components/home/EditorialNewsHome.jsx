@@ -81,7 +81,9 @@ export default function EditorialNewsHome() {
           params.kategori_slug = selectedTopic;
         }
         const res = await api.get('/berita', { params });
-        return res?.data || res || { rows: [], count: 0 };
+        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res?.rows) ? res.rows : (Array.isArray(res) ? res : []));
+        const total = res?.total || res?.count || list.length;
+        return { rows: list, count: total };
       } catch (err) {
         return { rows: [], count: 0 };
       }
@@ -94,7 +96,7 @@ export default function EditorialNewsHome() {
     queryFn: async () => {
       try {
         const res = await api.get('/berita', { params: { is_featured: 'true', limit: 4, status: 'PUBLISHED' } });
-        const list = res?.data?.rows || res?.rows || [];
+        const list = Array.isArray(res?.data) ? res.data : (Array.isArray(res?.rows) ? res.rows : (Array.isArray(res) ? res : []));
         return list;
       } catch (err) {
         return [];
@@ -258,8 +260,8 @@ export default function EditorialNewsHome() {
                       {/* Image Thumbnail with Category Badge Overlay */}
                       <Link to={`/berita/${item.slug}`} className="block relative aspect-[16/10] overflow-hidden bg-slate-100">
                         <img
-                          src={item.gambar_utama || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80'}
-                          alt={item.judul}
+                          src={item.cover_image || item.gambar_utama || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80'}
+                          alt={item.title || item.judul}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           onError={(e) => {
                             e.currentTarget.src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80';
@@ -286,12 +288,12 @@ export default function EditorialNewsHome() {
                               ? new Date(item.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
                               : 'Terbaru'}
                           </span>
-                          {item.read_time && (
+                          {(item.read_time_minutes || item.read_time) && (
                             <>
                               <span>•</span>
                               <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
-                                {item.read_time} mnt
+                                {item.read_time_minutes || item.read_time} mnt
                               </span>
                             </>
                           )}
@@ -300,13 +302,13 @@ export default function EditorialNewsHome() {
                         {/* Title */}
                         <h2 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-2 leading-snug">
                           <Link to={`/berita/${item.slug}`}>
-                            {item.judul}
+                            {item.title || item.judul}
                           </Link>
                         </h2>
 
                         {/* Excerpt */}
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                          {item.ringkasan || item.excerpt || 'Baca liputan dan informasi mendalam selengkapnya di artikel ini.'}
+                          {item.excerpt || item.ringkasan || 'Baca liputan dan informasi mendalam selengkapnya di artikel ini.'}
                         </p>
                       </div>
                     </div>
@@ -421,8 +423,8 @@ export default function EditorialNewsHome() {
 
                 <Link to={`/berita/${mainFeatured.slug}`} className="block relative aspect-[4/3] rounded-2xl overflow-hidden group shadow-sm">
                   <img
-                    src={mainFeatured.gambar_utama || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80'}
-                    alt={mainFeatured.judul}
+                    src={mainFeatured.cover_image || mainFeatured.gambar_utama || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80'}
+                    alt={mainFeatured.title || mainFeatured.judul}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent flex flex-col justify-end p-4 text-white">
@@ -430,7 +432,7 @@ export default function EditorialNewsHome() {
                       {mainFeatured.kategori?.nama_kategori || 'Editorial'}
                     </span>
                     <h5 className="text-sm font-black text-white line-clamp-2 mt-1 leading-snug">
-                      {mainFeatured.judul}
+                      {mainFeatured.title || mainFeatured.judul}
                     </h5>
                     <span className="text-[10px] text-slate-300 mt-2 block">
                       {mainFeatured.author_name || authorName} • {mainFeatured.published_at ? new Date(mainFeatured.published_at).toLocaleDateString('id-ID') : 'Terbaru'}

@@ -234,24 +234,26 @@ async function seedDummyData() {
     if (docCount === 0) {
       await DokumenPublik.bulkCreate([
         {
-          nama_dokumen: 'Standar Operasional Prosedur (SOP) Pelayanan',
-          nomor_dokumen: '001/SOP/2026',
+          judul: 'Standar Operasional Prosedur (SOP) Pelayanan',
+          slug: 'sop-pelayanan-2026',
+          nomor_surat: '001/SOP/2026',
           tahun: 2026,
-          kategori: 'SOP',
+          kategori: 'PANDUAN_SIKEPO',
           file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
           file_size_kb: 120,
-          downloads_count: 34,
-          is_active: true
+          download_count: 34,
+          status: 'PUBLISHED'
         },
         {
-          nama_dokumen: 'Rencana Strategis (Renstra) Pelayanan Publik',
-          nomor_dokumen: '002/RENSTRA/2026',
+          judul: 'Rencana Strategis (Renstra) Pelayanan Publik',
+          slug: 'renstra-pelayanan-publik-2026',
+          nomor_surat: '002/RENSTRA/2026',
           tahun: 2026,
-          kategori: 'RENSTRA',
+          kategori: 'LAPORAN_KINERJA',
           file_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
           file_size_kb: 450,
-          downloads_count: 56,
-          is_active: true
+          download_count: 56,
+          status: 'PUBLISHED'
         }
       ]);
     }
@@ -262,19 +264,19 @@ async function seedDummyData() {
       await GaleriMedia.bulkCreate([
         {
           judul: 'Dokumentasi Rapat Koordinasi Layanan',
-          deskripsi: 'Pertemuan koordinasi peningkatan mutu standar pelayanan masyarakat.',
-          media_type: 'FOTO',
-          file_url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
-          kategori: 'KEGIATAN',
-          is_active: true
+          tipe: 'FOTO',
+          media_url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
+          album: 'Kegiatan Publikasi',
+          caption: 'Pertemuan koordinasi peningkatan mutu standar pelayanan.',
+          status: 'PUBLISHED'
         },
         {
           judul: 'Sosialisasi Digitalisasi Dokumen',
-          deskripsi: 'Penyuluhan pemanfaatan layanan elektronik bagi masyarakat luas.',
-          media_type: 'FOTO',
-          file_url: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80',
-          kategori: 'PELAYANAN',
-          is_active: true
+          tipe: 'FOTO',
+          media_url: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80',
+          album: 'Kegiatan Publikasi',
+          caption: 'Penyuluhan pemanfaatan platform digital.',
+          status: 'PUBLISHED'
         }
       ]);
     }
