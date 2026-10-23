@@ -5,7 +5,8 @@ import {
   ArrowRight, ArrowLeft, Sparkles, Server, Mail, Phone, 
   MapPin, User, Lock, AlertCircle, RefreshCw, KeyRound, 
   Laptop2, Check, ExternalLink, HardDriveDownload, Newspaper,
-  LayoutGrid, BookOpen, Layers
+  LayoutGrid, BookOpen, Layers, Heart, Coffee, Eye, ShieldAlert,
+  Code2, Sparkle
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -23,9 +24,9 @@ export default function InstallWizard() {
     // Step 2: Website & Agency Identity
     site_name: 'Djie CMS Pro — Digital Portal',
     site_tagline: 'Modern Content Management System & Publishing Engine',
-    site_description: 'Platform manajemen konten berkecepatan tinggi untuk portal berita, media digital, profil perusahaan, dan publikasi profesional.',
-    instansi_name: 'Media Digital / Perusahaan',
-    email_kontak: 'editorial@example.com',
+    site_description: 'Platform manajemen konten berkecepatan tinggi untuk portal berita, media digital, profil instansi/perusahaan, dan publikasi profesional.',
+    instansi_name: 'Media Digital / Instansi',
+    email_kontak: 'redaksi@example.com',
     telepon_kontak: '(021) 555-0199',
     alamat_kantor: 'Gedung Pusat Informasi & Redaksi Lt. 5',
 
@@ -181,7 +182,7 @@ export default function InstallWizard() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-bold text-lg text-slate-900 tracking-tight">Djie CMS Pro</h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                 Setup Wizard
               </span>
             </div>
@@ -312,6 +313,40 @@ export default function InstallWizard() {
               {/* STEP 1: Prasyarat & Status DB */}
               {currentStep === 1 && (
                 <div className="space-y-6">
+                  {/* OPEN SOURCE NOTICE & DONATION BANNER */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50 via-sky-50/70 to-indigo-50 border border-blue-200/80 shadow-xs space-y-3.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-black text-[11px] tracking-wide uppercase flex items-center gap-1 shadow-xs">
+                          <Code2 className="w-3 h-3" />
+                          Open Source
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          Dibuat oleh <span className="text-blue-700 font-black">Adjie Kurniawan</span>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-xl border border-rose-200">
+                        <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                        <span>GRATIS — Jangan Diperjualbelikan!</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Proyek <strong>Djie CMS Pro</strong> ini dikembangkan secara terbuka untuk mendukung instansi publik, media, dan developer Indonesia agar memiliki sistem manajemen konten modern, cepat, dan aman.
+                    </p>
+
+                    <div className="pt-2 border-t border-blue-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                      <div className="flex items-center gap-2 text-slate-700 font-medium">
+                        <Heart className="w-4 h-4 text-rose-500 fill-rose-500 flex-shrink-0" />
+                        <span>Dukung & donasi pengembang (DANA / Gopay / Transfer):</span>
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-blue-200 shadow-xs font-mono font-bold text-blue-700 text-xs">
+                        <Coffee className="w-3.5 h-3.5 text-amber-500" />
+                        <span>0812-6949-4591</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
                       <Database className="w-3.5 h-3.5" />
@@ -442,7 +477,7 @@ export default function InstallWizard() {
                 </div>
               )}
 
-              {/* STEP 2: Identitas & Pilihan Tema */}
+              {/* STEP 2: Identitas & Pilihan Tema dengan Visual Preview Card */}
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div>
@@ -456,81 +491,174 @@ export default function InstallWizard() {
                     </p>
                   </div>
 
-                  {/* THEME SELECTION CARD (HIGHLIGHTED) */}
-                  <div className="space-y-2">
+                  {/* THEME SELECTION CARD WITH VISUAL WIREFRAME PREVIEWS */}
+                  <div className="space-y-2.5">
                     <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      Pilih Gaya Tampilan (Theme Layout) <span className="text-blue-600 font-normal lowercase">(dapat diubah nanti di admin)</span>
+                      Pilih Gaya Tampilan (Theme Layout) <span className="text-blue-600 font-normal lowercase">(dapat diganti kapan saja di admin)</span>
                     </label>
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Editorial News Theme */}
+                      {/* Pilihan A: Editorial News Theme */}
                       <button
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'editorial', home_layout_mode: 'EDITORIAL' }))}
-                        className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+                        className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between relative group ${
                           formData.selected_theme === 'editorial'
-                            ? 'border-blue-600 bg-blue-50/50 shadow-md ring-2 ring-blue-500/20'
+                            ? 'border-blue-600 bg-blue-50/40 shadow-md ring-2 ring-blue-500/20'
                             : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
-                              <Newspaper className="w-5 h-5" />
+                        <div>
+                          {/* Mini Wireframe Preview Mockup */}
+                          <div className="w-full h-32 rounded-xl bg-slate-100 border border-slate-200/80 p-2 mb-3 overflow-hidden flex flex-col gap-1.5 shadow-inner">
+                            {/* Mock Header */}
+                            <div className="h-4 bg-white rounded flex items-center justify-between px-2 border border-slate-200/60">
+                              <div className="flex items-center gap-1">
+                                <div className="w-2 h-2 rounded bg-blue-600" />
+                                <div className="w-12 h-1.5 rounded-full bg-slate-400" />
+                              </div>
+                              <div className="flex gap-1">
+                                <div className="w-6 h-1.5 rounded-full bg-slate-300" />
+                                <div className="w-6 h-1.5 rounded-full bg-slate-300" />
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm font-black text-slate-900">Revision Editorial</p>
-                              <p className="text-[11px] font-bold text-blue-700">Portal Berita & Majalah Digital</p>
+                            {/* Mock Trending Pills */}
+                            <div className="flex gap-1 items-center">
+                              <div className="w-10 h-2 rounded-full bg-blue-200" />
+                              <div className="w-8 h-2 rounded-full bg-slate-200" />
+                              <div className="w-12 h-2 rounded-full bg-slate-200" />
+                            </div>
+                            {/* Mock 2-Column Grid */}
+                            <div className="grid grid-cols-12 gap-1.5 flex-1">
+                              {/* Left main article */}
+                              <div className="col-span-7 bg-white rounded p-1.5 border border-slate-200/60 flex flex-col justify-between">
+                                <div className="h-9 bg-slate-200/80 rounded w-full" />
+                                <div className="space-y-0.5 mt-1">
+                                  <div className="w-full h-1.5 bg-slate-700 rounded-full" />
+                                  <div className="w-3/4 h-1 bg-slate-300 rounded-full" />
+                                </div>
+                              </div>
+                              {/* Right sidebar */}
+                              <div className="col-span-5 flex flex-col gap-1">
+                                <div className="h-8 bg-blue-100/70 rounded p-1 border border-blue-200/50 flex flex-col justify-center">
+                                  <div className="w-8 h-1 bg-blue-600 rounded-full mb-0.5" />
+                                  <div className="w-full h-1 bg-blue-400/80 rounded-full" />
+                                </div>
+                                <div className="flex-1 bg-white rounded p-1 border border-slate-200/60 flex flex-col justify-center">
+                                  <div className="w-full h-1 bg-slate-400 rounded-full mb-0.5" />
+                                  <div className="w-2/3 h-1 bg-slate-300 rounded-full" />
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          {formData.selected_theme === 'editorial' && (
-                            <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-xs">
-                              <Check className="w-4 h-4 stroke-[3]" />
-                            </span>
-                          )}
+
+                          <div className="flex items-start justify-between mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center">
+                                A
+                              </span>
+                              <div>
+                                <p className="text-sm font-black text-slate-900 leading-tight">Revision Editorial</p>
+                                <p className="text-[11px] font-bold text-blue-700">Khusus Media & Berita Digital</p>
+                              </div>
+                            </div>
+                            {formData.selected_theme === 'editorial' && (
+                              <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-xs">
+                                <Check className="w-4 h-4 stroke-[3]" />
+                              </span>
+                            )}
+                          </div>
+                          
+                          <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                            Layout 2-kolom editorial modern, bar topik trending, sidebar redaksi bergradasi, dan newsletter.
+                          </p>
                         </div>
-                        <p className="text-xs text-slate-600 leading-relaxed">
-                          Layout 2-kolom editorial modern, trending topics pills, sidebar redaksi elegan, dan box newsletter interaktif. Sangat cocok untuk publikasi berita intensif.
-                        </p>
-                        <div className="mt-3.5 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[10px] font-bold text-blue-800">
+
+                        <div className="mt-3 pt-2.5 border-t border-slate-200 flex items-center gap-1.5 text-[10px] font-bold text-blue-800">
                           <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">2-Column Layout</span>
-                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Trending Bar</span>
-                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Blue Accent</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Trending Pills</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Sidebar Redaksi</span>
                         </div>
                       </button>
 
-                      {/* Portal Layanan Theme */}
+                      {/* Pilihan B: Portal Layanan Theme */}
                       <button
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, selected_theme: 'emerald', home_layout_mode: 'PORTAL' }))}
-                        className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+                        className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between relative group ${
                           formData.selected_theme === 'emerald'
-                            ? 'border-emerald-600 bg-emerald-50/40 shadow-md ring-2 ring-emerald-500/20'
+                            ? 'border-blue-600 bg-blue-50/40 shadow-md ring-2 ring-blue-500/20'
                             : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow-xs">
-                              <LayoutGrid className="w-5 h-5" />
+                        <div>
+                          {/* Mini Wireframe Preview Mockup */}
+                          <div className="w-full h-32 rounded-xl bg-slate-100 border border-slate-200/80 p-2 mb-3 overflow-hidden flex flex-col gap-1.5 shadow-inner">
+                            {/* Mock Header */}
+                            <div className="h-4 bg-white rounded flex items-center justify-between px-2 border border-slate-200/60">
+                              <div className="flex items-center gap-1">
+                                <div className="w-2 h-2 rounded bg-emerald-600" />
+                                <div className="w-12 h-1.5 rounded-full bg-slate-400" />
+                              </div>
+                              <div className="flex gap-1">
+                                <div className="w-6 h-1.5 rounded-full bg-slate-300" />
+                                <div className="w-6 h-1.5 rounded-full bg-slate-300" />
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm font-black text-slate-900">Portal Layanan Publik</p>
-                              <p className="text-[11px] font-bold text-emerald-800">Instansi Pemerintah & BUMN</p>
+                            {/* Mock Hero Search Box */}
+                            <div className="h-9 bg-emerald-800 rounded p-1.5 flex flex-col justify-center items-center gap-1">
+                              <div className="w-20 h-1.5 bg-white/90 rounded-full" />
+                              <div className="w-32 h-3 bg-white/20 rounded flex items-center px-1">
+                                <div className="w-2 h-2 rounded-full bg-emerald-300" />
+                              </div>
+                            </div>
+                            {/* Mock Grid Layanan (4 box) */}
+                            <div className="grid grid-cols-4 gap-1 flex-1">
+                              <div className="bg-white rounded p-1 border border-slate-200/60 flex flex-col items-center justify-center">
+                                <div className="w-3 h-3 rounded bg-emerald-100 mb-0.5" />
+                                <div className="w-4 h-1 bg-slate-400 rounded-full" />
+                              </div>
+                              <div className="bg-white rounded p-1 border border-slate-200/60 flex flex-col items-center justify-center">
+                                <div className="w-3 h-3 rounded bg-blue-100 mb-0.5" />
+                                <div className="w-4 h-1 bg-slate-400 rounded-full" />
+                              </div>
+                              <div className="bg-white rounded p-1 border border-slate-200/60 flex flex-col items-center justify-center">
+                                <div className="w-3 h-3 rounded bg-amber-100 mb-0.5" />
+                                <div className="w-4 h-1 bg-slate-400 rounded-full" />
+                              </div>
+                              <div className="bg-white rounded p-1 border border-slate-200/60 flex flex-col items-center justify-center">
+                                <div className="w-3 h-3 rounded bg-purple-100 mb-0.5" />
+                                <div className="w-4 h-1 bg-slate-400 rounded-full" />
+                              </div>
                             </div>
                           </div>
-                          {formData.selected_theme === 'emerald' && (
-                            <span className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs shadow-xs">
-                              <Check className="w-4 h-4 stroke-[3]" />
-                            </span>
-                          )}
+
+                          <div className="flex items-start justify-between mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-lg bg-emerald-700 text-white font-bold text-xs flex items-center justify-center">
+                                B
+                              </span>
+                              <div>
+                                <p className="text-sm font-black text-slate-900 leading-tight">Portal Layanan Publik</p>
+                                <p className="text-[11px] font-bold text-emerald-800">Instansi Pemerintah & BUMN</p>
+                              </div>
+                            </div>
+                            {formData.selected_theme === 'emerald' && (
+                              <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-xs">
+                                <Check className="w-4 h-4 stroke-[3]" />
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                            Layout korporat dan pemerintahan dengan hero search bar pencarian cepat, grid katalog layanan, dan status antrean.
+                          </p>
                         </div>
-                        <p className="text-xs text-slate-600 leading-relaxed">
-                          Layout korporat dan pemerintahan dengan hero search bar pencarian cepat, kartu grid layanan publik terpadu, dan widget status jam operasional.
-                        </p>
-                        <div className="mt-3.5 pt-3 border-t border-slate-200/80 flex items-center gap-2 text-[10px] font-bold text-emerald-800">
-                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Service Grid</span>
+
+                        <div className="mt-3 pt-2.5 border-t border-slate-200 flex items-center gap-1.5 text-[10px] font-bold text-emerald-800">
                           <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Hero Search</span>
-                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Emerald / Teal</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Katalog Layanan</span>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200">Emerald / Cyan</span>
                         </div>
                       </button>
                     </div>
@@ -807,7 +935,7 @@ export default function InstallWizard() {
                       <div className="py-3 flex justify-between items-center">
                         <span className="text-slate-500 font-medium">Gaya Tema Terpilih:</span>
                         <span className="font-bold text-blue-700">
-                          {formData.selected_theme === 'editorial' ? '📰 Revision Editorial Magazine' : '🏛️ Portal Layanan & Berita Terpadu'}
+                          {formData.selected_theme === 'editorial' ? '📰 Pilihan A — Revision Editorial Magazine' : '🏛️ Pilihan B — Portal Layanan & Berita Terpadu'}
                         </span>
                       </div>
                       <div className="py-3 flex justify-between items-center">
@@ -962,9 +1090,9 @@ export default function InstallWizard() {
 
       {/* Footer */}
       <footer className="relative z-10 max-w-4xl mx-auto w-full pt-4 text-center text-xs text-slate-500 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-2">
-        <p>© 2026 Djie CMS Pro. Open Source Publishing Engine.</p>
+        <p>© 2026 Djie CMS Pro. Dibuat oleh Adjie Kurniawan (Open Source).</p>
         <div className="flex items-center gap-4 text-slate-500 text-[11px] font-medium">
-          <span>Official Brand Theme</span>
+          <span>Donasi: 0812-6949-4591</span>
           <span>•</span>
           <span>Security Hardened</span>
           <span>•</span>
