@@ -18,22 +18,31 @@ export default function Home() {
   const navigate = useNavigate();
   const { currentTheme } = useTheme();
 
+  // Cached layout mode to eliminate flash of unstyled theme on page refresh
+  const cachedLayout = localStorage.getItem('djie_layout_mode') || 'EDITORIAL';
+
   // 1. Fetch CMS Web Settings for Layout Mode override
-  const { data: settingsData } = useQuery({
+  const { data: settingsData, isLoading: isSettingsLoading } = useQuery({
     queryKey: ['cmsWebSettings'],
     queryFn: async () => {
       try {
         const res = await api.get('/cms/pengaturan');
-        return res?.data || res || {};
+        const data = res?.data || res || {};
+        if (data.home_layout_mode) {
+          localStorage.setItem('djie_layout_mode', data.home_layout_mode);
+        }
+        return data;
       } catch (e) {
         return {};
       }
-    }
+    },
+    staleTime: 1000 * 60 * 5 // 5 minutes cache
   });
 
   const settings = settingsData || {};
+  const activeLayout = settings.home_layout_mode || cachedLayout;
   // Either explicit layout mode 'EDITORIAL' or active theme 'editorial'
-  const isEditorialMode = settings.home_layout_mode === 'EDITORIAL' || currentTheme === 'editorial';
+  const isEditorialMode = activeLayout === 'EDITORIAL' || currentTheme === 'editorial';
 
   // 2. Data Fetching for Agendas (Direct from Database CMS)
   const { data: agendaData } = useQuery({

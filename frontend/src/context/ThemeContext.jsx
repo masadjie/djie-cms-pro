@@ -66,10 +66,13 @@ export const themes = [
 ];
 
 export const ThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState('emerald');
+  // Read saved theme synchronously from localStorage on initial render (no initial 'emerald' flash)
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    return localStorage.getItem('tamiang_theme') || 'editorial';
+  });
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('tamiang_theme') || 'emerald';
+    const savedTheme = localStorage.getItem('tamiang_theme') || 'editorial';
     setCurrentTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);

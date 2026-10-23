@@ -136,6 +136,11 @@ export default function InstallWizard() {
       const res = await api.post('/cms/install/setup', payload);
       const resData = res?.data || res;
       if (resData && (resData.success || resData.installed)) {
+        // Immediately persist theme in localStorage so initial page load matches immediately
+        localStorage.setItem('tamiang_theme', formData.selected_theme || 'editorial');
+        localStorage.setItem('djie_layout_mode', formData.home_layout_mode || 'EDITORIAL');
+        document.documentElement.setAttribute('data-theme', formData.selected_theme || 'editorial');
+
         setSuccessResult(resData);
         setCurrentStep(5); // completion step
       } else {
