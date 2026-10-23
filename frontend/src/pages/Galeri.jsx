@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { useTheme } from '../context/ThemeContext';
 import SEOHead from '../components/common/SEOHead';
 import FloatingActionBars from '../components/common/FloatingActionBars';
 import { 
@@ -26,12 +27,33 @@ import {
 } from '../utils/videoEmbedHelper';
 
 export default function Galeri() {
+  const { currentTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('ALL'); // 'ALL' | 'FOTO' | 'VIDEO'
   const [search, setSearch] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState('ALL');
   const [page, setPage] = useState(1);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const limit = 12;
+
+  // 1. Fetch CMS Web Settings for Dynamic Global Branding & Instansi Name
+  const { data: settingsData } = useQuery({
+    queryKey: ['cmsWebSettings'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/cms/pengaturan');
+        return res?.data || res || {};
+      } catch (err) {
+        return {};
+      }
+    }
+  });
+
+  const settings = settingsData || {};
+  const isTemplateA = currentTheme === 'editorial' || settings.home_layout_mode === 'EDITORIAL';
+
+  // Dynamic branding variables
+  const siteName = settings.site_name || 'Portal Resmi Pemerintahan';
+  const instansiName = settings.instansi_name || 'Pemerintah Daerah';
 
   // Fetch Galeri Data with query params
   const { data: galeriRes, isLoading } = useQuery({
@@ -61,39 +83,39 @@ export default function Galeri() {
   const totalPages = galeriRes?.pagination?.totalPages || Math.ceil((galeriRes?.pagination?.total || rawList.length) / limit) || 1;
   const totalItems = galeriRes?.pagination?.total || rawList.length;
 
-  // Fallback demo data if database is empty
+  // Fallback demo data if database is empty - fully global & dynamic
   const defaultList = [
     {
       id: 'demo-1',
-      judul: 'Pelantikan & Pengambilan Sumpah Jabatan Fungsional BKPSDM 2026',
+      judul: `Dokumentasi Rapat Koordinasi Layanan ${instansiName}`,
       tipe: 'FOTO',
-      album: 'Kegiatan Kedinasan',
-      media_url: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80',
-      caption: 'Dokumentasi resmi pelantikan aparatur sipil negara di Aula Setdakab.'
+      album: 'Kegiatan Publikasi',
+      media_url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
+      caption: 'Pertemuan koordinasi peningkatan mutu standar pelayanan publik.'
     },
     {
       id: 'demo-2',
-      judul: 'Tutorial Pengisian SKP & Integrasi e-Kinerja BKN',
-      tipe: 'VIDEO',
-      album: 'Edukasi ASN',
-      media_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      caption: 'Panduan teknis evaluasi kinerja berkala aparatur sipil negara.'
+      judul: 'Sosialisasi Digitalisasi Dokumen & Layanan Publik',
+      tipe: 'FOTO',
+      album: 'Kegiatan Publikasi',
+      media_url: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80',
+      caption: 'Penyuluhan pemanfaatan platform digital terintegrasi.'
     },
     {
       id: 'demo-3',
-      judul: 'Bimtek Transformasi Digital Kepegawaian SiKEPO v2.0',
+      judul: 'Bimbingan Teknis Transformasi Layanan Digital Terpadu',
       tipe: 'FOTO',
-      album: 'Pengembangan SDM',
+      album: 'Pengembangan Kapasitas',
       media_url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
-      caption: 'Bimbingan teknis optimalisasi layanan administrasi mandiri ASN.'
+      caption: 'Bimbingan teknis optimalisasi layanan administrasi mandiri masyarakat.'
     },
     {
       id: 'demo-4',
-      judul: 'Reels: Semangat BerAKHLAK ASN Kabupaten Aceh Tamiang',
+      judul: `Tutorial Penggunaan Portal Layanan Mandiri ${siteName}`,
       tipe: 'VIDEO',
-      album: 'Sosial Media BKPSDM',
-      media_url: 'https://www.instagram.com/reel/C3abcde123/',
-      caption: 'Inspirasi dan nilai dasar Core Values BerAKHLAK aparatur pemerintah daerah.'
+      album: 'Edukasi Publik',
+      media_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      caption: 'Panduan teknis pengajuan permohonan dan pelacakan berkas secara daring.'
     }
   ];
 
@@ -113,28 +135,40 @@ export default function Galeri() {
   return (
     <div className="w-full min-h-screen bg-[#f8faf8] text-slate-800 pt-28 pb-16">
       <SEOHead
-        title="Galeri Dokumentasi & Video Kegiatan ASN | BKPSDM Aceh Tamiang"
-        description="Dokumentasi foto resmi kedinasan dan video edukasi kepegawaian (YouTube, Instagram Reels, TikTok) Badan Kepegawaian & Pengembangan SDM Kabupaten Aceh Tamiang."
-        canonicalUrl="https://bkpsdm.acehtamiangkab.go.id/galeri"
+        title={`Galeri & Dokumentasi Kegiatan | ${siteName}`}
+        description={`Arsip visual dan dokumentasi resmi kegiatan, publikasi program, dan video edukasi ${instansiName}.`}
+        canonicalUrl="/galeri"
       />
 
       <FloatingActionBars />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
-        {/* Page Hero Banner */}
-        <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute -right-16 -top-16 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Page Hero Banner: Dynamic color matching Template A (Royal Blue) or Classic (Emerald) */}
+        <div className={`rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden ${
+          isTemplateA 
+            ? 'bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900' 
+            : 'bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900'
+        }`}>
+          <div className={`absolute -right-16 -top-16 w-72 h-72 rounded-full blur-3xl pointer-events-none ${
+            isTemplateA ? 'bg-blue-500/15' : 'bg-emerald-500/10'
+          }`} />
           <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/80 border border-emerald-700/80 text-amber-300 text-xs font-black uppercase tracking-wider">
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
+              isTemplateA
+                ? 'bg-blue-800/80 border border-blue-700/80 text-blue-200'
+                : 'bg-emerald-800/80 border border-emerald-700/80 text-amber-300'
+            }`}>
               <Sparkles className="w-3.5 h-3.5" />
               <span>Multimedia & Dokumentasi Resmi</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-              Galeri Foto & Video Kegiatan ASN
+              {settings.editorial_gallery_heading || 'Galeri Foto & Video Dokumentasi'}
             </h1>
-            <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed">
-              Arsip visual kegiatan kedinasan, pelantikan jabatan, bimbingan teknis, serta tayangan video edukasi kepegawaian melalui YouTube, Instagram, dan TikTok.
+            <p className={`text-sm sm:text-base leading-relaxed ${
+              isTemplateA ? 'text-blue-100/90' : 'text-emerald-100/90'
+            }`}>
+              {settings.editorial_gallery_subheading || `Arsip visual kegiatan resmi, peluncuran program prioritas, serta tayangan video edukasi dan liputan publik ${instansiName}.`}
             </p>
           </div>
         </div>
@@ -149,7 +183,9 @@ export default function Galeri() {
               placeholder="Cari dokumentasi atau kegiatan..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+              className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 ${
+                isTemplateA ? 'focus:ring-blue-600' : 'focus:ring-emerald-700'
+              }`}
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           </div>
@@ -163,7 +199,9 @@ export default function Galeri() {
                 type="button"
                 onClick={() => { setActiveTab('ALL'); setPage(1); }}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
-                  activeTab === 'ALL' ? 'bg-white text-emerald-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  activeTab === 'ALL' 
+                    ? (isTemplateA ? 'bg-white text-blue-600 shadow-xs' : 'bg-white text-emerald-900 shadow-xs')
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Semua
@@ -172,7 +210,9 @@ export default function Galeri() {
                 type="button"
                 onClick={() => { setActiveTab('FOTO'); setPage(1); }}
                 className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 ${
-                  activeTab === 'FOTO' ? 'bg-white text-emerald-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  activeTab === 'FOTO' 
+                    ? (isTemplateA ? 'bg-white text-blue-600 shadow-xs' : 'bg-white text-emerald-900 shadow-xs')
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <ImageIcon className="w-3.5 h-3.5" />
@@ -195,7 +235,9 @@ export default function Galeri() {
               <select
                 value={selectedAlbum}
                 onChange={(e) => { setSelectedAlbum(e.target.value); setPage(1); }}
-                className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                className={`px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 ${
+                  isTemplateA ? 'focus:ring-blue-600' : 'focus:ring-emerald-700'
+                }`}
               >
                 <option value="ALL">Semua Album</option>
                 {albums.filter(a => a !== 'ALL').map(alb => (
@@ -218,7 +260,9 @@ export default function Galeri() {
               <div
                 key={item.id}
                 onClick={() => setSelectedMedia(item)}
-                className="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-2xs hover:shadow-xl hover:border-emerald-400 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                className={`group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-2xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                  isTemplateA ? 'hover:border-blue-400' : 'hover:border-emerald-400'
+                }`}
               >
                 {/* Thumbnail Container */}
                 <div className="relative aspect-4/3 w-full bg-slate-900 overflow-hidden">
@@ -240,7 +284,9 @@ export default function Galeri() {
                       src={item.media_url}
                       alt={item.judul}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => { e.currentTarget.src = '/hero-tamiang.jpg'; }}
+                      onError={(e) => { 
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80'; 
+                      }}
                     />
                   )}
 
@@ -258,7 +304,11 @@ export default function Galeri() {
                         <span>{platform}</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg text-emerald-950 bg-emerald-300 shadow-md flex items-center gap-1">
+                      <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1 ${
+                        isTemplateA 
+                          ? 'text-blue-950 bg-blue-200' 
+                          : 'text-emerald-950 bg-emerald-300'
+                      }`}>
                         <ImageIcon className="w-3 h-3" />
                         <span>Foto</span>
                       </span>
@@ -276,15 +326,19 @@ export default function Galeri() {
 
                   {/* Album Name */}
                   <div className="absolute bottom-2.5 left-3 right-3 text-white">
-                    <span className="text-[11px] font-semibold text-emerald-200 block truncate">
-                      {item.album || 'Dokumentasi BKPSDM'}
+                    <span className={`text-[11px] font-semibold block truncate ${
+                      isTemplateA ? 'text-blue-200' : 'text-emerald-200'
+                    }`}>
+                      {item.album || 'Dokumentasi Resmi'}
                     </span>
                   </div>
                 </div>
 
                 {/* Card Content */}
                 <div className="p-4 flex-1 flex flex-col justify-between gap-3">
-                  <h3 className="font-extrabold text-sm text-slate-900 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug">
+                  <h3 className={`font-extrabold text-sm text-slate-900 transition-colors line-clamp-2 leading-snug ${
+                    isTemplateA ? 'group-hover:text-blue-600' : 'group-hover:text-emerald-800'
+                  }`}>
                     {item.judul}
                   </h3>
 
@@ -294,7 +348,11 @@ export default function Galeri() {
                     </p>
                   )}
 
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-800 group-hover:text-amber-600 transition-colors">
+                  <div className={`pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold transition-colors ${
+                    isTemplateA 
+                      ? 'text-blue-600 group-hover:text-blue-700' 
+                      : 'text-emerald-800 group-hover:text-amber-600'
+                  }`}>
                     <span>{itemIsVideo ? 'Tonton Video' : 'Lihat Foto'}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -344,8 +402,10 @@ export default function Galeri() {
             {/* Modal Header */}
             <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
-                  {selectedMedia.album || 'Dokumentasi BKPSDM'}
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${
+                  isTemplateA ? 'text-blue-700 bg-blue-50' : 'text-emerald-800 bg-emerald-50'
+                }`}>
+                  {selectedMedia.album || 'Dokumentasi Resmi'}
                 </span>
                 <h3 className="text-sm font-black text-slate-900 mt-1 truncate">
                   {selectedMedia.judul}
@@ -377,7 +437,9 @@ export default function Galeri() {
                   src={selectedMedia.media_url}
                   alt={selectedMedia.judul}
                   className="max-h-[70vh] max-w-full object-contain"
-                  onError={(e) => { e.currentTarget.src = '/hero-tamiang.jpg'; }}
+                  onError={(e) => { 
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80'; 
+                  }}
                 />
               )}
             </div>
@@ -385,7 +447,7 @@ export default function Galeri() {
             {/* Modal Footer Caption */}
             <div className="p-5 bg-white border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
               <p className="text-slate-600 line-clamp-2 max-w-xl">
-                {selectedMedia.caption || 'Dokumentasi kegiatan resmi Badan Kepegawaian & Pengembangan Sumber Daya Manusia Kabupaten Aceh Tamiang.'}
+                {selectedMedia.caption || `Dokumentasi kegiatan resmi publikasi dan keterbukaan informasi ${instansiName}.`}
               </p>
               <a
                 href={selectedMedia.media_url}
