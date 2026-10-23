@@ -1,10 +1,10 @@
-# 🌐 Djie CMS Pro — Enterprise Open Source Government & Portal CMS
+# 🌐 Djie CMS Pro — Open Source Portal & Content Management System
 
 <div align="center">
   <img src="frontend/public/logo-djie-cms-pro-horizontal.png" alt="Djie CMS Pro Banner" width="460" />
   
   <p align="center">
-    <strong>Content Management System (CMS) Modern Level Enterprise Khusus Portal Pemerintah, OPD, Lembaga & Organisasi Publik</strong>
+    <strong>Content Management System (CMS) Modern, Cepat & Fleksibel untuk Portal Berita, Media Online, Blog Profesional, Company Profile, Komunitas, dan Portal Publik</strong>
   </p>
 
   <p align="center">
@@ -19,49 +19,59 @@
 
 ## 📖 Ringkasan Proyek
 
-**Djie CMS Pro** adalah platform portal informasi dan manajemen konten (CMS) berstandar industri modern yang dirancang untuk instansi pemerintahan (Dinas/Badan/OPD, Pemkab/Pemkot, Lembaga Publik) serta organisasi profesional. 
+**Djie CMS Pro** adalah Content Management System (CMS) modern level Enterprise yang dirancang fleksibel untuk berbagai kebutuhan web: mulai dari **Portal Berita & Media Online**, **Blog Publikasi Berbobot**, **Website Profil Perusahaan (Company Profile)**, **Portal Komunitas/Organisasi**, hingga **Layanan Informasi Publik**.
 
-Berbeda dari CMS konvensional, **Djie CMS Pro** hadir dengan **Fresh-Install Engine**: saat pertama kali di-clone, sistem berstatus **`Uninstalled`**. Siapa pun yang membuka web langsung disambut oleh **Setup Wizard Interaktif 4-Langkah** dengan opsi migrasi dummy data bawaan.
+Dibangun dengan arsitektur modern (*Node.js + React*), Djie CMS Pro memberikan kecepatan muat super kencang, editor naskah yang nyaman, sistem manajemen media, serta **Fresh-Install Engine**: saat pertama kali di-clone, sistem berada dalam status **`Uninstalled`**. Siapa pun yang membuka web langsung disambut oleh **Interactive Setup Wizard 4-Langkah** dengan opsi migrasi data contoh (*dummy migration*) sekali klik!
+
+---
+
+## 🎯 Cocok Digunakan Untuk Apa Saja?
+
+* 📰 **Portal Berita & Media Informasi**: Media online, pers kampus, portal berita independen, majalah digital, dan bulletin berkala.
+* 🏢 **Company Profile & Corporate Website**: Website resmi perusahaan, agensi, startup, bisnis jasa, atau portofolio tim.
+* 👥 **Organisasi, Komunitas & Yayasan**: Portal yayasan sosial, asosiasi profesi, komunitas hobi, lembaga riset, maupun serikat pekerja.
+* 🏛️ **Instansi & Layanan Publik**: Portal informasi warga, pusat dokumen resmi, regulasi, dan transparansi publik.
+* ✍️ **Personal Brand & Blog Profesional**: Penulis, analis, konten kreator, dan profesional yang membutuhkan CMS mandiri tanpa ketergantungan platform sewa.
 
 ---
 
 ## ✨ Fitur Kunci & Keunggulan
 
 ### 1. 🛠️ Interactive Setup Wizard (`/install`)
-* **Sistem Deteksi Otomatis**: Jika database baru belum dikonfigurasi, pengunjung otomatis diarahkan ke Wizard `/install`.
-* **Pengecekan Kesiapan Lingkungan**: Verifikasi versi Node.js, koneksi MySQL/MariaDB, Redis Cache, dan S3 MinIO.
-* **Konfigurasi Identitas Instansi**: Pengisian nama situs, tagline, kontak, logo, dan profil wilayah tanpa coding.
-* **Akun Master Super Admin**: Pembuatan akun admin pertama dengan enkripsi bcrypt yang aman.
-* **Opsi Migrasi Dummy Data**: Disediakan tombol centang apakah ingin memasang sampel artikel berita, SOP regulasi, banner slider, dan testimoni bawaan atau mulai dari database kosong.
+* **Sistem Deteksi Otomatis**: Jika database baru belum dikonfigurasi, sistem otomatis mengarahkan pengunjung ke Setup Wizard `/install`.
+* **Pengecekan Kesiapan Sistem**: Verifikasi versi Node.js, status koneksi MySQL/MariaDB, Redis Cache, dan S3 MinIO secara visual.
+* **Konfigurasi Identitas Portal**: Input nama situs/portal, slogan, kontak, alamat, dan deskripsi SEO tanpa perlu menyentuh kode.
+* **Akun Master Super Admin**: Pembuatan akun admin utama pertama kali dengan enkripsi aman (`bcrypt`).
+* **Opsi Migrasi Dummy Data (Pilihan)**: Tersedia pilihan untuk langsung memasang sampel artikel berita, slider hero, arsip dokumen, galeri foto, dan ulasan agar website langsung terlihat hidup dan siap demo, atau mulai dari database kosong (*clean slate*).
 
-### 2. 🕒 Jadwal Publikasi Otomatis (Scheduled Publishing)
-* Penulis berita dapat menjadwalkan tanggal dan jam publikasi artikel di masa mendatang (`published_at`).
+### 2. 🕒 Jadwal Publikasi Berita (Scheduled Publishing)
+* Penulis dan redaksi dapat menjadwalkan tanggal dan jam publikasi artikel di masa mendatang (`published_at`).
 * **Sistem Embargo**: Artikel tidak akan bocor ke publik atau tautan langsung (*direct slug*) sebelum waktu terbit tiba.
-* Begitu waktu tayang tercapai, artikel otomatis tampil di portal publik tanpa perlu intervensi staf.
+* Begitu waktu tayang tercapai, artikel otomatis tampil di portal publik secara real-time tanpa perlu login admin manual.
 
 ### 3. 💾 Auto-Save Draft & Crash Recovery Naskah
-* Naskah di editor tersimpan otomatis ke browser (`localStorage`) setiap 15 detik.
-* Jika laptop mati mendadak, kuota habis, atau tab tertutup, sistem langsung menampilkan banner pemulihan: *"Ditemukan draf lokal belum tersimpan. Pulihkan tulisan Anda?"*.
+* Ketikan naskah di editor tersimpan otomatis ke browser (`localStorage`) setiap 15 detik.
+* Jika laptop mati mendadak, kuota habis, atau tab tertutup tidak sengaja, sistem langsung menampilkan banner pemulihan: *"Ditemukan draf lokal belum tersimpan. Pulihkan tulisan Anda?"*.
 
 ### 4. 🚧 Mode Pemeliharaan Publik (1-Click Maintenance Mode)
-* Sakelar cepat di panel admin untuk mengunci akses warga saat server sedang diperbarui.
-* Tampilan publik pemeliharaan bergaya *dark-ambient glassmorphism* dilengkapi hitungan estimasi waktu online kembali dan kontak WhatsApp darurat.
-* **Jalur Admin Tetap Terbuka**: Administrator tetap bebas login dan mengelola sistem seperti biasa.
+* Sakelar cepat di panel admin untuk mengunci sementara akses publik saat portal sedang diperbarui.
+* Tampilan publik pemeliharaan bergaya *dark-ambient glassmorphism* dilengkapi hitungan estimasi waktu online kembali dan kontak darurat.
+* **Jalur Admin Tetap Terbuka**: Staf admin tetap leluasa login dan bekerja normal di dalam dashboard.
 
 ### 5. 👥 Granular Role-Based Access Control (RBAC)
-* Hak akses berjenjang:
-  * `SUPER_ADMIN`: Akses penuh konfigurasi sistem, database, audit log, dan tema.
-  * `ADMIN_OPD`: Manajemen layanan, dokumen publik, dan data sektoral.
-  * `EDITOR`: Penulisan, kurasi, dan publikasi artikel berita/galeri.
-  * `VERIFIKATOR`: Peninjauan dan validasi permohonan layanan publik.
-  * `WARGA`: Akses akun pemohon layanan dan pelacakan tiket permohonan.
+* Pembagian peran pengguna berjenjang:
+  * `SUPER_ADMIN`: Pengaturan sistem penuh, konfigurasi tema, audit log, dan database.
+  * `ADMIN_OPD`: Manajemen kategori, dokumen, dan data layanan portal.
+  * `EDITOR`: Penulisan, kurasi konten, jadwal terbit, dan moderasi artikel/galeri.
+  * `VERIFIKATOR`: Peninjauan dan validasi data/permohonan masuk.
+  * `WARGA`: Akun pengguna/member umum untuk berinteraksi dan komentar.
 
 ### 6. 🛡️ Audit Trail & Keamanan Menyeluruh
-* Log audit real-time mencatat setiap aksi login, pembuatan naskah, penghapusan data, dan manipulasi sistem lengkap dengan alamat IP dan User-Agent.
+* Log audit real-time mencatat setiap aksi login, pembuatan naskah, pengeditan, penghapusan data, dan manipulasi sistem lengkap dengan alamat IP dan User-Agent.
 
-### 7. ⚡ Performa Tinggi & SEO Suite
-* Otomasi kompresi gambar upload ke format modern **WebP**.
-* Dukungan penuh Schema.org (JSON-LD), Open Graph, Twitter Cards, dan generator Canonical URL otomatis.
+### 7. ⚡ Performa Super Cepat & SEO Suite Studio
+* Otomasi kompresi gambar upload ke format modern **WebP** guna menghemat kuota dan mempercepat loading.
+* Dukungan penuh Schema.org (JSON-LD `NewsArticle`), Open Graph Facebook, Twitter Cards, dan Canonical URL otomatis.
 * Akselerasi cache memori **Redis** dengan fallback cerdas.
 
 ---
@@ -75,9 +85,9 @@ djie-cms-pro/
 │   │   ├── config/           # Database Sequelize, Redis, MinIO, Winston Logger
 │   │   ├── controllers/      # Logika Bisnis (CMS, Berita, RBAC, Layanan, Storage)
 │   │   ├── middlewares/      # JWT Auth, Rate Limiter, Security, Audit Log
-│   │   ├── models/           # Sequelize ORM Schema
+│   │   ├── models/           # Sequelize ORM Schema (Berita, User, Halaman, dll)
 │   │   ├── routes/           # RESTful API Endpoints
-│   │   └── utils/            # Migrator, Seeder, dan Dummy Generator
+│   │   └── utils/            # Migrator, Seeder, dan Dummy Data Generator
 │   ├── .env.example
 │   └── package.json
 └── frontend/                 # React 18 + Vite SPA Single Page Application
@@ -92,13 +102,33 @@ djie-cms-pro/
 
 ---
 
-## 🚀 Panduan Instalasi Cepat
+## 💻 Rincian Teknologi yang Digunakan
+
+* **Backend**:
+  * **Runtime**: Node.js (v18.x / v20.x LTS)
+  * **Framework**: Express.js
+  * **Database ORM**: Sequelize ORM (MySQL 8.x / MariaDB)
+  * **Keamanan**: JSON Web Token (JWT), bcryptjs, Helmet, Express Rate Limit
+  * **Cache**: Redis Cache Engine
+  * **File Storage**: MinIO / S3 Object Storage & Local Storage fallback
+* **Frontend**:
+  * **Framework**: React 18
+  * **Build Tool**: Vite 5
+  * **CSS Framework**: Tailwind CSS v3
+  * **State & Data Cache**: TanStack React Query v5
+  * **Routing**: React Router DOM v6
+  * **Editor Visual**: TipTap WYSIWYG Editor
+  * **Ikon**: Lucide React Vector Icons
+
+---
+
+## 📦 Panduan Instalasi Cepat
 
 ### Prasyarat Sistem
 * **Node.js**: Versi 18.x atau 20.x ke atas
 * **Database**: MySQL 8.0+ atau MariaDB 10.5+
 * **Redis** (Opsional, untuk akselerasi cache)
-* **MinIO / S3 Storage** (Opsional, untuk penyimpanan berkas dokumen awan)
+* **MinIO / S3 Storage** (Opsional, untuk penyimpanan berkas dokumen)
 
 ---
 
@@ -108,7 +138,7 @@ git clone https://github.com/masadjie/djie-cms-pro.git
 cd djie-cms-pro
 ```
 
-### Langkah 2: Konfigurasi & Jalankan Backend
+### Langkah 2: Setup & Jalankan Backend
 ```bash
 cd backend
 cp .env.example .env
@@ -121,7 +151,7 @@ npm install
 npm run dev
 ```
 
-### Langkah 3: Konfigurasi & Jalankan Frontend
+### Langkah 3: Setup & Jalankan Frontend
 Buka terminal baru di folder proyek:
 ```bash
 cd frontend
@@ -137,16 +167,16 @@ Sistem otomatis mendeteksi status instalasi dan mengarahkan Anda ke:
 👉 **`http://localhost:5173/install`**
 
 Ikuti 4 langkah pada antarmuka:
-1. **Pemeriksaan Sistem**: Memastikan server siap digunakan.
-2. **Identitas Portal**: Masukkan nama instansi/organisasi dan informasi kontak.
-3. **Akun Super Admin**: Tentukan email dan password admin utama Anda, serta pilih opsi data contoh (*dummy migration*).
+1. **Pemeriksaan Sistem**: Memastikan server dan database siap digunakan.
+2. **Identitas Portal**: Masukkan nama portal berita/organisasi Anda dan informasi kontak.
+3. **Akun Super Admin & Dummy Data**: Buat email dan password admin utama Anda, serta pilih apakah ingin memasang data contoh (*dummy migration*).
 4. **Selesai**: Klik tombol luncurkan dan masuk ke Dashboard Administrator!
 
 ---
 
 ## 🤝 Berkontribusi
 
-Kontribusi dari seluruh pengembang sangat terbuka!
+Kontribusi dari seluruh pengembang dan komunitas open source sangat terbuka!
 1. Fork repositori ini
 2. Buat branch fitur baru (`git checkout -b feature/FiturKeren`)
 3. Commit perubahan Anda (`git commit -m 'Menambahkan fitur keren'`)
@@ -157,8 +187,8 @@ Kontribusi dari seluruh pengembang sangat terbuka!
 
 ## 📄 Lisensi
 
-Proyek ini dirilis di bawah lisensi resmi **[MIT License](LICENSE)**. Anda bebas menggunakan, memodifikasi, dan menyebarluaskannya untuk kepentingan instansi pemerintah, swasta, akademis, maupun komersial.
+Proyek ini dirilis secara terbuka di bawah lisensi resmi **[MIT License](LICENSE)**. Anda bebas menggunakan, memodifikasi, dan menyebarluaskannya untuk kepentingan personal, portal berita independen, komersial, maupun organisasi.
 
 <div align="center">
-  <p>Dibuat dengan dedikasi untuk akselerasi transformasi digital pelayanan publik Indonesia.</p>
+  <p>Dibuat dan dikembangkan oleh <strong>Mas Adjie & Kontributor Open Source</strong>.</p>
 </div>
