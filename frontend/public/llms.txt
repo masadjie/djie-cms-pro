@@ -1,0 +1,18 @@
+# BKPSDM Kabupaten Aceh Tamiang
+
+> Portal Resmi Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM) Pemerintah Kabupaten Aceh Tamiang & Ekosistem Digital SiKEPO (Sistem Kepegawaian Online).
+
+Pusat pelayanan manajemen aparatur sipil negara terpadu, seleksi penerimaan CASN/PPPK, periodisasi kenaikan pangkat 6 kali setahun berbasis SIASN BKN, izin & tugas belajar, e-Kinerja BKN, penilaian SKP, e-Cuti ASN, serta konsultasi kepensiunan daerah.
+
+## Layanan Utama ASN
+- [Katalog Layanan Kepegawaian](https://bkpsdm.acehtamiangkab.go.id/katalog): Daftar seluruh standar operasional prosedur dan persyaratan administrasi ASN Kabupaten Aceh Tamiang.
+- [SiKEPO Online Hub](https://bkpsdm.acehtamiangkab.go.id/sikepo): Portal single sign-on manajemen ASN (Cuti online, KGB, e-Kinerja, Presensi Geotagging, dan SK Digital).
+- [Lacak Berkas & Tracking Usulan](https://bkpsdm.acehtamiangkab.go.id/tracking): Pelacakan status verifikasi kenaikan pangkat, mutasi, dan izin belajar secara real-time.
+
+## Informasi & Publikasi Resmi
+- [Warta Kepegawaian & Pengumuman](https://bkpsdm.acehtamiangkab.go.id/berita): Berita kedinasan terbaru, pengumuman seleksi CASN/PPPK, dan regulasi manajemen SDM aparatur.
+- [Galeri Multimedia](https://bkpsdm.acehtamiangkab.go.id/galeri): Dokumentasi foto dan video kedinasan, bimbingan teknis, dan sosialisasi program kepegawaian.
+- [Profil & Visi Misi BKPSDM](https://bkpsdm.acehtamiangkab.go.id/page/visi-misi): Struktur organisasi, tugas pokok dan fungsi Badan Kepegawaian & Pengembangan SDM.
+
+## Kontak & Helpdesk
+- [Kontak Resmi BKPSDM](https://bkpsdm.acehtamiangkab.go.id): Jl. Ir. H. Juanda No. 1 Komplek Perkantoran Pemkab Aceh Tamiang, Karang Baru. Email: bkpsdm@acehtamiangkab.go.id, Call Center: 081168814767.

@@ -1,0 +1,53 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "BKPSDM Kabupaten Aceh Tamiang",
+    "documentationUrl": "https://bkpsdm.acehtamiangkab.go.id/llms.txt",
+    "logoUrl": "https://bkpsdm.acehtamiangkab.go.id/logo-tamiang.png"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:bkpsdm.acehtamiangkab.go.id:api:layanan-asn",
+      "displayName": "Katalog Layanan Kepegawaian & Administrasi ASN",
+      "type": "application/json",
+      "url": "https://bkpsdm.acehtamiangkab.go.id/api/v1/layanan",
+      "capabilities": [
+        "searchServices",
+        "getServiceRequirements"
+      ],
+      "representativeQueries": [
+        "Bagaimana syarat dan alur pengajuan kenaikan pangkat 6 periode di Aceh Tamiang?",
+        "Cari formulir dan syarat pengajuan izin belajar atau tugas belajar ASN",
+        "Bagaimana cara pengajuan cuti tahunan PNS melalui sistem SiKEPO?"
+      ]
+    },
+    {
+      "identifier": "urn:air:bkpsdm.acehtamiangkab.go.id:api:berita-pengumuman",
+      "displayName": "Pusat Warta & Pengumuman Seleksi CASN BKPSDM",
+      "type": "application/json",
+      "url": "https://bkpsdm.acehtamiangkab.go.id/api/v1/berita",
+      "capabilities": [
+        "getLatestAnnouncements",
+        "searchNews"
+      ],
+      "representativeQueries": [
+        "Pengumuman seleksi CASN dan PPPK Aceh Tamiang terbaru",
+        "Jadwal ujian dinas dan penyesuaian ijazah PNS Aceh Tamiang",
+        "Surat edaran pemutakhiran data MyASN dan e-Kinerja BKN"
+      ]
+    },
+    {
+      "identifier": "urn:air:bkpsdm.acehtamiangkab.go.id:api:tracking-usulan",
+      "displayName": "Lacak Berkas & Status Usulan ASN",
+      "type": "application/json",
+      "url": "https://bkpsdm.acehtamiangkab.go.id/api/v1/layanan/tracking",
+      "capabilities": [
+        "trackApplicationStatus"
+      ],
+      "representativeQueries": [
+        "Lacak berkas usulan kenaikan pangkat dengan nomor registrasi",
+        "Cek status pengajuan izin belajar ASN Aceh Tamiang"
+      ]
+    }
+  ]
+}
