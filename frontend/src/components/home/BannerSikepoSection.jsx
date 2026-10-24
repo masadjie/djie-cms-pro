@@ -185,15 +185,15 @@ export default function BannerSikepoSection() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white font-black rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-emerald-900/20 transition-all group"
                     >
-                      <span>{mainBanner ? 'Kunjungi Layanan' : 'Buka SiKEPO Online'}</span>
+                      <span>{settings.promo_hero_btn1_label || (mainBanner ? 'Kunjungi Layanan' : 'Buka SiKEPO Online')}</span>
                       <ArrowUpRight className="w-4 h-4 text-amber-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </a>
 
                     <Link
-                      to="/katalog"
+                      to={settings.promo_hero_btn2_url || "/katalog"}
                       className="inline-flex items-center gap-1.5 px-4 py-2.5 sm:py-3 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-bold rounded-2xl text-xs sm:text-sm border border-slate-200 transition-all"
                     >
-                      <span>Katalog SOP Layanan</span>
+                      <span>{settings.promo_hero_btn2_label || "Katalog SOP Layanan"}</span>
                       <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
                     </Link>
                   </div>
@@ -212,7 +212,9 @@ export default function BannerSikepoSection() {
                       e.currentTarget.src = "/logo-sikepo.webp";
                     }}
                   />
-                  <span className="text-[10px] font-bold text-slate-400 mt-2">Versi Resmi 2.0</span>
+                  <span className="text-[10px] font-bold text-slate-400 mt-2">
+                    {settings.promo_hero_badge || "Versi Resmi 2.0"}
+                  </span>
                 </div>
               </div>
 
@@ -220,11 +222,11 @@ export default function BannerSikepoSection() {
               <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Domain / Akses: <strong className="text-slate-800 font-bold">{mainBanner?.target_url || 'sikepo.acehtamiangkab.go.id'}</strong></span>
+                  <span>Domain / Akses: <strong className="text-slate-800 font-bold">{mainBanner?.target_url || settings.site_url || 'sikepo.acehtamiangkab.go.id'}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full text-[11px]">
-                    Terintegrasi MyASN & SIASN
+                    {settings.promo_hero_tag || 'Terintegrasi MyASN & SIASN'}
                   </span>
                 </div>
               </div>

@@ -48,6 +48,11 @@ export default function WidgetManagerTab() {
     section_promo_title: 'Satu Pintu Layanan Digital Karir ASN',
     section_promo_desc: 'Integrasi terpadu SiKEPO Kabupaten Aceh Tamiang dengan ekosistem BKN RI untuk pelayanan kenaikan pangkat, e-Kinerja, dan mutasi tanpa hambatan.',
     section_promo_active: 'true',
+    promo_hero_badge: 'Versi Resmi 2.0',
+    promo_hero_tag: 'Terintegrasi MyASN & SIASN',
+    promo_hero_btn1_label: 'Buka SiKEPO Online',
+    promo_hero_btn2_label: 'Katalog SOP Layanan',
+    promo_hero_btn2_url: '/katalog',
 
     // Widget 4: Quick Contact & Call Center
     widget_contact_active: 'true',
@@ -398,10 +403,78 @@ export default function WidgetManagerTab() {
                   placeholder="Penjelasan ringkas seputar layanan terintegrasi..."
                 />
               </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Badge / Versi Tag Kartu Utama</label>
+                <input
+                  type="text"
+                  value={form.promo_hero_badge || ''}
+                  onChange={(e) => setForm({ ...form, promo_hero_badge: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  placeholder="Contoh: Versi Resmi 2.0 / Layanan Utama"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Status Terintegrasi / Tag Bawah</label>
+                <input
+                  type="text"
+                  value={form.promo_hero_tag || ''}
+                  onChange={(e) => setForm({ ...form, promo_hero_tag: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  placeholder="Contoh: Terintegrasi MyASN & SIASN / Terverifikasi"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1">Teks Tombol Aksi Utama</label>
+                <input
+                  type="text"
+                  value={form.promo_hero_btn1_label || ''}
+                  onChange={(e) => setForm({ ...form, promo_hero_btn1_label: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  placeholder="Contoh: Buka SiKEPO Online / Kunjungi Layanan"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Teks Tombol 2</label>
+                  <input
+                    type="text"
+                    value={form.promo_hero_btn2_label || ''}
+                    onChange={(e) => setForm({ ...form, promo_hero_btn2_label: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    placeholder="Katalog SOP Layanan"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">URL Tombol 2</label>
+                  <input
+                    type="text"
+                    value={form.promo_hero_btn2_url || ''}
+                    onChange={(e) => setForm({ ...form, promo_hero_btn2_url: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                    placeholder="/katalog"
+                  />
+                </div>
+              </div>
             </div>
-            <p className="text-[11px] text-slate-400 italic">
-              *Catatan: Kartu banner di dalam section ini dapat ditambah, diedit gambarnya, diubah judulnya, dan diganti tautan link-nya di tab <strong>Manajemen Banner</strong> (Pilih filter tipe <strong>Promo / Layanan</strong>).
-            </p>
+
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-[11px] text-slate-500">
+                *Kartu banner & icon di dalam section ini dapat ditambah, diubah gambar logo/fotonya, serta diatur urutannya langsung di tab <strong>Manajemen Banner</strong> (Filter: <em>Banner Promo / Layanan Unggulan</em>).
+              </p>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={saveMutation.isPending}
+                className="px-4 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-auto cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5 text-amber-300" />
+                <span>{saveMutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan Section Ini'}</span>
+              </button>
+            </div>
           </div>
 
         </div>
