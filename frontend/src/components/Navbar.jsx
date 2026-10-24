@@ -167,7 +167,18 @@ export default function Navbar() {
         
         {/* Brand Logo & Name (Dynamically Adaptable to Editorial or Portal Theme) */}
         <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink min-w-0 pr-2" onClick={() => setActiveDropdown(null)}>
-          {isEditorial ? (
+          {settings.site_logo ? (
+            <img
+              src={settings.site_logo}
+              alt={settings.site_name || 'Logo Instansi'}
+              width="40"
+              height="40"
+              className="w-8 h-8 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-sm"
+              onError={(e) => {
+                e.target.src = '/logo-djie-cms-pro-square.png';
+              }}
+            />
+          ) : isEditorial ? (
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center p-1 overflow-hidden shrink-0">
               <img
                 src="/logo-djie-cms-pro-square.png"
@@ -182,13 +193,13 @@ export default function Navbar() {
             </div>
           ) : (
             <img
-              src="/logo-tamiang.webp"
-              alt="Lambang Instansi"
+              src="/logo-djie-cms-pro-square.png"
+              alt="Logo Instansi"
               width="40"
               height="40"
               className="w-8 h-8 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-sm"
               onError={(e) => {
-                e.target.src = '/logo-djie-cms-pro-square.png';
+                e.target.style.display = 'none';
               }}
             />
           )}

@@ -1,7 +1,7 @@
 const app = require('./app');
 const { sequelize } = require('./models');
 const logger = require('./config/logger');
-const { ensureDefaultData } = require('./utils/ensureSeedUsers');
+const { seedCoreStructure } = require('./utils/ensureSeedUsers');
 const { ensureTableColumns } = require('./utils/ensureTableColumns');
 const { runMigrations } = require('./utils/migrator');
 const { seedDefaultStorageFiles } = require('./utils/seedStorageFiles');
@@ -31,7 +31,7 @@ async function startServer() {
 
     if (isInstalled) {
       // Hanya verifikasi seed jika CMS memang sudah terinstall
-      await ensureDefaultData(false);
+      await seedCoreStructure();
       await seedDefaultStorageFiles();
     } else {
       logger.info('ℹ️  Djie CMS Pro siap diinstal. Buka browser dan ikuti panduan Setup Wizard di http://localhost:5173/install');
