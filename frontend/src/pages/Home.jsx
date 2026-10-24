@@ -36,13 +36,14 @@ export default function Home() {
         return {};
       }
     },
-    staleTime: 1000 * 60 * 5 // 5 minutes cache
+    staleTime: 1000 * 30 // 30 seconds cache for rapid admin updates
   });
 
   const settings = settingsData || {};
-  const activeLayout = settings.home_layout_mode || cachedLayout;
-  // Either explicit layout mode 'EDITORIAL' or active theme 'editorial'
-  const isEditorialMode = activeLayout === 'EDITORIAL' || currentTheme === 'editorial';
+  // The database setting (settings.home_layout_mode) is the absolute authority for layout!
+  const isEditorialMode = settings.home_layout_mode 
+    ? settings.home_layout_mode === 'EDITORIAL'
+    : (currentTheme === 'editorial' || cachedLayout === 'EDITORIAL');
 
   // 2. Data Fetching for Agendas (Direct from Database CMS)
   const { data: agendaData } = useQuery({

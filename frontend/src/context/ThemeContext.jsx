@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '../services/api';
 
 const ThemeContext = createContext(null);
 
@@ -66,16 +68,52 @@ export const themes = [
 ];
 
 export const ThemeProvider = ({ children }) => {
-  // Read saved theme synchronously from localStorage on initial render (no initial 'emerald' flash)
+  // 1. Initial State: sync from cached setting or default
   const [currentTheme, setCurrentTheme] = useState(() => {
     return localStorage.getItem('tamiang_theme') || 'editorial';
   });
 
+  // 2. Fetch Centralized Web Settings from Backend (Always Single Source of Truth for ALL Visitors)
+  const { data: settingsData } = useQuery({
+    queryKey: ['cmsWebSettingsThemeGlobal'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/cms/pengaturan');
+        return res?.data || res || {};
+      } catch (err) {
+        return {};
+      }
+    },
+    staleTime: 1000 * 30, // 30 seconds fresh check
+    refetchInterval: 1000 * 60 // Check periodically
+  });
+
+  // 3. Whenever admin updates settings in DB, automatically synchronize theme for all visitors
   useEffect(() => {
-    const savedTheme = localStorage.getItem('tamiang_theme') || 'editorial';
-    setCurrentTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }, []);
+    if (!settingsData || Object.keys(settingsData).length === 0) return;
+
+    let targetTheme = null;
+    if (settingsData.home_layout_mode === 'PORTAL') {
+      targetTheme = settingsData.site_theme || 'emerald';
+    } else if (settingsData.home_layout_mode === 'EDITORIAL') {
+      targetTheme = 'editorial';
+    } else if (settingsData.site_theme) {
+      targetTheme = settingsData.site_theme;
+    }
+
+    if (targetTheme && targetTheme !== currentTheme) {
+      setCurrentTheme(targetTheme);
+      localStorage.setItem('tamiang_theme', targetTheme);
+      if (settingsData.home_layout_mode) {
+        localStorage.setItem('djie_layout_mode', settingsData.home_layout_mode);
+      }
+      document.documentElement.setAttribute('data-theme', targetTheme);
+    }
+  }, [settingsData, currentTheme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  }, [currentTheme]);
 
   const changeTheme = (themeId) => {
     setCurrentTheme(themeId);
