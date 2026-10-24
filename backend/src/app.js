@@ -116,8 +116,16 @@ app.use('/sitemap.xml', (req, res, next) => {
   req.url = '/sitemap.xml';
   seoRoutes(req, res, next);
 });
+app.use('/sitemap-news.xml', (req, res, next) => {
+  req.url = '/sitemap-news.xml';
+  seoRoutes(req, res, next);
+});
 app.use('/rss.xml', (req, res, next) => {
   req.url = '/rss.xml';
+  seoRoutes(req, res, next);
+});
+app.use('/robots.txt', (req, res, next) => {
+  req.url = '/robots.txt';
   seoRoutes(req, res, next);
 });
 
