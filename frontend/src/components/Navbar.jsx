@@ -207,12 +207,12 @@ export default function Navbar() {
             <span className={`font-black text-xs xs:text-sm sm:text-[17px] tracking-tight leading-snug truncate ${
               isEditorial ? 'text-slate-900' : 'text-white'
             }`}>
-              {settings.site_name || settings.site_title || 'Djie CMS Pro'}
+              {settings.site_title || settings.site_name || 'Djie CMS Pro'}
             </span>
             <span className={`text-[9px] xs:text-[10px] sm:text-[11px] tracking-wide font-medium truncate ${
               isEditorial ? 'text-blue-600 font-bold' : 'text-amber-300'
             }`}>
-              {settings.instansi_name || settings.site_tagline || 'Media Digital & Publishing'}
+              {settings.site_tagline || settings.instansi_name || 'Media Digital & Publishing'}
             </span>
           </div>
         </Link>

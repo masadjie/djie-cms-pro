@@ -120,10 +120,10 @@ export default function Footer() {
               </div>
               <div>
                 <span className="font-extrabold text-base text-slate-900 leading-tight block">
-                  {settings.site_name || settings.site_title || 'Djie CMS Pro'}
+                  {settings.site_title || settings.site_name || 'Djie CMS Pro'}
                 </span>
                 <span className={`text-xs font-semibold block ${isTemplateA ? 'text-blue-600 font-bold' : 'text-amber-600'}`}>
-                  {settings.instansi_name || settings.site_tagline || 'Portal Resmi Publikasi'}
+                  {settings.site_tagline || settings.instansi_name || 'Portal Resmi Publikasi'}
                 </span>
               </div>
             </div>

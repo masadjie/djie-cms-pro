@@ -295,13 +295,16 @@ export default function PengaturanAplikasiTab() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Nama Situs / Judul Aplikasi (Site Title)
+                Nama Situs / Judul Utama Portal (Site Title)
               </label>
               <input
                 type="text"
                 name="site_title"
                 value={form.site_title}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  setForm(prev => ({ ...prev, site_name: e.target.value }));
+                }}
                 placeholder="Contoh: BKPSDM Kab. Aceh Tamiang"
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 font-semibold focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
               />
@@ -309,53 +312,34 @@ export default function PengaturanAplikasiTab() {
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Nama Singkat / Instansi (Site Name & Instansi)
-              </label>
-              <input
-                type="text"
-                name="site_name"
-                value={form.site_name || form.site_title}
-                onChange={(e) => {
-                  handleChange(e);
-                  setForm(prev => ({ ...prev, site_name: e.target.value, instansi_name: e.target.value }));
-                }}
-                placeholder="Contoh: BKPSDM Kabupaten Aceh Tamiang"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 font-semibold focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Tagline / Slogan Subjudul
+                Tagline / Slogan Subjudul (Tampil di Bawah Judul Header)
               </label>
               <input
                 type="text"
                 name="site_tagline"
                 value={form.site_tagline}
-                onChange={handleChange}
-                placeholder="Badan Kepegawaian & Pengembangan Sumber Daya Manusia"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Nama Instansi Lengkap (Footer & Dokumen)
-              </label>
-              <input
-                type="text"
-                name="instansi_nama"
-                value={form.instansi_nama || form.instansi_name || ''}
                 onChange={(e) => {
                   handleChange(e);
-                  setForm(prev => ({ ...prev, instansi_nama: e.target.value, instansi_name: e.target.value }));
+                  setForm(prev => ({ ...prev, instansi_name: e.target.value }));
                 }}
-                placeholder="Badan Kepegawaian & Pengembangan Sumber Daya Manusia"
+                placeholder="Contoh: Badan Kepegawaian & Pengembangan Sumber Daya Manusia"
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              Nama Instansi Lengkap (Footer & Dokumen Publik)
+            </label>
+            <input
+              type="text"
+              name="instansi_nama"
+              value={form.instansi_nama || form.instansi_name || ''}
+              onChange={handleChange}
+              placeholder="Badan Kepegawaian & Pengembangan Sumber Daya Manusia Kabupaten Aceh Tamiang"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
+            />
           </div>
 
           <div>
