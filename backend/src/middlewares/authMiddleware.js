@@ -49,9 +49,31 @@ const authorize = (...roles) => {
   };
 };
 
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_jwt_key_aceh_tamiang_spbe_2026');
+      if (decoded && decoded.id) {
+        const user = await User.findByPk(decoded.id, {
+          include: [{ model: OPD, as: 'opd' }]
+        });
+        if (user && user.is_active) {
+          req.user = user;
+        }
+      }
+    }
+  } catch (error) {
+    // Ignore invalid/expired token for optional auth
+  }
+  next();
+};
+
 module.exports = {
   authenticate,
   authorize,
+  optionalAuth,
   verifyToken: authenticate,
   requireRole: (roles) => authorize(roles)
 };

@@ -25,7 +25,7 @@ const {
   deleteComment,
   bulkActionComments
 } = require('../controllers/komentarController');
-const { verifyToken, requireRole } = require('../middlewares/authMiddleware');
+const { verifyToken, requireRole, optionalAuth } = require('../middlewares/authMiddleware');
 const { auditLogMiddleware } = require('../middlewares/auditMiddleware');
 
 // Public News Routes (Cached in Redis)
@@ -56,7 +56,7 @@ router.get('/:slug/share-analytics', getBeritaShareAnalytics);
 router.get('/:slug/komentar', getApprovedCommentsBySlug);
 router.post('/:slug/komentar', submitComment);
 
-router.get('/:slug', getBeritaBySlug);
+router.get('/:slug', optionalAuth, getBeritaBySlug);
 
 // Admin Routes (Invalidates Redis Cache)
 router.post('/', verifyToken, requireRole(['SUPER_ADMIN', 'ADMIN_OPD', 'EDITOR']), auditLogMiddleware('CREATE_BERITA', 'BERITA'), createBerita);

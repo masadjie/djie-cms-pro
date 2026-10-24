@@ -152,11 +152,12 @@ const getBeritaBySlug = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Slug berita diperlukan' });
     }
 
-    const isAdmin = req.query.admin === 'true' || !!req.headers.authorization;
-    const cacheKey = `berita:detail:${slug}:adm${isAdmin}`;
+    const isAdmin = req.query.admin === 'true' || !!req.user || (!!req.headers.authorization && req.headers.authorization.startsWith('Bearer '));
+    const cacheKey = `berita:detail:${slug}:adm${!!isAdmin}`;
     let berita = await getOrSetCache(cacheKey, async () => {
-      const pubWhere = { slug, status: 'PUBLISHED' };
+      const pubWhere = { slug };
       if (!isAdmin) {
+        pubWhere.status = 'PUBLISHED';
         pubWhere.published_at = {
           [Op.or]: [{ [Op.lte]: new Date() }, { [Op.eq]: null }]
         };
@@ -181,13 +182,13 @@ const getBeritaBySlug = async (req, res) => {
       if (!article) {
         const cleanSlug = slug.replace(/^(bkpsdm-aceh-tamiang-|pemerintah-kabupaten-aceh-tamiang-)/i, '');
         const fallbackWhere = {
-          status: 'PUBLISHED',
           [Op.or]: [
             { slug: { [Op.like]: `%${cleanSlug}%` } },
             { title: { [Op.like]: `%${cleanSlug.replace(/-/g, '%')}%` } }
           ]
         };
         if (!isAdmin) {
+          fallbackWhere.status = 'PUBLISHED';
           fallbackWhere.published_at = {
             [Op.or]: [{ [Op.lte]: new Date() }, { [Op.eq]: null }]
           };

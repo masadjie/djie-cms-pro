@@ -108,6 +108,30 @@ export default function BeritaDetail() {
 
       <FloatingActionBars />
 
+      {/* Scheduled Alert Notice for Admins */}
+      {article?.status === 'PUBLISHED' && article?.published_at && new Date(article.published_at) > new Date() && (
+        <div className="w-full max-w-[1600px] mx-auto px-3 xs:px-4 sm:px-6 lg:px-12 mb-4">
+          <div className="bg-sky-50 border border-sky-200 text-sky-900 px-4 py-3 rounded-2xl flex items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
+              <span>
+                <strong>Mode Pratinjau Administrator:</strong> Artikel ini dijadwalkan terbit pada{' '}
+                <span className="font-bold underline">
+                  {new Date(article.published_at).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' })}
+                </span>{' '}
+                dan saat ini belum dapat dilihat oleh publik / pengunjung umum.
+              </span>
+            </div>
+            <Link
+              to={`/admin/berita/edit/${article.id}`}
+              className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs shrink-0 shadow-xs transition-colors"
+            >
+              Edit Berita Ini
+            </Link>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-[1600px] mx-auto px-3 xs:px-4 sm:px-6 lg:px-12 space-y-6 sm:space-y-8">
         
         {/* Breadcrumb Navigation */}
