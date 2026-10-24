@@ -32,21 +32,22 @@ export default function ArticlePublishSidebar({
   setCoverMediaModalOpen,
   handleGenerateTags
 }) {
-  const isScheduled = formData.status === 'PUBLISHED' && formData.published_at && new Date(formData.published_at) > new Date();
+  const isScheduled = formData.status === 'PUBLISHED' && formData.is_scheduled && formData.published_at && new Date(formData.published_at) > new Date();
 
   const handleSetNow = () => {
     const now = new Date();
-    // format as YYYY-MM-DDTHH:mm in local time
-    const localIso = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-    setFormData({ ...formData, published_at: localIso });
+    const pad = (n) => String(n).padStart(2, '0');
+    const localIso = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    setFormData({ ...formData, published_at: localIso, is_scheduled: false });
   };
 
   const handleSetTomorrow = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(8, 0, 0, 0);
-    const localIso = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-    setFormData({ ...formData, status: 'PUBLISHED', published_at: localIso });
+    const pad = (n) => String(n).padStart(2, '0');
+    const localIso = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T${pad(tomorrow.getHours())}:${pad(tomorrow.getMinutes())}`;
+    setFormData({ ...formData, status: 'PUBLISHED', published_at: localIso, is_scheduled: true });
   };
   return (
     <div className="w-full p-4 sm:p-6 space-y-5 sm:space-y-6">
@@ -83,44 +84,74 @@ export default function ArticlePublishSidebar({
           </button>
         </div>
 
-        {/* Publish Date & Scheduling */}
-        <div className="space-y-1.5 pt-2">
+        {/* Scheduling Toggle & Options */}
+        <div className="space-y-2 pt-2 border-t border-slate-100">
           <div className="flex items-center justify-between">
-            <label className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              <span>Waktu Publikasi</span>
+            <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={!!formData.is_scheduled}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  if (checked) {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(8, 0, 0, 0);
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const localIso = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}T${pad(tomorrow.getHours())}:${pad(tomorrow.getMinutes())}`;
+                    setFormData({ ...formData, is_scheduled: true, status: 'PUBLISHED', published_at: localIso });
+                  } else {
+                    handleSetNow();
+                  }
+                }}
+                className="w-4 h-4 rounded text-emerald-800 focus:ring-emerald-600 cursor-pointer"
+              />
+              <span>Jadwalkan Penayangan (Schedule)</span>
             </label>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={handleSetNow}
-                className="text-[10px] font-bold text-slate-500 hover:text-emerald-800 bg-slate-100 hover:bg-emerald-50 px-1.5 py-0.5 rounded transition-colors"
-                title="Atur Waktu Sekarang"
-              >
-                Sekarang
-              </button>
-              <button
-                type="button"
-                onClick={handleSetTomorrow}
-                className="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded transition-colors"
-                title="Jadwalkan Besok Pagi 08:00"
-              >
-                + Besok 08:00
-              </button>
-            </div>
+
+            {formData.is_scheduled && (
+              <span className="text-[10px] font-black uppercase text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                Terjadwal
+              </span>
+            )}
           </div>
-          <input
-            type="datetime-local"
-            value={formData.published_at}
-            onChange={(e) => setFormData({ ...formData, published_at: e.target.value })}
-            className={`w-full p-2 text-xs bg-slate-50 border rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none transition-all ${
-              isScheduled ? 'border-sky-300 bg-sky-50/40 text-sky-950 font-semibold' : 'border-slate-200'
-            }`}
-          />
-          {isScheduled && (
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-sky-800 bg-sky-50 border border-sky-200/80 px-2.5 py-1.5 rounded-lg">
-              <Clock className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-              <span>Naskah akan otomatis terbit publik pada waktu tersebut.</span>
+
+          {formData.is_scheduled ? (
+            <div className="space-y-1.5 pt-1 bg-sky-50/50 p-2.5 rounded-xl border border-sky-200/70">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-sky-900 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-sky-600" />
+                  Pilih Tanggal & Jam Terbit
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={handleSetTomorrow}
+                    className="text-[10px] font-bold text-sky-700 hover:text-sky-900 bg-white hover:bg-sky-100 border border-sky-200 px-1.5 py-0.5 rounded transition-colors"
+                  >
+                    Besok 08:00
+                  </button>
+                </div>
+              </div>
+              <input
+                type="datetime-local"
+                value={formData.published_at}
+                onChange={(e) => setFormData({ ...formData, published_at: e.target.value })}
+                className="w-full p-2 text-xs bg-white border border-sky-300 rounded-xl focus:ring-2 focus:ring-sky-600 focus:outline-none text-sky-950 font-semibold"
+              />
+              <p className="text-[10px] text-sky-700 leading-tight">
+                *Artikel akan otomatis aktif dan tampil ke publik setelah tanggal & jam di atas tercapai.
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs">
+              <div className="flex items-center gap-1.5 text-slate-600 text-[11px]">
+                <Calendar className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Terbit langsung sekarang (Waktu real-time default)</span>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                Langsung
+              </span>
             </div>
           )}
         </div>

@@ -22,6 +22,12 @@ export default function AdminBeritaEditor() {
   const { user } = useAuth();
   const titleTextareaRef = useRef(null);
 
+  const getLocalNowIso = () => {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  };
+
   // Form State
   const [formData, setFormData] = useState({
     title: '',
@@ -34,7 +40,8 @@ export default function AdminBeritaEditor() {
     kategori_ids: [1],
     author_name: user?.name || 'Humas BKPSDM Aceh Tamiang',
     status: 'PUBLISHED',
-    published_at: new Date().toISOString().slice(0, 16),
+    published_at: getLocalNowIso(),
+    is_scheduled: false,
     is_featured: false,
     is_pinned: false,
     tags: 'Kepegawaian, ASN, Aceh Tamiang',
@@ -153,6 +160,15 @@ export default function AdminBeritaEditor() {
         }
       }
 
+      const articleDate = existingArticle.published_at ? new Date(existingArticle.published_at) : null;
+      let localDateStr = getLocalNowIso();
+      if (articleDate && !isNaN(articleDate.getTime())) {
+        const pad = (n) => String(n).padStart(2, '0');
+        localDateStr = `${articleDate.getFullYear()}-${pad(articleDate.getMonth() + 1)}-${pad(articleDate.getDate())}T${pad(articleDate.getHours())}:${pad(articleDate.getMinutes())}`;
+      }
+
+      const isFutureScheduled = articleDate && articleDate.getTime() > Date.now();
+
       setFormData({
         title: existingArticle.title || '',
         slug: existingArticle.slug || '',
@@ -164,9 +180,8 @@ export default function AdminBeritaEditor() {
         kategori_ids: parsedKatIds.length > 0 ? parsedKatIds : [Number(existingArticle.kategori_id || 1)],
         author_name: existingArticle.author_name || user?.name || 'Humas BKPSDM Aceh Tamiang',
         status: existingArticle.status || 'PUBLISHED',
-        published_at: existingArticle.published_at 
-          ? new Date(existingArticle.published_at).toISOString().slice(0, 16) 
-          : new Date().toISOString().slice(0, 16),
+        published_at: localDateStr,
+        is_scheduled: !!isFutureScheduled,
         is_featured: !!existingArticle.is_featured,
         is_pinned: !!existingArticle.is_pinned,
         tags: existingArticle.meta_keywords || 'Kepegawaian, ASN, Aceh Tamiang',
@@ -481,11 +496,22 @@ export default function AdminBeritaEditor() {
       const metaDescClamped = (formData.meta_description || formData.excerpt || '').slice(0, 320);
       const coverCaptionClamped = (formData.cover_caption || '').slice(0, 250);
 
+      const finalStatus = targetStatus || formData.status || 'PUBLISHED';
+      let finalPublishedAt = formData.published_at;
+
+      // Jika tidak dijadwalkan secara eksplisit dan statusnya PUBLISHED, gunakan waktu sekarang
+      if (!formData.is_scheduled && finalStatus === 'PUBLISHED') {
+        finalPublishedAt = new Date().toISOString();
+      } else if (formData.is_scheduled && finalPublishedAt) {
+        finalPublishedAt = new Date(finalPublishedAt).toISOString();
+      }
+
       const payload = {
         ...formData,
         title: formData.title.slice(0, 250),
         content: cleanedContent,
-        status: targetStatus || formData.status || 'PUBLISHED',
+        status: finalStatus,
+        published_at: finalPublishedAt,
         author_name: user?.name || formData.author_name || 'Humas BKPSDM Aceh Tamiang',
         meta_title: metaTitleClamped,
         meta_description: metaDescClamped,
