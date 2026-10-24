@@ -125,7 +125,9 @@ export default function ThemeSettingTab() {
               type="button"
               onClick={() => {
                 changeTheme('emerald');
-                setForm(prev => ({ ...prev, home_layout_mode: 'PORTAL' }));
+                setForm(prev => ({ ...prev, home_layout_mode: 'PORTAL', site_theme: 'emerald' }));
+                localStorage.setItem('djie_layout_mode', 'PORTAL');
+                saveMutation.mutate({ ...form, home_layout_mode: 'PORTAL', site_theme: 'emerald' });
               }}
               className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
                 currentTheme !== 'editorial' && form.home_layout_mode !== 'EDITORIAL'
@@ -146,7 +148,9 @@ export default function ThemeSettingTab() {
               type="button"
               onClick={() => {
                 changeTheme('editorial');
-                setForm(prev => ({ ...prev, home_layout_mode: 'EDITORIAL' }));
+                setForm(prev => ({ ...prev, home_layout_mode: 'EDITORIAL', site_theme: 'editorial' }));
+                localStorage.setItem('djie_layout_mode', 'EDITORIAL');
+                saveMutation.mutate({ ...form, home_layout_mode: 'EDITORIAL', site_theme: 'editorial' });
               }}
               className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
                 currentTheme === 'editorial' || form.home_layout_mode === 'EDITORIAL'

@@ -70,7 +70,11 @@ export const themes = [
 export const ThemeProvider = ({ children }) => {
   // 1. Initial State: sync from cached setting or default
   const [currentTheme, setCurrentTheme] = useState(() => {
-    return localStorage.getItem('tamiang_theme') || 'editorial';
+    const cachedMode = localStorage.getItem('djie_layout_mode');
+    const cachedTheme = localStorage.getItem('tamiang_theme');
+    if (cachedMode === 'EDITORIAL') return 'editorial';
+    if (cachedMode === 'PORTAL') return cachedTheme && cachedTheme !== 'editorial' ? cachedTheme : 'emerald';
+    return cachedTheme || 'editorial';
   });
 
   // 2. Fetch Centralized Web Settings from Backend (Always Single Source of Truth for ALL Visitors)
@@ -84,8 +88,8 @@ export const ThemeProvider = ({ children }) => {
         return {};
       }
     },
-    staleTime: 1000 * 30, // 30 seconds fresh check
-    refetchInterval: 1000 * 60 // Check periodically
+    staleTime: 1000 * 5, // 5 seconds fresh check
+    refetchInterval: 1000 * 30 // Check periodically
   });
 
   // 3. Whenever admin updates settings in DB, automatically synchronize theme for all visitors
@@ -94,7 +98,7 @@ export const ThemeProvider = ({ children }) => {
 
     let targetTheme = null;
     if (settingsData.home_layout_mode === 'PORTAL') {
-      targetTheme = settingsData.site_theme || 'emerald';
+      targetTheme = settingsData.site_theme || (currentTheme !== 'editorial' ? currentTheme : 'emerald');
     } else if (settingsData.home_layout_mode === 'EDITORIAL') {
       targetTheme = 'editorial';
     } else if (settingsData.site_theme) {
