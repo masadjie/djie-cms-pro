@@ -128,13 +128,15 @@ router.get(
   requireRole(['SUPER_ADMIN']),
   async (req, res) => {
     try {
-      const { page = 1, limit = 50, module: modFilter, action: actFilter, search } = req.query;
+      const { page = 1, limit = 50, module: modFilter, excludeModule, action: actFilter, search } = req.query;
       const offset = (page - 1) * limit;
 
       const whereClause = {};
 
       if (modFilter && modFilter !== 'ALL') {
         whereClause.module = modFilter;
+      } else if (excludeModule) {
+        whereClause.module = { [Op.ne]: excludeModule };
       }
 
       if (actFilter) {

@@ -39,7 +39,37 @@ const AuditSecurityTab = () => {
   const [auditSearch, setAuditSearch] = useState('');
   const [auditModule, setAuditModule] = useState('');
 
-  // 1. Fetch Audit Logs & Security Threats from DB
+  // WAF Threat Table States
+  const [threatPage, setThreatPage] = useState(1);
+  const [threatLimit, setThreatLimit] = useState(10);
+  const [threatSearch, setThreatSearch] = useState('');
+
+  // 1. Fetch WAF Security Threats from DB (Dedicated Query for Threats Tab)
+  const { 
+    data: threatsQueryData, 
+    isLoading: isThreatsLoading, 
+    refetch: refetchThreats 
+  } = useQuery({
+    queryKey: ['adminAuditThreatsList', threatPage, threatLimit, threatSearch],
+    queryFn: async () => {
+      try {
+        const params = new URLSearchParams({
+          page: String(threatPage),
+          limit: String(threatLimit),
+          module: 'SECURITY_ALERT'
+        });
+        if (threatSearch) params.append('search', threatSearch);
+
+        const res = await api.get(`/master/audit-logs?${params.toString()}`);
+        return res || { data: [], securitySummary: { totalSecurityAlerts: 0, recentThreats: [] }, meta: { total: 0 } };
+      } catch (err) {
+        return { data: [], securitySummary: { totalSecurityAlerts: 0, recentThreats: [] }, meta: { total: 0 } };
+      }
+    },
+    refetchInterval: 15000
+  });
+
+  // 2. Fetch SPBE Operational Audit Logs from DB (Dedicated Query for SPBE Tab)
   const { 
     data: auditData, 
     isLoading: isAuditLoading, 
@@ -50,7 +80,8 @@ const AuditSecurityTab = () => {
       try {
         const params = new URLSearchParams({
           page: String(auditPage),
-          limit: String(auditLimit)
+          limit: String(auditLimit),
+          excludeModule: 'SECURITY_ALERT'
         });
         if (auditSearch) params.append('search', auditSearch);
         if (auditModule) params.append('module', auditModule);
@@ -64,7 +95,7 @@ const AuditSecurityTab = () => {
     refetchInterval: 15000 // Polling 15 seconds for live security status
   });
 
-  // 2. Fetch Docker Live Logs & Threat Analysis
+  // 3. Fetch Docker Live Logs & Threat Analysis
   const { 
     data: dockerLogsData, 
     isLoading: isDockerLoading, 
@@ -89,13 +120,11 @@ const AuditSecurityTab = () => {
     refetchInterval: subTab === 'docker_logs' ? 10000 : false // Auto refresh every 10s if on docker tab
   });
 
-  const securitySummary = auditData?.securitySummary || { totalSecurityAlerts: 0, recentThreats: [] };
-  const rawAuditLogs = auditData?.data || [];
+  // Summary counts
+  const totalSecurityAlerts = threatsQueryData?.securitySummary?.totalSecurityAlerts ?? threatsQueryData?.meta?.total ?? 0;
+  const blockedThreats = threatsQueryData?.data || [];
+  const normalAudits = auditData?.data || [];
   const totalAuditLogs = auditData?.meta?.total || 0;
-
-  // Filter threats vs normal audits
-  const blockedThreats = rawAuditLogs.filter(item => item.module === 'SECURITY_ALERT');
-  const normalAudits = rawAuditLogs.filter(item => item.module !== 'SECURITY_ALERT');
 
   // Filter docker logs based on search & suspicious toggle
   const filteredDockerLogs = (dockerLogsData?.data || []).filter(log => {
@@ -262,12 +291,12 @@ const AuditSecurityTab = () => {
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Perlindungan WAF & Firewall</p>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-2xl font-black text-slate-900">
-                {securitySummary.totalSecurityAlerts}
+                {totalSecurityAlerts}
               </span>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                securitySummary.totalSecurityAlerts > 0 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'
+                totalSecurityAlerts > 0 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'
               }`}>
-                {securitySummary.totalSecurityAlerts > 0 ? 'Serangan Terblokir' : 'Sistem Aman'}
+                {totalSecurityAlerts > 0 ? 'Serangan Terblokir' : 'Sistem Aman'}
               </span>
             </div>
             <p className="text-[11px] text-slate-400 mt-1">SQLi, XSS, & Path Traversal Guard aktif</p>
@@ -334,7 +363,7 @@ const AuditSecurityTab = () => {
             }`}
           >
             <ShieldAlert className="w-4 h-4" />
-            <span>Alert Serangan & WAF ({securitySummary.totalSecurityAlerts})</span>
+            <span>Alert Serangan & WAF ({totalSecurityAlerts})</span>
           </button>
 
           <button
@@ -371,13 +400,14 @@ const AuditSecurityTab = () => {
           <button
             type="button"
             onClick={() => {
+              refetchThreats();
               refetchAudit();
               refetchDockerLogs();
             }}
-            disabled={isAuditLoading || isDockerFetching}
+            disabled={isAuditLoading || isThreatsLoading || isDockerFetching}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isDockerFetching || isAuditLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isDockerFetching || isAuditLoading || isThreatsLoading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -398,10 +428,10 @@ const AuditSecurityTab = () => {
                 Mencatat dan memblokir secara otomatis upaya SQL Injection, Cross-Site Scripting (XSS), Path Traversal, serta exploit probes.
               </p>
             </div>
-            {securitySummary.totalSecurityAlerts > 0 && (
+            {totalSecurityAlerts > 0 && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold">
                 <Flame className="w-4 h-4 text-red-600 animate-pulse" />
-                <span>Terdeteksi {securitySummary.totalSecurityAlerts} Percobaan Serangan Dicegah</span>
+                <span>Terdeteksi {totalSecurityAlerts} Percobaan Serangan Dicegah</span>
               </div>
             )}
           </div>
@@ -409,9 +439,18 @@ const AuditSecurityTab = () => {
           <DataTable
             columns={threatColumns}
             data={blockedThreats}
-            isLoading={isAuditLoading}
+            isLoading={isThreatsLoading}
+            serverSide={true}
+            totalItems={threatsQueryData?.meta?.total || blockedThreats.length}
+            currentPage={threatPage}
+            pageSize={threatLimit}
+            onPageChange={setThreatPage}
+            onPageSizeChange={setThreatLimit}
+            onSearchChange={(q) => {
+              setThreatSearch(q);
+              setThreatPage(1);
+            }}
             searchPlaceholder="Cari ancaman, IP penyerang, atau pola payload..."
-            searchKeys={['action', 'description', 'ip_address']}
             defaultPageSize={10}
             emptyMessage="Belum ada percobaan serangan siber yang terdeteksi. Sistem berjalan aman dan terlindungi."
           />
@@ -581,8 +620,17 @@ const AuditSecurityTab = () => {
             columns={auditColumns}
             data={normalAudits}
             isLoading={isAuditLoading}
+            serverSide={true}
+            totalItems={totalAuditLogs}
+            currentPage={auditPage}
+            pageSize={auditLimit}
+            onPageChange={setAuditPage}
+            onPageSizeChange={setAuditLimit}
+            onSearchChange={(q) => {
+              setAuditSearch(q);
+              setAuditPage(1);
+            }}
             searchPlaceholder="Cari aksi, administrator, atau modul audit..."
-            searchKeys={['action', 'module', 'user.name', 'user.email']}
             defaultPageSize={15}
             emptyMessage="Belum ada catatan audit trail operasional."
           />
