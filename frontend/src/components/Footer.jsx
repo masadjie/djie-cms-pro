@@ -108,13 +108,13 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 shadow-xs flex items-center justify-center p-1 overflow-hidden shrink-0">
                 <img
-                  src="/logo-djie-cms-pro-square.png"
-                  alt="Logo Instansi"
+                  src={settings.site_logo || "/logo-djie-cms-pro-square.png"}
+                  alt={settings.site_name || "Logo Instansi"}
                   width="42"
                   height="42"
                   className="w-full h-full object-contain"
                   onError={(e) => {
-                    e.target.style.display = 'none';
+                    e.target.src = '/logo-djie-cms-pro-square.png';
                   }}
                 />
               </div>

@@ -19,20 +19,28 @@ import {
   AlertCircle,
   Hammer,
   Clock,
-  Power
+  Power,
+  Image as ImageIcon,
+  UploadCloud,
+  Trash2
 } from 'lucide-react';
+import MediaLibraryModal from './MediaLibraryModal';
 
 export default function PengaturanAplikasiTab() {
   const queryClient = useQueryClient();
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
   // Main Application & SEO Settings Form State
   const [form, setForm] = useState({
     // 1. Identitas & Nama Portal
     site_title: 'BKPSDM Kab. Aceh Tamiang',
+    site_name: 'BKPSDM Kab. Aceh Tamiang',
     site_tagline: 'Badan Kepegawaian & Pengembangan Sumber Daya Manusia',
     site_description: 'Portal resmi pelayanan kepegawaian, pengumuman seleksi CASN, kenaikan pangkat, e-kinerja, dan SIKEPO Kabupaten Aceh Tamiang.',
+    site_logo: '',
+    instansi_name: 'Badan Kepegawaian & Pengembangan Sumber Daya Manusia Kabupaten Aceh Tamiang',
     
     // 2. SEO & Metadata
     seo_keywords: 'BKPSDM Aceh Tamiang, SiKEPO Aceh Tamiang, CASN Aceh Tamiang, Kenaikan Pangkat BKN, SIASN, MyASN, E-Kinerja, Pemkab Aceh Tamiang',
@@ -220,6 +228,70 @@ export default function PengaturanAplikasiTab() {
             </div>
           </div>
 
+          {/* Logo Instansi / Aplikasi Setting */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-xs font-black text-slate-800 block">Logo Resmi Portal / Instansi</span>
+                <span className="text-[11px] text-slate-500">Logo ini akan otomatis tampil di Navbar, Footer, Kopsurat, dan seluruh halaman publik.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsMediaModalOpen(true)}
+                  className="px-3.5 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <UploadCloud className="w-3.5 h-3.5" />
+                  <span>Pilih / Upload Logo</span>
+                </button>
+                {form.site_logo && (
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, site_logo: '' }))}
+                    className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer border border-rose-200"
+                    title="Hapus Logo Custom"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 pt-2">
+              <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center p-2 overflow-hidden shrink-0">
+                {form.site_logo ? (
+                  <img
+                    src={form.site_logo}
+                    alt="Logo Preview"
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.target.src = '/logo-djie-cms-pro-square.png';
+                    }}
+                  />
+                ) : (
+                  <img
+                    src="/logo-djie-cms-pro-square.png"
+                    alt="Default Logo CMS"
+                    className="w-full h-full object-contain opacity-70"
+                  />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <input
+                  type="text"
+                  name="site_logo"
+                  value={form.site_logo || ''}
+                  onChange={handleChange}
+                  placeholder="URL Logo atau path (contoh: https://... atau /uploads/...)"
+                  className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 font-mono outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all"
+                />
+                <span className="text-[10px] text-slate-400 mt-1 block">
+                  {form.site_logo ? 'Menggunakan Logo Kustom yang diunggah' : 'Menggunakan logo bawaan default CMS'}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -237,6 +309,25 @@ export default function PengaturanAplikasiTab() {
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Nama Singkat / Instansi (Site Name & Instansi)
+              </label>
+              <input
+                type="text"
+                name="site_name"
+                value={form.site_name || form.site_title}
+                onChange={(e) => {
+                  handleChange(e);
+                  setForm(prev => ({ ...prev, site_name: e.target.value, instansi_name: e.target.value }));
+                }}
+                placeholder="Contoh: BKPSDM Kabupaten Aceh Tamiang"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 font-semibold focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Tagline / Slogan Subjudul
               </label>
               <input
@@ -244,6 +335,23 @@ export default function PengaturanAplikasiTab() {
                 name="site_tagline"
                 value={form.site_tagline}
                 onChange={handleChange}
+                placeholder="Badan Kepegawaian & Pengembangan Sumber Daya Manusia"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Nama Instansi Lengkap (Footer & Dokumen)
+              </label>
+              <input
+                type="text"
+                name="instansi_nama"
+                value={form.instansi_nama || form.instansi_name || ''}
+                onChange={(e) => {
+                  handleChange(e);
+                  setForm(prev => ({ ...prev, instansi_nama: e.target.value, instansi_name: e.target.value }));
+                }}
                 placeholder="Badan Kepegawaian & Pengembangan Sumber Daya Manusia"
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-[13px] text-slate-800 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 outline-none transition-all"
               />
@@ -658,6 +766,25 @@ export default function PengaturanAplikasiTab() {
         </div>
 
       </form>
+
+      {/* Media Library Modal for Selecting Logo */}
+      <MediaLibraryModal
+        isOpen={isMediaModalOpen}
+        onClose={() => setIsMediaModalOpen(false)}
+        singleSelect={true}
+        onlyImages={true}
+        title="Pilih File Logo dari Media Library"
+        confirmText="Gunakan Sebagai Logo Portal"
+        onSelectFiles={(files) => {
+          if (files && files.length > 0) {
+            setForm(prev => ({
+              ...prev,
+              site_logo: files[0].file_url || files[0].url || files[0].path
+            }));
+          }
+          setIsMediaModalOpen(false);
+        }}
+      />
     </div>
   );
 }
