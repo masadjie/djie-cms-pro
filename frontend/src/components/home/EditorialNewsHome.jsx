@@ -320,7 +320,7 @@ export default function EditorialNewsHome() {
     }, 280);
   };
 
-  // Auto-rotate Circular Highlights every 6 seconds if not hovered
+  // Auto-rotate Circular Highlights every 4.5 seconds if not hovered
   useEffect(() => {
     if (isHighlightPaused) return;
     const hlTimer = setInterval(() => {
@@ -328,8 +328,8 @@ export default function EditorialNewsHome() {
       setTimeout(() => {
         setHighlightPage((prev) => (prev + 1) % highlightSets.length);
         setHighlightFade(true);
-      }, 280);
-    }, 6000);
+      }, 250);
+    }, 4500);
     return () => clearInterval(hlTimer);
   }, [isHighlightPaused, highlightSets.length]);
 
@@ -423,18 +423,21 @@ export default function EditorialNewsHome() {
           {/* Subtle Navigation Header & Indicator */}
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 px-1">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+              </span>
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-800">
                 Top Editorial Picks & Highlights
               </span>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                {highlightPage + 1} / {highlightSets.length}
+              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100/60">
+                Auto-Slide {highlightPage + 1} / {highlightSets.length}
               </span>
             </div>
 
             {/* Prev / Next Buttons & Dots */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 mr-1">
+              <div className="flex items-center gap-1.5 mr-1">
                 {highlightSets.map((_, sIndex) => (
                   <button
                     key={sIndex}
@@ -443,11 +446,11 @@ export default function EditorialNewsHome() {
                       setTimeout(() => {
                         setHighlightPage(sIndex);
                         setHighlightFade(true);
-                      }, 280);
+                      }, 250);
                     }}
                     aria-label={`Go to batch ${sIndex + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                      highlightPage === sIndex ? 'w-5 bg-blue-600' : 'w-1.5 bg-slate-200 hover:bg-slate-300'
+                    className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
+                      highlightPage === sIndex ? 'w-6 bg-blue-600 shadow-xs' : 'w-1.5 bg-slate-200 hover:bg-slate-300'
                     }`}
                   />
                 ))}
@@ -471,9 +474,9 @@ export default function EditorialNewsHome() {
             </div>
           </div>
 
-          {/* Cards with Smooth Fade Transition */}
+          {/* Cards with Smooth Slide & Fade Transition */}
           <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 transition-all duration-300 ease-in-out ${
-            highlightFade ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
+            highlightFade ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-2 scale-[0.99]'
           }`}>
             {currentHighlightItems.map((item, idx) => (
               <div 
