@@ -115,9 +115,18 @@ export default function Navbar() {
   const rawMenus = (menuList && menuList.length > 0 ? menuList : defaultNavs)
     .filter((m) => m.is_active !== false);
 
-  // Use dynamic menus directly from DB; only filter out parent_id children
-  const activeMenus = rawMenus
-    .filter((m) => !m.parent_id);
+  // Use dynamic menus directly from DB; filter out parent_id children and deduplicate
+  const activeMenus = useMemo(() => {
+    const topLevel = rawMenus.filter((m) => !m.parent_id);
+    const seen = new Set();
+    return topLevel.filter((m) => {
+      const dropdownKey = getDropdownKey(m.url, m.label);
+      const uniqueKey = dropdownKey || `${(m.label || '').trim().toLowerCase()}|${(m.url || '').trim().toLowerCase()}`;
+      if (seen.has(uniqueKey)) return false;
+      seen.add(uniqueKey);
+      return true;
+    });
+  }, [rawMenus]);
 
   // Map child sub-menus grouped by parent
   const getChildrenFor = (parentItem) => {
@@ -166,7 +175,12 @@ export default function Navbar() {
       <div className="w-full px-3 sm:px-6 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand Logo & Name (Dynamically Adaptable to Editorial or Portal Theme) */}
-        <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink min-w-0 pr-2" onClick={() => setActiveDropdown(null)}>
+        <Link 
+          to="/" 
+          className="flex items-center gap-2 sm:gap-3 shrink-0 max-w-[200px] xs:max-w-[240px] sm:max-w-[280px] md:max-w-[340px] lg:max-w-[360px] xl:max-w-none pr-2" 
+          onClick={() => setActiveDropdown(null)}
+          title={settings.site_title || settings.site_name || 'Portal Resmi'}
+        >
           {settings.site_logo ? (
             <img
               src={settings.site_logo}
@@ -204,21 +218,27 @@ export default function Navbar() {
             />
           )}
           <div className="flex flex-col min-w-0">
-            <span className={`font-black text-xs xs:text-sm sm:text-[17px] tracking-tight leading-snug truncate ${
-              isEditorial ? 'text-slate-900' : 'text-white'
-            }`}>
+            <span 
+              title={settings.site_title || settings.site_name || 'Djie CMS Pro'}
+              className={`font-black text-xs xs:text-sm sm:text-[17px] tracking-tight leading-snug truncate ${
+                isEditorial ? 'text-slate-900' : 'text-white'
+              }`}
+            >
               {settings.site_title || settings.site_name || 'Djie CMS Pro'}
             </span>
-            <span className={`text-[9px] xs:text-[10px] sm:text-[11px] tracking-wide font-medium truncate ${
-              isEditorial ? 'text-blue-600 font-bold' : 'text-amber-300'
-            }`}>
+            <span 
+              title={settings.site_tagline || settings.instansi_name || 'Media Digital & Publishing'}
+              className={`text-[9px] xs:text-[10px] sm:text-[11px] tracking-wide font-medium truncate ${
+                isEditorial ? 'text-blue-600 font-bold' : 'text-amber-300'
+              }`}
+            >
               {settings.site_tagline || settings.instansi_name || 'Media Digital & Publishing'}
             </span>
           </div>
         </Link>
 
         {/* Dynamic Center Nav Links from CMS Database */}
-        <nav className={`hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-bold whitespace-nowrap ${
+        <nav className={`hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8 text-sm font-bold whitespace-nowrap overflow-x-auto no-scrollbar py-1 ${
           isEditorial ? 'text-slate-700' : 'text-emerald-100'
         }`}>
           {activeMenus.map((menu) => {
