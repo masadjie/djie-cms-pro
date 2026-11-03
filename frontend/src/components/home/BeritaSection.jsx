@@ -311,7 +311,7 @@ export default function BeritaSection() {
                         {news.views_count !== undefined && (
                           <span className="ml-auto text-slate-600 flex items-center gap-1 font-mono font-semibold">
                             <Eye className="w-3 h-3 text-slate-500" />
-                            {news.views_count}
+                            {Number(news.views_count || 0).toLocaleString('id-ID')}
                           </span>
                         )}
                       </div>

@@ -495,7 +495,7 @@ export default function AdminDashboard() {
       accessor: 'views_count',
       align: 'center',
       render: (item) => (
-        <span className="font-mono font-black text-slate-700">{item.views_count || 0}</span>
+        <span className="font-mono font-black text-slate-700">{Number(item.views_count || 0).toLocaleString('id-ID')}</span>
       )
     },
     {

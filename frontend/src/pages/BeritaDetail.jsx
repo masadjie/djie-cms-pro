@@ -161,7 +161,7 @@ export default function BeritaDetail() {
               </span>
               <span className="flex items-center gap-1 text-slate-400 text-xs">
                 <Eye className="w-3.5 h-3.5" />
-                {article.views_count || 0} pembaca
+                {Number(article.views_count || 0).toLocaleString('id-ID')} pembaca
               </span>
             </div>
 

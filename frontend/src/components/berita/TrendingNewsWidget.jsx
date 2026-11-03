@@ -29,7 +29,7 @@ export default function TrendingNewsWidget({ trendingNews, title = 'Berita Terpo
               <div className="flex items-center gap-2 text-[10px] text-slate-400">
                 <span>{new Date(item.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
                 <span>•</span>
-                <span>{item.views_count} views</span>
+                <span>{Number(item.views_count || 0).toLocaleString('id-ID')} views</span>
               </div>
             </div>
           </Link>

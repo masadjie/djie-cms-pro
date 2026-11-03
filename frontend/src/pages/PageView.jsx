@@ -122,7 +122,7 @@ export default function PageView() {
             <span>•</span>
             <div className="flex items-center gap-1.5 font-mono">
               <Eye className="w-4 h-4 text-emerald-300" />
-              <span>{page.views_count || 0} Dilihat</span>
+              <span>{Number(page.views_count || 0).toLocaleString('id-ID')} Dilihat</span>
             </div>
           </div>
         </div>
