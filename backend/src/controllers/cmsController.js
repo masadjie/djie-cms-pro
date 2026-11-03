@@ -14,6 +14,7 @@ const {
   VisitorLog,
   Testimoni,
   KomentarBerita,
+  MedsosAsn,
   sequelize 
 } = require('../models');
 const { getOrSetCache, deletePattern, redisClient } = require('../config/redis');
@@ -585,6 +586,101 @@ const deleteBanner = async (req, res) => {
   } catch (error) {
     logger.error('Error in deleteBanner:', error);
     return res.status(500).json({ success: false, message: 'Gagal menghapus banner.' });
+  }
+};
+
+// 4.1 Medsos ASN Highlights CRUD
+const getMedsosAsnList = async (req, res) => {
+  try {
+    const { status, limit } = req.query;
+    const where = {};
+    if (status === 'active') {
+      where.is_active = true;
+    }
+
+    const items = await MedsosAsn.findAll({
+      where,
+      order: [['urutan', 'ASC'], ['created_at', 'DESC']],
+      limit: limit ? parseInt(limit, 10) : 20
+    });
+    return res.status(200).json({ success: true, data: items });
+  } catch (error) {
+    logger.error('Error in getMedsosAsnList:', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengambil data Medsos ASN.' });
+  }
+};
+
+const createMedsosAsn = async (req, res) => {
+  try {
+    const { judul, platform, url, cover_image, badge_text, urutan, is_active } = req.body;
+    if (!judul || !url) {
+      return res.status(400).json({ success: false, message: 'Judul dan URL Medsos wajib diisi.' });
+    }
+
+    // Auto detect platform if not specified or OTHER
+    let detectedPlatform = platform;
+    const lowerUrl = url.toLowerCase();
+    if (!detectedPlatform || detectedPlatform === 'OTHER') {
+      if (lowerUrl.includes('instagram.com')) detectedPlatform = 'INSTAGRAM';
+      else if (lowerUrl.includes('tiktok.com')) detectedPlatform = 'TIKTOK';
+      else if (lowerUrl.includes('youtube.com') || lowerUrl.includes('youtu.be')) detectedPlatform = 'YOUTUBE';
+      else if (lowerUrl.includes('facebook.com') || lowerUrl.includes('fb.watch')) detectedPlatform = 'FACEBOOK';
+      else if (lowerUrl.includes('twitter.com') || lowerUrl.includes('x.com')) detectedPlatform = 'TWITTER';
+      else detectedPlatform = 'OTHER';
+    }
+
+    const item = await MedsosAsn.create({
+      judul,
+      platform: detectedPlatform,
+      url,
+      cover_image: cover_image || null,
+      badge_text: badge_text || null,
+      urutan: urutan !== undefined ? Number(urutan) : 0,
+      is_active: is_active !== undefined ? Boolean(is_active) : true
+    });
+
+    return res.status(201).json({ success: true, message: 'Konten Medsos ASN berhasil ditambahkan.', data: item });
+  } catch (error) {
+    logger.error('Error in createMedsosAsn:', error);
+    return res.status(500).json({ success: false, message: 'Gagal menambahkan konten Medsos ASN.' });
+  }
+};
+
+const updateMedsosAsn = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { judul, platform, url, cover_image, badge_text, urutan, is_active } = req.body;
+
+    const item = await MedsosAsn.findByPk(id);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Konten Medsos ASN tidak ditemukan.' });
+    }
+
+    await item.update({
+      ...(judul !== undefined && { judul }),
+      ...(platform !== undefined && { platform }),
+      ...(url !== undefined && { url }),
+      ...(cover_image !== undefined && { cover_image }),
+      ...(badge_text !== undefined && { badge_text }),
+      ...(urutan !== undefined && { urutan: Number(urutan) }),
+      ...(is_active !== undefined && { is_active: Boolean(is_active) })
+    });
+
+    return res.status(200).json({ success: true, message: 'Konten Medsos ASN berhasil diperbarui.', data: item });
+  } catch (error) {
+    logger.error('Error in updateMedsosAsn:', error);
+    return res.status(500).json({ success: false, message: 'Gagal memperbarui konten Medsos ASN.' });
+  }
+};
+
+const deleteMedsosAsn = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await MedsosAsn.destroy({ where: { id } });
+    return res.status(200).json({ success: true, message: 'Konten Medsos ASN berhasil dihapus.' });
+  } catch (error) {
+    logger.error('Error in deleteMedsosAsn:', error);
+    return res.status(500).json({ success: false, message: 'Gagal menghapus konten Medsos ASN.' });
   }
 };
 
@@ -1442,5 +1538,9 @@ module.exports = {
   getTestimoniList,
   createTestimoni,
   updateTestimoni,
-  deleteTestimoni
+  deleteTestimoni,
+  getMedsosAsnList,
+  createMedsosAsn,
+  updateMedsosAsn,
+  deleteMedsosAsn
 };

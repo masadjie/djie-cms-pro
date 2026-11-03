@@ -11,6 +11,7 @@ import BannerSikepoSection from '../components/home/BannerSikepoSection';
 import LayananTerpopulerSection from '../components/home/LayananTerpopulerSection';
 import AgendaSection from '../components/home/AgendaSection';
 import GaleriVideoSection from '../components/home/GaleriVideoSection';
+import MedsosAsnSection from '../components/home/MedsosAsnSection';
 import EditorialNewsHome from '../components/home/EditorialNewsHome';
 
 export default function Home() {
@@ -94,6 +95,9 @@ export default function Home() {
 
           {/* 2. Berita & Pengumuman Kepegawaian Partial */}
           <BeritaSection />
+
+          {/* 2.1 Medsos ASN Highlights Partial (Reels, TikTok, YouTube Shorts) */}
+          <MedsosAsnSection />
 
           {/* 3. Banner Promosi & Layanan Unggulan Partial */}
           <BannerSikepoSection />

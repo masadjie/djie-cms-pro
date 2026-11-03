@@ -61,6 +61,7 @@ import PengaturanAplikasiTab from '../components/admin/PengaturanAplikasiTab';
 import TestimoniManagerTab from '../components/admin/TestimoniManagerTab';
 import AuditSecurityTab from '../components/admin/AuditSecurityTab';
 import WidgetManagerTab from '../components/admin/WidgetManagerTab';
+import MedsosAsnManagerTab from '../components/admin/MedsosAsnManagerTab';
 
 export default function AdminDashboard() {
   const confirm = useConfirm();
@@ -79,6 +80,7 @@ export default function AdminDashboard() {
         { key: 'menu', label: 'Menu Navigasi', icon: Sliders },
         { key: 'pages', label: 'Halaman (Pages)', icon: FolderOpen },
         { key: 'berita', label: 'Berita & Artikel', icon: Newspaper },
+        { key: 'medsos', label: 'Medsos ASN', icon: Sparkles },
         { key: 'komentar', label: 'Moderasi Komentar', icon: MessageSquare },
         { key: 'kategori', label: 'Kategori Berita', icon: Tag },
         { key: 'files', label: 'Manajemen File & MinIO', icon: HardDrive },
@@ -100,6 +102,7 @@ export default function AdminDashboard() {
         { key: 'overview', label: 'Dashboard', icon: LayoutDashboard },
         { key: 'pages', label: 'Halaman (Pages)', icon: FolderOpen },
         { key: 'berita', label: 'Berita & Artikel', icon: Newspaper },
+        { key: 'medsos', label: 'Medsos ASN', icon: Sparkles },
         { key: 'komentar', label: 'Moderasi Komentar', icon: MessageSquare },
         { key: 'kategori', label: 'Kategori Berita', icon: Tag },
         { key: 'files', label: 'Manajemen File & MinIO', icon: HardDrive },
@@ -729,6 +732,14 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => handleTabChange('medsos')}
+                  className="px-3.5 py-2.5 bg-pink-50 hover:bg-pink-100 text-pink-900 border border-pink-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-pink-600" />
+                  <span>Medsos ASN</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleTabChange('komentar')}
                   className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                 >
@@ -1046,6 +1057,9 @@ export default function AdminDashboard() {
             />
           </div>
         )}
+
+        {/* TAB: MEDSOS ASN HIGHLIGHTS */}
+        {activeTab === 'medsos' && <MedsosAsnManagerTab />}
 
         {/* TAB: MODERASI KOMENTAR BERITA */}
         {activeTab === 'komentar' && <KomentarModerationTab />}

@@ -43,7 +43,11 @@ const {
   getTestimoniList,
   createTestimoni,
   updateTestimoni,
-  deleteTestimoni
+  deleteTestimoni,
+  getMedsosAsnList,
+  createMedsosAsn,
+  updateMedsosAsn,
+  deleteMedsosAsn
 } = require('../controllers/cmsController');
 const { verifyToken, requireRole } = require('../middlewares/authMiddleware');
 const { auditLogMiddleware } = require('../middlewares/auditMiddleware');
@@ -99,6 +103,12 @@ router.get('/testimoni', getTestimoniList);
 router.post('/testimoni', verifyToken, requireRole(['SUPER_ADMIN', 'EDITOR']), auditLogMiddleware('CREATE_TESTIMONI', 'CMS'), createTestimoni);
 router.put('/testimoni/:id', verifyToken, requireRole(['SUPER_ADMIN', 'EDITOR']), auditLogMiddleware('UPDATE_TESTIMONI', 'CMS'), updateTestimoni);
 router.delete('/testimoni/:id', verifyToken, requireRole(['SUPER_ADMIN', 'EDITOR']), auditLogMiddleware('DELETE_TESTIMONI', 'CMS'), deleteTestimoni);
+
+// Medsos ASN Highlight Cards
+router.get('/medsos-asn', getMedsosAsnList);
+router.post('/medsos-asn', verifyToken, requireRole(['SUPER_ADMIN', 'EDITOR', 'ADMIN_OPD']), auditLogMiddleware('CREATE_MEDSOS_ASN', 'CMS'), createMedsosAsn);
+router.put('/medsos-asn/:id', verifyToken, requireRole(['SUPER_ADMIN', 'EDITOR', 'ADMIN_OPD']), auditLogMiddleware('UPDATE_MEDSOS_ASN', 'CMS'), updateMedsosAsn);
+router.delete('/medsos-asn/:id', verifyToken, requireRole(['SUPER_ADMIN', 'EDITOR', 'ADMIN_OPD']), auditLogMiddleware('DELETE_MEDSOS_ASN', 'CMS'), deleteMedsosAsn);
 
 // Pengaturan Web (Restricted to SUPER_ADMIN)
 router.get('/pengaturan', getPengaturanWeb);

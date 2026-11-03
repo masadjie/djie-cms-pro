@@ -20,6 +20,7 @@ const { initVisitorLogModel } = require('./VisitorLog');
 const { initLampiranBeritaModel } = require('./LampiranBerita');
 const { initKomentarBeritaModel } = require('./KomentarBerita');
 const { initTestimoniModel } = require('./Testimoni');
+const { initMedsosAsnModel } = require('./MedsosAsn');
 
 // Initialize models
 const User = initUserModel(sequelize);
@@ -43,6 +44,7 @@ const VisitorLog = initVisitorLogModel(sequelize);
 const LampiranBerita = initLampiranBeritaModel(sequelize);
 const KomentarBerita = initKomentarBeritaModel(sequelize);
 const Testimoni = initTestimoniModel(sequelize);
+const MedsosAsn = initMedsosAsnModel(sequelize);
 
 // Define Model Relationships
 
@@ -124,5 +126,6 @@ module.exports = {
   VisitorLog,
   LampiranBerita,
   KomentarBerita,
-  Testimoni
+  Testimoni,
+  MedsosAsn
 };
