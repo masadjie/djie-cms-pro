@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
 import { 
@@ -18,16 +18,22 @@ import {
   X, 
   AlertCircle,
   Share2,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Upload,
+  Loader2
 } from 'lucide-react';
 import { useConfirm } from '../common/ConfirmDialog';
+import { compressImageToWebP } from '../../utils/imageCompressor';
 
 export default function MedsosAsnManagerTab() {
   const confirm = useConfirm();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
+
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Form State
   const [form, setForm] = useState({
@@ -55,6 +61,42 @@ export default function MedsosAsnManagerTab() {
     it.judul?.toLowerCase().includes(search.toLowerCase()) ||
     it.platform?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Direct Upload Cover to MinIO Storage
+  const handleUploadCover = async (e) => {
+    let file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Hanya berkas gambar (JPG, PNG, WebP) yang dapat diunggah.');
+      return;
+    }
+
+    setUploadingImage(true);
+    setErrorMsg('');
+    try {
+      // Compress to high-speed WebP
+      file = await compressImageToWebP(file, { maxWidth: 1080, maxHeight: 1350, quality: 0.82 });
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('nama_lampiran', `Cover Medsos ASN: ${form.judul || file.name}`);
+      formData.append('kategori_dokumen', 'GALERI_MEDIA');
+
+      const res = await api.post('/storage/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      const uploadedUrl = res?.data?.file_url || res?.file_url;
+      if (uploadedUrl) {
+        setForm(prev => ({ ...prev, cover_image: uploadedUrl }));
+      }
+    } catch (err) {
+      setErrorMsg('Gagal mengunggah gambar: ' + (err?.response?.data?.message || err.message));
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   // Create or Update Mutation
   const saveMutation = useMutation({
@@ -336,7 +378,7 @@ export default function MedsosAsnManagerTab() {
           onClick={() => setModalOpen(false)}
         >
           <div 
-            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-150"
+            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-150 max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -351,7 +393,7 @@ export default function MedsosAsnManagerTab() {
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-xl"
+                className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-xl cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -426,20 +468,77 @@ export default function MedsosAsnManagerTab() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  URL Gambar Cover / Thumbnail
+              {/* UPLOAD GAMBAR COVER (FILE ATAU URL) */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700">
+                  Upload Gambar Cover / Thumbnail
                 </label>
+
+                {/* Upload Button + File Input */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUploadCover}
+                    className="hidden"
+                    id="medsos-cover-file-input"
+                  />
+                  <label
+                    htmlFor="medsos-cover-file-input"
+                    className={`px-4 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-all ${
+                      uploadingImage ? 'opacity-60 pointer-events-none' : ''
+                    }`}
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Mengompres & Mengunggah...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4 text-amber-300" />
+                        <span>Pilih & Unggah Gambar</span>
+                      </>
+                    )}
+                  </label>
+
+                  <span className="text-[11px] text-slate-400 text-center sm:text-left">
+                    atau masukkan URL langsung di bawah
+                  </span>
+                </div>
+
+                {/* Text input for manual URL or view uploaded path */}
                 <input
                   type="text"
                   value={form.cover_image}
                   onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
-                  placeholder="https://... atau /hero-tamiang.jpg"
+                  placeholder="https://... atau /uploads/..."
                   className="w-full p-2.5 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none font-mono"
                 />
-                <p className="text-[10px] text-slate-400 mt-1">
-                  Cover akan ditampilkan sebagai poster visual bergaya highlight.
-                </p>
+
+                {/* Cover Image Preview */}
+                {form.cover_image && (
+                  <div className="relative w-full h-32 rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 group mt-2">
+                    <img
+                      src={form.cover_image}
+                      alt="Cover Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.src = '/hero-tamiang.jpg'; }}
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-between p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-white text-xs font-bold drop-shadow">Pratinjau Cover</span>
+                      <button
+                        type="button"
+                        onClick={() => setForm(prev => ({ ...prev, cover_image: '' }))}
+                        className="p-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs cursor-pointer"
+                        title="Hapus Cover"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-1">
@@ -475,7 +574,7 @@ export default function MedsosAsnManagerTab() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saveMutation.isPending}
+                  disabled={saveMutation.isPending || uploadingImage}
                   className="px-5 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
