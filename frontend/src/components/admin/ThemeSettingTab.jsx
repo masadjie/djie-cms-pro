@@ -77,6 +77,7 @@ export default function ThemeSettingTab() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cmsWebSettings'] });
+      queryClient.invalidateQueries({ queryKey: ['cmsWebSettingsThemeGlobal'] });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3500);
     }

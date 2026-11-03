@@ -128,20 +128,20 @@ export const ThemeProvider = ({ children }) => {
     refetchInterval: 1000 * 30 // Check periodically
   });
 
-  // 3. Whenever admin updates settings in DB, automatically synchronize theme for all visitors
+  // 3. Whenever settings arrive from DB on initial mount / sync
   useEffect(() => {
     if (!settingsData || Object.keys(settingsData).length === 0) return;
 
     let targetTheme = null;
     if (settingsData.home_layout_mode === 'PORTAL') {
-      targetTheme = settingsData.site_theme || (currentTheme !== 'editorial' ? currentTheme : 'emerald');
+      targetTheme = settingsData.site_theme || 'emerald';
     } else if (settingsData.home_layout_mode === 'EDITORIAL') {
       targetTheme = 'editorial';
     } else if (settingsData.site_theme) {
       targetTheme = settingsData.site_theme;
     }
 
-    if (targetTheme && targetTheme !== currentTheme) {
+    if (targetTheme) {
       setCurrentTheme(targetTheme);
       localStorage.setItem('tamiang_theme', targetTheme);
       if (settingsData.home_layout_mode) {
@@ -149,10 +149,12 @@ export const ThemeProvider = ({ children }) => {
       }
       document.documentElement.setAttribute('data-theme', targetTheme);
     }
-  }, [settingsData, currentTheme]);
+  }, [settingsData]);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', currentTheme);
+    if (currentTheme) {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+    }
   }, [currentTheme]);
 
   const changeTheme = (themeId) => {
