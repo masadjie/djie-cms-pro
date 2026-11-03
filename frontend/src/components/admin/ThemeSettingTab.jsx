@@ -176,8 +176,23 @@ export default function ThemeSettingTab() {
             return (
               <button
                 key={theme.id}
-                onClick={() => changeTheme(theme.id)}
-                className={`p-4 rounded-2xl border-2 text-left transition-all relative group flex flex-col justify-between h-40 cursor-pointer overflow-hidden ${
+                onClick={() => {
+                  changeTheme(theme.id);
+                  const isEditorialTheme = theme.id === 'editorial';
+                  const nextLayout = isEditorialTheme ? 'EDITORIAL' : 'PORTAL';
+                  setForm((prev) => ({ 
+                    ...prev, 
+                    site_theme: theme.id,
+                    home_layout_mode: nextLayout
+                  }));
+                  localStorage.setItem('djie_layout_mode', nextLayout);
+                  saveMutation.mutate({ 
+                    ...form, 
+                    site_theme: theme.id,
+                    home_layout_mode: nextLayout
+                  });
+                }}
+                className={`p-4 rounded-2xl border-2 text-left transition-all relative group flex flex-col justify-between min-h-[168px] cursor-pointer overflow-hidden ${
                   isSelected
                     ? 'border-emerald-600 bg-gradient-to-br from-emerald-50/50 via-white to-amber-50/30 shadow-md scale-[1.01]'
                     : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'

@@ -54,6 +54,42 @@ export const themes = [
     badgeText: 'text-amber-300'
   },
   {
+    id: 'crimson',
+    name: 'Majestic Crimson & Ruby Gold',
+    primaryColor: '#881337', // Deep Crimson Rose
+    accentColor: '#fbbf24',  // Warm Gold
+    badgeBg: 'bg-rose-950/80',
+    heroGradient: 'from-[#2e0514] via-[#4c0519] to-[#881337]',
+    navbarBg: 'bg-[#3b0718]',
+    accentText: 'text-amber-300',
+    primaryBtn: 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 hover:from-amber-300 hover:to-yellow-400',
+    badgeText: 'text-rose-300'
+  },
+  {
+    id: 'teal',
+    name: 'Persian Teal & Coral Sunset',
+    primaryColor: '#115e59', // Deep Teal
+    accentColor: '#fb7185',  // Sunset Coral
+    badgeBg: 'bg-teal-950/80',
+    heroGradient: 'from-[#042f2e] via-[#134e4a] to-[#115e59]',
+    navbarBg: 'bg-[#0a3835]',
+    accentText: 'text-rose-300',
+    primaryBtn: 'bg-gradient-to-r from-rose-400 to-pink-500 text-white hover:from-rose-500 hover:to-pink-600',
+    badgeText: 'text-teal-200'
+  },
+  {
+    id: 'amethyst',
+    name: 'Imperial Amethyst & Lilac',
+    primaryColor: '#581c87', // Royal Purple
+    accentColor: '#c084fc',  // Bright Lilac
+    badgeBg: 'bg-purple-950/80',
+    heroGradient: 'from-[#1e0736] via-[#3b0764] to-[#581c87]',
+    navbarBg: 'bg-[#2a0845]',
+    accentText: 'text-purple-300',
+    primaryBtn: 'bg-gradient-to-r from-purple-400 to-fuchsia-500 text-white hover:from-purple-300 hover:to-fuchsia-400',
+    badgeText: 'text-purple-200'
+  },
+  {
     id: 'editorial',
     name: 'Revision Editorial News & Magazine (Royal Blue Brand)',
     primaryColor: '#0058fb', // Brand Royal Blue
