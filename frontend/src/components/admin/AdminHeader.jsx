@@ -38,6 +38,7 @@ import {
   AlertTriangle,
   Clock,
   CheckCircle2,
+  Share2,
   X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -65,6 +66,12 @@ const NAVIGATION_GROUPS = [
         label: 'Berita & Artikel',
         icon: Newspaper,
         desc: 'Tulis, jadwalkan, & kelola artikel publikasi resmi'
+      },
+      {
+        key: 'medsos',
+        label: 'Medsos ASN',
+        icon: Share2,
+        desc: 'Sorotan video Reels, TikTok, YouTube & konten medsos ASN'
       },
       {
         key: 'komentar',
