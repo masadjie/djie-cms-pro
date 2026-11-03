@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
@@ -24,7 +24,10 @@ import {
 
 export default function GaleriVideoSection() {
   const [selectedMedia, setSelectedMedia] = useState(null);
-  const scrollRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   // Fetch Galeri Media from CMS API
   const { data: mediaData } = useQuery({
@@ -81,11 +84,48 @@ export default function GaleriVideoSection() {
     return item.media_url || '/hero-tamiang.jpg';
   };
 
-  const handleScroll = (direction) => {
-    if (!scrollRef.current) return;
-    const { clientWidth } = scrollRef.current;
-    const scrollAmount = direction === 'left' ? -clientWidth * 0.75 : clientWidth * 0.75;
-    scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  // Navigasi Carousel (geser 1 item per geseran)
+  const totalItems = items.length;
+
+  const handleNext = () => {
+    if (totalItems <= 1) return;
+    setCurrentIndex((prev) => (prev + 1) % totalItems);
+  };
+
+  const handlePrev = () => {
+    if (totalItems <= 1) return;
+    setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
+  };
+
+  // Auto Slide setiap 4 detik (pause saat hover atau modal terbuka)
+  useEffect(() => {
+    if (totalItems <= 1 || isPaused || selectedMedia) return;
+
+    const interval = setInterval(() => {
+      handleNext();
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [totalItems, isPaused, selectedMedia]);
+
+  // Touch Swipe Handlers for Mobile
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const distance = touchStartX.current - touchEndX.current;
+    if (Math.abs(distance) > 50) {
+      if (distance > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
   };
 
   // Testimonials — hanya dari database
@@ -107,7 +147,7 @@ export default function GaleriVideoSection() {
 
   return (
     <section className="w-full py-16 sm:py-24 bg-gradient-to-b from-white via-slate-50/50 to-white border-t border-b border-slate-100/80 overflow-hidden relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* ======================================================== */}
         {/* SECTION HEADER (EDITORIAL / LIFESTYLE STYLE)             */}
@@ -141,7 +181,7 @@ export default function GaleriVideoSection() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => handleScroll('left')}
+                  onClick={handlePrev}
                   aria-label="Geser ke kiri"
                   className="w-11 h-11 rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 hover:text-slate-950 flex items-center justify-center transition-all shadow-xs hover:shadow-md cursor-pointer"
                 >
@@ -149,7 +189,7 @@ export default function GaleriVideoSection() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleScroll('right')}
+                  onClick={handleNext}
                   aria-label="Geser ke kanan"
                   className="w-11 h-11 rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 hover:text-slate-950 flex items-center justify-center transition-all shadow-xs hover:shadow-md cursor-pointer"
                 >
@@ -161,14 +201,23 @@ export default function GaleriVideoSection() {
         </div>
 
         {/* ======================================================== */}
-        {/* CAROUSEL GALLERY POST CARDS                               */}
+        {/* CAROUSEL GALLERY POST CARDS (3 CARDS PER VIEW DESKTOP)    */}
         {/* ======================================================== */}
         {items.length > 0 && (
-          <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-            <div
-              ref={scrollRef}
-              className="flex gap-5 sm:gap-6 overflow-x-auto pb-6 pt-2 scroll-smooth no-scrollbar snap-x snap-mandatory"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          <div 
+            className="relative overflow-hidden"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Sliding Track */}
+            <div 
+              className="flex transition-transform duration-700 ease-in-out"
+              style={{
+                transform: `translateX(-${currentIndex * (100 / (window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3))}%)`
+              }}
             >
               {items.map((item, idx) => {
                 const itemIsVideo = isVideo(item);
@@ -178,85 +227,108 @@ export default function GaleriVideoSection() {
                 return (
                   <div
                     key={item.id || idx}
-                    onClick={() => setSelectedMedia(item)}
-                    className="group relative flex-none w-[280px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[480px] rounded-3xl overflow-hidden cursor-pointer snap-start transition-all duration-300 hover:-translate-y-1.5 shadow-sm hover:shadow-2xl border border-slate-200/70 bg-slate-900"
+                    className="w-full sm:w-1/2 lg:w-1/3 shrink-0 px-2.5 sm:px-3"
                   >
-                    {/* Media Background Image */}
-                    <img
-                      src={thumb}
-                      alt={item.judul || 'Dokumentasi BKPSDM'}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      loading="lazy"
-                      onError={(e) => { e.currentTarget.src = '/hero-tamiang.jpg'; }}
-                    />
+                    <div
+                      onClick={() => setSelectedMedia(item)}
+                      className="group relative w-full h-[450px] sm:h-[480px] rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1.5 shadow-sm hover:shadow-2xl border border-slate-200/70 bg-slate-900"
+                    >
+                      {/* Media Background Image */}
+                      <img
+                        src={thumb}
+                        alt={item.judul || 'Dokumentasi BKPSDM'}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.src = '/hero-tamiang.jpg'; }}
+                      />
 
-                    {/* Gradient Overlay for high-contrast typography & editorial feel */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-slate-900/10 opacity-90 group-hover:opacity-95 transition-opacity" />
+                      {/* Gradient Overlay for high-contrast typography & editorial feel */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-slate-900/10 opacity-90 group-hover:opacity-95 transition-opacity" />
 
-                    {/* Card Top: Badges */}
-                    <div className="absolute top-5 inset-x-5 flex items-center justify-between gap-2 z-10">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase bg-white/95 text-slate-900 backdrop-blur-md shadow-xs">
-                        {albumName}
-                      </span>
-
-                      {itemIsVideo ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/90 text-white backdrop-blur-md shadow-xs">
-                          <Play className="w-3 h-3 fill-white" />
-                          <span>Video</span>
+                      {/* Card Top: Badges */}
+                      <div className="absolute top-5 inset-x-5 flex items-center justify-between gap-2 z-10">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase bg-white/95 text-slate-900 backdrop-blur-md shadow-xs">
+                          {albumName}
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-xs">
-                          <ImageIcon className="w-3 h-3" />
-                          <span>Foto</span>
-                        </span>
-                      )}
-                    </div>
 
-                    {/* Center Floating Play Icon for Video */}
-                    {itemIsVideo && (
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:scale-110 group-hover:bg-white text-white group-hover:text-emerald-900 shadow-xl transition-all duration-300">
-                          <Play className="w-6 h-6 fill-current translate-x-0.5" />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Card Bottom: Content & Action Button */}
-                    <div className="absolute bottom-5 inset-x-5 flex flex-col justify-end space-y-3.5 z-10">
-                      <div className="space-y-1.5">
-                        <h3 className="text-lg sm:text-xl font-black text-white leading-snug line-clamp-2 drop-shadow-xs group-hover:text-emerald-300 transition-colors">
-                          {item.judul}
-                        </h3>
-
-                        {item.caption && (
-                          <p className="text-xs text-slate-300/90 line-clamp-2 leading-relaxed">
-                            {item.caption}
-                          </p>
+                        {itemIsVideo ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/90 text-white backdrop-blur-md shadow-xs">
+                            <Play className="w-3 h-3 fill-white" />
+                            <span>Video</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-xs">
+                            <ImageIcon className="w-3 h-3" />
+                            <span>Foto</span>
+                          </span>
                         )}
                       </div>
 
-                      {/* Action Pill Button */}
-                      <div className="pt-1">
-                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/95 hover:bg-white text-slate-900 text-xs font-black shadow-md group-hover:shadow-lg group-hover:bg-emerald-500 group-hover:text-white transition-all duration-200">
-                          {itemIsVideo ? (
-                            <>
-                              <Play className="w-3.5 h-3.5 fill-current" />
-                              <span>Putar Video</span>
-                            </>
-                          ) : (
-                            <>
-                              <Eye className="w-3.5 h-3.5" />
-                              <span>Buka Galeri</span>
-                            </>
+                      {/* Center Floating Play Icon for Video */}
+                      {itemIsVideo && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:scale-110 group-hover:bg-white text-white group-hover:text-emerald-900 shadow-xl transition-all duration-300">
+                            <Play className="w-6 h-6 fill-current translate-x-0.5" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Card Bottom: Content & Action Button */}
+                      <div className="absolute bottom-5 inset-x-5 flex flex-col justify-end space-y-3 z-10">
+                        <div className="space-y-1.5">
+                          <h3 className="text-lg sm:text-xl font-black text-white leading-snug line-clamp-2 drop-shadow-xs group-hover:text-emerald-300 transition-colors">
+                            {item.judul}
+                          </h3>
+
+                          {item.caption && (
+                            <p className="text-xs text-slate-300/90 line-clamp-2 leading-relaxed">
+                              {item.caption}
+                            </p>
                           )}
-                          <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
-                        </span>
+                        </div>
+
+                        {/* Action Pill Button */}
+                        <div className="pt-1">
+                          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/95 hover:bg-white text-slate-900 text-xs font-black shadow-md group-hover:shadow-lg group-hover:bg-emerald-500 group-hover:text-white transition-all duration-200">
+                            {itemIsVideo ? (
+                              <>
+                                <Play className="w-3.5 h-3.5 fill-current" />
+                                <span>Putar Video</span>
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Buka Galeri</span>
+                              </>
+                            )}
+                            <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 );
               })}
             </div>
+
+            {/* Carousel Dot Indicators */}
+            {totalItems > 1 && (
+              <div className="flex items-center justify-center gap-1.5 pt-6">
+                {items.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    onClick={() => setCurrentIndex(dotIdx)}
+                    aria-label={`Ke slide ${dotIdx + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      currentIndex === dotIdx 
+                        ? 'w-7 bg-emerald-600' 
+                        : 'w-2 bg-slate-200 hover:bg-slate-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
