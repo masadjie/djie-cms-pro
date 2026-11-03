@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
@@ -61,7 +61,21 @@ export default function GaleriVideoSection() {
   });
 
   const mediaList = Array.isArray(mediaData) ? mediaData : [];
-  const items = Array.isArray(mediaList) ? mediaList.filter(Boolean) : [];
+  const rawItems = Array.isArray(mediaList) ? mediaList.filter(Boolean) : [];
+
+  // Jika items kurang dari 6, lakukan looping duplikasi agar carousel selalu memiliki cukup kartu
+  // dan tampilan selalu penuh 3 kolom tanpa ada area kosong/bolong saat bergeser
+  const displayItems = useMemo(() => {
+    if (rawItems.length === 0) return [];
+    if (rawItems.length >= 6) return rawItems;
+    
+    // Gandakan items sampai minimal 6 atau 9 item agar loop carousel mulus
+    let looped = [...rawItems];
+    while (looped.length < 6) {
+      looped = [...looped, ...rawItems];
+    }
+    return looped;
+  }, [rawItems]);
 
   const getItemPlatform = (item) => {
     if (!item?.media_url) return 'YOUTUBE';
@@ -84,29 +98,29 @@ export default function GaleriVideoSection() {
     return item.media_url || '/hero-tamiang.jpg';
   };
 
-  // Navigasi Carousel (geser 1 item per geseran)
-  const totalItems = items.length;
+  // Navigasi Carousel berputar (infinite loop index)
+  const totalDisplay = displayItems.length;
 
   const handleNext = () => {
-    if (totalItems <= 1) return;
-    setCurrentIndex((prev) => (prev + 1) % totalItems);
+    if (totalDisplay <= 1) return;
+    setCurrentIndex((prev) => (prev + 1) % totalDisplay);
   };
 
   const handlePrev = () => {
-    if (totalItems <= 1) return;
-    setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
+    if (totalDisplay <= 1) return;
+    setCurrentIndex((prev) => (prev - 1 + totalDisplay) % totalDisplay);
   };
 
-  // Auto Slide setiap 4 detik (pause saat hover atau modal terbuka)
+  // Auto Slide setiap 4 detik (pause saat mouse hover atau modal terbuka)
   useEffect(() => {
-    if (totalItems <= 1 || isPaused || selectedMedia) return;
+    if (totalDisplay <= 1 || isPaused || selectedMedia) return;
 
     const interval = setInterval(() => {
       handleNext();
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [totalItems, isPaused, selectedMedia]);
+  }, [totalDisplay, isPaused, selectedMedia]);
 
   // Touch Swipe Handlers for Mobile
   const handleTouchStart = (e) => {
@@ -141,7 +155,7 @@ export default function GaleriVideoSection() {
     : [];
 
   // Jika di database baik galeri media maupun testimoni keduanya kosong, jangan tampilkan section ini
-  if (items.length === 0 && testimonials.length === 0) {
+  if (rawItems.length === 0 && testimonials.length === 0) {
     return null;
   }
 
@@ -169,7 +183,7 @@ export default function GaleriVideoSection() {
           </div>
 
           {/* Carousel Navigation Controls & Link */}
-          {items.length > 0 && (
+          {displayItems.length > 0 && (
             <div className="flex items-center gap-3 shrink-0 pt-2 md:pt-0">
               <Link
                 to="/galeri"
@@ -203,7 +217,7 @@ export default function GaleriVideoSection() {
         {/* ======================================================== */}
         {/* CAROUSEL GALLERY POST CARDS (3 CARDS PER VIEW DESKTOP)    */}
         {/* ======================================================== */}
-        {items.length > 0 && (
+        {displayItems.length > 0 && (
           <div 
             className="relative overflow-hidden"
             onMouseEnter={() => setIsPaused(true)}
@@ -212,21 +226,21 @@ export default function GaleriVideoSection() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Sliding Track */}
+            {/* Sliding Track: Selalu bergeser mulus per-card */}
             <div 
               className="flex transition-transform duration-700 ease-in-out"
               style={{
-                transform: `translateX(-${currentIndex * (100 / (window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3))}%)`
+                transform: `translateX(-${currentIndex * (100 / (typeof window !== 'undefined' && window.innerWidth < 640 ? 1 : typeof window !== 'undefined' && window.innerWidth < 1024 ? 2 : 3))}%)`
               }}
             >
-              {items.map((item, idx) => {
+              {displayItems.map((item, idx) => {
                 const itemIsVideo = isVideo(item);
                 const thumb = getThumb(item);
                 const albumName = item.album || (itemIsVideo ? 'VIDEO DOKUMENTASI' : 'FOTO KEGIATAN');
 
                 return (
                   <div
-                    key={item.id || idx}
+                    key={`${item.id || 'media'}-${idx}`}
                     className="w-full sm:w-1/2 lg:w-1/3 shrink-0 px-2.5 sm:px-3"
                   >
                     <div
@@ -311,17 +325,17 @@ export default function GaleriVideoSection() {
               })}
             </div>
 
-            {/* Carousel Dot Indicators */}
-            {totalItems > 1 && (
+            {/* Carousel Dot Indicators (Berdasarkan jumlah asli data) */}
+            {rawItems.length > 1 && (
               <div className="flex items-center justify-center gap-1.5 pt-6">
-                {items.map((_, dotIdx) => (
+                {rawItems.map((_, dotIdx) => (
                   <button
                     key={dotIdx}
                     type="button"
                     onClick={() => setCurrentIndex(dotIdx)}
                     aria-label={`Ke slide ${dotIdx + 1}`}
                     className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                      currentIndex === dotIdx 
+                      (currentIndex % rawItems.length) === dotIdx 
                         ? 'w-7 bg-emerald-600' 
                         : 'w-2 bg-slate-200 hover:bg-slate-300'
                     }`}
@@ -396,7 +410,7 @@ export default function GaleriVideoSection() {
         )}
 
         {/* Mobile View All Link */}
-        {items.length > 0 && (
+        {rawItems.length > 0 && (
           <div className="flex sm:hidden justify-center pt-2">
             <Link
               to="/galeri"
