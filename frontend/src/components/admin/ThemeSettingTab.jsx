@@ -176,7 +176,10 @@ export default function ThemeSettingTab() {
             return (
               <button
                 key={theme.id}
-                onClick={() => {
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   changeTheme(theme.id);
                   const isEditorialTheme = theme.id === 'editorial';
                   const nextLayout = isEditorialTheme ? 'EDITORIAL' : 'PORTAL';
@@ -194,7 +197,7 @@ export default function ThemeSettingTab() {
                 }}
                 className={`p-4 rounded-2xl border-2 text-left transition-all relative group flex flex-col justify-between min-h-[168px] cursor-pointer overflow-hidden ${
                   isSelected
-                    ? 'border-emerald-600 bg-gradient-to-br from-emerald-50/50 via-white to-amber-50/30 shadow-md scale-[1.01]'
+                    ? 'border-emerald-600 ring-2 ring-emerald-500/30 bg-gradient-to-br from-emerald-50/50 via-white to-amber-50/30 shadow-md scale-[1.01]'
                     : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
                 }`}
               >

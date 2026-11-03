@@ -63,6 +63,42 @@
   --theme-hero-to: #eff6ff;
 }
 
+[data-theme="crimson"] {
+  --theme-primary: #881337;
+  --theme-primary-dark: #2e0514;
+  --theme-primary-light: #be123c;
+  --theme-accent: #fbbf24;
+  --theme-accent-light: #fde68a;
+  --theme-navbar-bg: #3b0718;
+  --theme-hero-from: #2e0514;
+  --theme-hero-via: #4c0519;
+  --theme-hero-to: #881337;
+}
+
+[data-theme="teal"] {
+  --theme-primary: #115e59;
+  --theme-primary-dark: #042f2e;
+  --theme-primary-light: #0f766e;
+  --theme-accent: #fb7185;
+  --theme-accent-light: #fda4af;
+  --theme-navbar-bg: #0a3835;
+  --theme-hero-from: #042f2e;
+  --theme-hero-via: #134e4a;
+  --theme-hero-to: #115e59;
+}
+
+[data-theme="amethyst"] {
+  --theme-primary: #581c87;
+  --theme-primary-dark: #1e0736;
+  --theme-primary-light: #7e22ce;
+  --theme-accent: #c084fc;
+  --theme-accent-light: #e9d5ff;
+  --theme-navbar-bg: #2a0845;
+  --theme-hero-from: #1e0736;
+  --theme-hero-via: #3b0764;
+  --theme-hero-to: #581c87;
+}
+
 @layer base {
   html, body {
     overflow-x: hidden;
