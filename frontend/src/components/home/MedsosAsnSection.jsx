@@ -94,8 +94,8 @@ export default function MedsosAsnSection() {
                 Official Reels & Highlights
               </span>
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-              Publikasi konten edukasi, info kepegawaian, dan warta ASN terkini langsung dari media sosial resmi BKPSDM.
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <span className="text-emerald-400 font-bold">Setiap ASN punya cerita</span>, dan setiap pengabdian layak untuk didengar. Mari berbagi gagasan, pengalaman, dan kisah inspiratif dari tempat tugas masing-masing, agar kita saling belajar, saling menguatkan, dan tumbuh bersama.
             </p>
           </div>
 
