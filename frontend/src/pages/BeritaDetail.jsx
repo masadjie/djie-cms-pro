@@ -30,6 +30,7 @@ import {
 export default function BeritaDetail() {
   const { slug } = useParams();
   const [previewImage, setPreviewImage] = useState(null); // { src, alt, caption }
+  const [previewDoc, setPreviewDoc] = useState(null); // { url, name, extension, size, category }
 
   // Scroll to top on slug change or initial load
   useEffect(() => {
@@ -294,15 +295,36 @@ export default function BeritaDetail() {
                         </div>
                       </div>
 
-                      <a
-                        href={att.file_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="w-full sm:w-auto px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs shrink-0 cursor-pointer"
-                      >
-                        <Download className="w-3.5 h-3.5 text-amber-300" />
-                        <span>Unduh Dokumen</span>
-                      </a>
+                      <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                        {/* Tombol Lihat / Pratinjau Dokumen */}
+                        <button
+                          type="button"
+                          onClick={() => setPreviewDoc({
+                            url: att.file_url,
+                            name: att.nama_lampiran,
+                            extension: att.file_extension || (att.file_url && att.file_url.split('.').pop().toLowerCase()),
+                            size: att.file_size_bytes ? (att.file_size_bytes / 1024).toFixed(0) + ' KB' : 'Dokumen',
+                            category: att.kategori_dokumen
+                          })}
+                          className="flex-1 sm:flex-initial px-3.5 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300/80 active:scale-95 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer group/view"
+                          title="Lihat Pratinjau Dokumen"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-emerald-700 group-hover/view:scale-110 transition-transform" />
+                          <span>Lihat</span>
+                        </button>
+
+                        {/* Tombol Unduh Dokumen */}
+                        <a
+                          href={att.file_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          download
+                          className="flex-1 sm:flex-initial px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5 text-amber-300" />
+                          <span>Unduh Dokumen</span>
+                        </a>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -419,6 +441,120 @@ export default function BeritaDetail() {
                 {previewImage.caption}
               </p>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Pratinjau Dokumen PDF / Berkas Lampiran */}
+      {previewDoc && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200"
+          onClick={() => setPreviewDoc(null)}
+        >
+          <div 
+            className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-5 sm:px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center gap-3 min-w-0 pr-2">
+                <div className="p-2 rounded-xl bg-emerald-700 text-amber-300 shrink-0">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-extrabold text-sm sm:text-base text-white truncate max-w-md sm:max-w-xl" title={previewDoc.name}>
+                    {previewDoc.name}
+                  </h4>
+                  <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono mt-0.5">
+                    <span className="uppercase text-emerald-400 font-bold">{previewDoc.extension || 'PDF'}</span>
+                    <span>&bull;</span>
+                    <span>{previewDoc.size}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={previewDoc.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  className="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  title="Unduh file dokumen"
+                >
+                  <Download className="w-3.5 h-3.5 text-amber-300" />
+                  <span className="hidden sm:inline">Unduh</span>
+                </a>
+
+                <a
+                  href={previewDoc.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  title="Buka di Tab Baru"
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => setPreviewDoc(null)}
+                  aria-label="Tutup Pratinjau Dokumen"
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-rose-900/60 text-slate-400 hover:text-rose-200 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body: Viewer iframe for PDF or Fallback Card for Excel/Doc */}
+            <div className="flex-1 bg-slate-100 p-2 sm:p-4 min-h-[60vh] max-h-[75vh] overflow-auto flex items-center justify-center">
+              {['pdf'].includes(String(previewDoc.extension || '').toLowerCase()) || String(previewDoc.url || '').toLowerCase().includes('.pdf') ? (
+                <iframe
+                  src={`${previewDoc.url}#toolbar=1`}
+                  title={previewDoc.name}
+                  className="w-full h-full min-h-[60vh] rounded-2xl border border-slate-300 bg-white shadow-inner"
+                />
+              ) : (
+                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 max-w-md w-full text-center space-y-4 shadow-sm my-auto">
+                  <div className="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto shadow-2xs">
+                    <FileText className="w-8 h-8 text-emerald-700" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">{previewDoc.name}</h4>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Format dokumen <span className="font-bold text-slate-700 uppercase">{previewDoc.extension}</span> dapat langsung dibuka dan diedit setelah diunduh ke perangkat Anda.
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <a
+                      href={previewDoc.url}
+                      download
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                    >
+                      <Download className="w-4 h-4 text-amber-300" />
+                      <span>Unduh Berkas Sekarang</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-5 sm:px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+              <span className="truncate max-w-md text-[11px]">
+                Pratinjau Resmi Dokumen Kedinasan &bull; BKPSDM Aceh Tamiang
+              </span>
+              <button
+                type="button"
+                onClick={() => setPreviewDoc(null)}
+                className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-colors cursor-pointer text-xs"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}
